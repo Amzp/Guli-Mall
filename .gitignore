@@ -15,3 +15,17 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+### Maven ###
+**/mvnw
+**/mvnw.cmd
+**/.mvn
+
+### Java ###
+**/target
+
+### IntelliJ IDEA ###
+.idea
+
+### Git ###
+**/.gitignore

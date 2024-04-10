@@ -25,7 +25,7 @@ buildNumber.properties
 **/target
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 
 ### Git ###
 **/.gitignore

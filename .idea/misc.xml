@@ -10,10 +10,11 @@
         <option value="$PROJECT_DIR$/gulimall-product/pom.xml" />
         <option value="$PROJECT_DIR$/gulimall-ware/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/renren-fast-master/pom.xml" />
+        <option value="$PROJECT_DIR$/renren-fast/pom.xml" />
+        <option value="$PROJECT_DIR$/renren-generator/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8.0_271" project-jdk-type="JavaSDK" />
 </project>

@@ -52,6 +52,14 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- nacos服务注册/发现：Spring Cloud应用将能够自动注册到Nacos服务注册中心，并从中发现其他服务，可以在微服务架构中实现服务的自动化管理。-->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+			<version>2021.0.1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

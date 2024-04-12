@@ -10,9 +10,10 @@ package io.renren;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-
-@SpringBootApplication
+@EnableDiscoveryClient	// 注册到注册中心
+@SpringBootApplication	// SpringBoot启动类
 public class RenrenApplication {
 
 	public static void main(String[] args) {

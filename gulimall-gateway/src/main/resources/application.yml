@@ -12,43 +12,45 @@ spring:
           predicates:
             - Query=url,qq
 
-#        - id: product_route
-#          uri: lb://gulimall-product
-#          predicates:
-#            - Path=/api/product/**
-#          filters:
-#            - RewritePath=/api/(?<segment>.*),/$\{segment}
-#
-#        - id: third_party_route
-#          uri: lb://gulimall-third-party
-#          predicates:
-#            - Path=/api/thirdparty/**
-#          filters:
-#            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
-#
-#        - id: member_route
-#          uri: lb://gulimall-member
-#          predicates:
-#            - Path=/api/member/**
-#          filters:
-#            - RewritePath=/api/(?<segment>.*),/$\{segment}
-#
-#        - id: ware_route
-#          uri: lb://gulimall-ware
-#          predicates:
-#            - Path=/api/ware/**
-#          filters:
-#            - RewritePath=/api/(?<segment>.*),/$\{segment}
-#
-#        - id: admin_route
-#          uri: lb://renren-fast
-#          predicates:
-#            - Path=/api/**
-#          filters:
-#            - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
+        #        - id: product_route
+        #          uri: lb://gulimall-product
+        #          predicates:
+        #            - Path=/api/product/**
+        #          filters:
+        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        #
+        #        - id: third_party_route
+        #          uri: lb://gulimall-third-party
+        #          predicates:
+        #            - Path=/api/thirdparty/**
+        #          filters:
+        #            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+        #
+        #        - id: member_route
+        #          uri: lb://gulimall-member
+        #          predicates:
+        #            - Path=/api/member/**
+        #          filters:
+        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        #
+        #        - id: ware_route
+        #          uri: lb://gulimall-ware
+        #          predicates:
+        #            - Path=/api/ware/**
+        #          filters:
+        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        #
+        # admin_route: 定义一个名为“admin_route”的路由规则
+        - id: admin_route
+          uri: lb://renren-fast # 将请求转发到名为“renren-fast”的服务上，lb://表示使用负载均衡
+          predicates:
+            - Path=/api/** # 判断请求路径是否以“/api/”开头
+          filters:
+            - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} # 对请求路径进行重写，将“/api/”替换为“/renren-fast/”
+            # RewritePath：表示要进行路径重写的操作。
+            # /api/(?<segment>.*?)：是一个正则表达式，匹配以/api/开头的路径，并将后面的任意字符捕获为一个组，命名为segment。
+            # /renren-fast/$\{segment}：是替换后的路径，其中$\{segment}会使用正则表达式中捕获的组内容进行替换，即将/api/替换为/renren-fast/
 
-
-
-  ## 前端项目，/api
-## http://localhost:88/api/captcha.jpg   http://localhost:8080/renren-fast/captcha.jpg
-## http://localhost:88/api/product/category/list/tree http://localhost:10000/product/category/list/tree
+          ## 前端项目，默认带上：/api
+          ## http://localhost:88/api/captcha.jpg =>  http://localhost:8080/renren-fast/captcha.jpg
+          ## http://localhost:88/api/product/category/list/tree => http://localhost:10000/product/category/list/tree

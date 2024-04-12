@@ -4,10 +4,7 @@ import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,10 +18,12 @@ import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
-
+    /*，CategoryServiceImpl 类继承自 MyBatis-Plus 提供的 ServiceImpl 抽象类，并通过泛型指定了 CategoryDao 和 CategoryEntity 类型，从而建立了对应的服务与 DAO 和实体类之间的关系。
+     *   使用 MyBatis-Plus 的 ServiceImpl 抽象类提供了对数据访问对象（CategoryDao）和实体类（CategoryEntity）的通用 CRUD（增删改查）操作的支持。
+     *   ServiceImpl自动注入了CategoryDao 类型的字段
+     * */
 //    @Autowired
 //    CategoryDao categoryDao;
 
@@ -41,28 +40,44 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return new PageUtils(page);
     }
 
+    /**
+     * 列出所有分类，并以树形结构进行组织。
+     * 这个方法首先查询出所有分类，然后将它们组织成树形结构，其中根节点是一级分类。
+     *
+     * @return 返回包含所有一级分类的列表，每个一级分类都包含其子分类。
+     */
     @Override
     public List<CategoryEntity> listWithTree() {
-        //1、查出所有分类
+        // 1、查询出所有分类
         List<CategoryEntity> entities = baseMapper.selectList(null);
 
-        //2、组装成父子的树形结构
+        // 检查是否有数据
+        if (entities.isEmpty()) {
+            // 返回空列表
+            return new ArrayList<>();
+        }
 
-        //2.1）、找到所有的一级分类
-        List<CategoryEntity> level1Menus = entities.stream().filter(categoryEntity ->
-             categoryEntity.getParentCid() == 0
-        ).map((menu)->{
-            menu.setChildren(getChildrens(menu,entities));
-            return menu;
-        }).sorted((menu1,menu2)->{
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
-        }).collect(Collectors.toList());
-
-
-
+        // 2、将查询结果组装成父子结构的树形列表
+        //    2.1、首先筛选出所有一级分类
+        List<CategoryEntity> level1Menus = entities.stream()
+                .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
+                .map((menu) -> {
+                    // 为每个一级分类查找并设置其子分类
+                    menu.setChildren(getChildren(menu, entities));
+                    return menu;
+                })
+                // 按照排序值对一级分类进行排序
+                .sorted((menu1, menu2) -> {
+                    // 安全获取排序值，如果sort为null，则默认为0
+                    Integer sort1 = menu1.getSort() != null ? menu1.getSort() : 0;
+                    Integer sort2 = menu2.getSort() != null ? menu2.getSort() : 0;
+                    return sort1.compareTo(sort2);
+                })
+                .collect(Collectors.toList());
 
         return level1Menus;
     }
+
 
     @Override
     public void removeMenuByIds(List<Long> asList) {
@@ -86,45 +101,60 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 级联更新所有关联的数据
+     *
      * @param category
      */
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
-        categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
     //225,25,2
-    private List<Long> findParentPath(Long catelogId,List<Long> paths){
+    private List<Long> findParentPath(Long catelogId, List<Long> paths) {
         //1、收集当前节点id
         paths.add(catelogId);
         CategoryEntity byId = this.getById(catelogId);
-        if(byId.getParentCid()!=0){
-            findParentPath(byId.getParentCid(),paths);
+        if (byId.getParentCid() != 0) {
+            findParentPath(byId.getParentCid(), paths);
         }
         return paths;
 
     }
 
 
-    //递归查找所有菜单的子菜单
-    private List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
+    /**
+     * 递归查找指定菜单的所有子菜单
+     *
+     * @param root 当前遍历的菜单项
+     * @param all  所有菜单项的列表
+     * @return 返回当前菜单项的所有子菜单项列表
+     */
+    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
 
-        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
-            return categoryEntity.getParentCid() == root.getCatId();
-        }).map(categoryEntity -> {
-            //1、找到子菜单
-            categoryEntity.setChildren(getChildrens(categoryEntity,all));
-            return categoryEntity;
-        }).sorted((menu1,menu2)->{
-            //2、菜单的排序
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
-        }).collect(Collectors.toList());
+        // 1. 使用流处理来查找当前菜单的所有子菜单
+        List<CategoryEntity> children = all.stream()
+                // 2. 筛选出父菜单ID与当前菜单ID相同的菜单项
+                .filter(categoryEntity -> Objects.equals(categoryEntity.getParentCid(), root.getCatId()))
+                // 3. 对筛选后的菜单项进行处理，递归找到它们的子菜单
+                .map(categoryEntity -> {
+                    // 为每个菜单项设置其子菜单
+                    categoryEntity.setChildren(getChildren(categoryEntity, all));
+                    return categoryEntity;
+                })
+                // 4. 对菜单项按照排序字段进行排序
+                .sorted((menu1, menu2) -> {
+                    // 安全获取排序值，如果sort为null，则默认为0
+                    Integer sort1 = menu1.getSort() != null ? menu1.getSort() : 0;
+                    Integer sort2 = menu2.getSort() != null ? menu2.getSort() : 0;
+                    return sort1.compareTo(sort2);
+                })
+                // 5. 集合化处理后的菜单项列表
+                .collect(Collectors.toList());
 
         return children;
     }
-
 
 
 }

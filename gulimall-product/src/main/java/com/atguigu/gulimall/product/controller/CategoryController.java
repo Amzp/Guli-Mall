@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +18,6 @@ import com.atguigu.common.utils.R;
 
 import javax.validation.Valid;
 
-
 /**
  * 商品三级分类
  *
@@ -27,6 +27,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("product/category")
+@Slf4j
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -36,9 +37,8 @@ public class CategoryController {
      */
     @RequestMapping("/list/tree")
     public R list(){
-
+        log.info("查出所有分类以及子分类，以树形结构组装起来...");
         List<CategoryEntity> entities = categoryService.listWithTree();
-
 
         return R.ok().put("data", entities);
     }

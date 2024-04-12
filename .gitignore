@@ -26,8 +26,12 @@ buildNumber.properties
 
 ### IntelliJ IDEA ###
 .idea
+gulimall.iml
+**/rebel.xml
+**/gulimall-*.iml
 
 ### Git ###
 **/.gitignore
 
 ### 配置文件 ###
+gulimall-third-party/src/main/resources/application.yml

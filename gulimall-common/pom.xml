@@ -31,7 +31,7 @@
     </build>
 
     <dependencies>
-        <!--        mybatis-plus-->
+        <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -44,6 +44,7 @@
             <version>1.18.8</version>
         </dependency>
 
+        <!--Apache httpclient依赖，用于发送http请求-->
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -51,20 +52,21 @@
             <version>4.4.12</version>
         </dependency>
 
-
+        <!--导入commons-lang依赖，用于字符串处理-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
 
-        <!--    导入mysql驱动    -->
+        <!--导入mysql驱动-->
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.17</version>
         </dependency>
+
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -73,18 +75,20 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--        服务注册/发现-->
+        <!-- nacos服务注册/发现：Spring Cloud应用将能够自动注册到Nacos服务注册中心，并从中发现其他服务，可以在微服务架构中实现服务的自动化管理。-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!--        配置中心来做配置管理-->
+        <!--nacos作为配置中心来做配置管理：Spring Cloud应用将能够从Nacos配置中心获取配置信息，实现配置的集中管理和动态刷新。-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+
+        <!--Java Validation API是Java EE和Jakarta EE的一部分，允许开发者以声明的方式对Java Bean中的字段、方法参数等进行约束定义和验证。-->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -92,9 +96,9 @@
         </dependency>
 
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud Alibaba 依赖管理 -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -104,6 +108,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 </project>

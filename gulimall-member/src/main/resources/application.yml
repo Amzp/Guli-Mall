@@ -12,6 +12,7 @@ spring:
 
   application:
     name: gulimall-member
+
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:

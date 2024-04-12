@@ -14,12 +14,11 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 /**
  * 1、开启服务注册发现
- *  (配置nacos的注册中心地址)
+ *      (配置nacos的注册中心地址)
  * 2、编写网关配置文件
  */
-
-@EnableDiscoveryClient
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@EnableDiscoveryClient  // 开启服务注册发现
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})    // 排除数据源自动配置
 public class GulimallGatewayApplication {
 
     public static void main(String[] args) {

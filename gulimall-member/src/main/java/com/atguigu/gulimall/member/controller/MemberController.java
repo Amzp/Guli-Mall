@@ -40,7 +40,9 @@ public class MemberController {
         memberEntity.setNickname("张三");
 
         R membercoupons = couponFeignService.membercoupons();
-        return R.ok().put("member",memberEntity).put("coupons",membercoupons.get("coupons"));
+        return R.ok()
+                .put("member",memberEntity)
+                .put("coupons",membercoupons.get("coupons"));
     }
 
 

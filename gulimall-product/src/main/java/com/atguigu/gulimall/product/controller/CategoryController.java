@@ -85,20 +85,41 @@ public class CategoryController {
 
 
     /**
-     * 删除
-     * @RequestBody:获取请求体，必须发送POST请求
-     * SpringMVC自动将请求体的数据（json），转为对应的对象
+     * 删除指定分类ID的产品分类信息
+     *
+     * @param catIds 需要删除的产品分类ID数组，通过POST请求的请求体以JSON格式传递
+     * @return 返回操作结果，成功操作返回R.ok()，表示操作成功
      */
-    @RequestMapping("/delete")
-    //@RequiresPermissions("product:category:delete")
-    public R delete(@RequestBody Long[] catIds){
+    @DeleteMapping("/delete")
+    public R deleteProductCategoriesByIds(@RequestBody List<Long> catIds){
+        log.info("尝试删除分类ID：{} 的产品分类信息...", catIds);
 
+        // 输入验证：确保catIds不为空且包含合法的ID
+        if (catIds == null || catIds.isEmpty()) {
+            log.error("删除请求中未提供任何分类ID");
+            return R.error("删除请求中未提供任何分类ID");
+        }
+        // 假设ID为正数且不为0的为合法ID，根据实际情况调整
+        for (Long id : catIds) {
+            if (id <= 0) {
+                log.error("分类ID {} 不合法", id);
+                return R.error("分类ID不合法");
+            }
+        }
 
-		//categoryService.removeByIds(Arrays.asList(catIds));
+        try {
+            // 调用categoryService的removeMenuByIds方法，根据提供的ID数组删除相应的分类信息
+            categoryService.removeMenuByIds(catIds);
 
-        categoryService.removeMenuByIds(Arrays.asList(catIds));
-
-        return R.ok();
+            log.info("成功删除分类ID：{} 的产品分类信息", catIds);
+            // 返回操作成功的响应
+            return R.ok();
+        } catch (Exception e) {
+            log.error("删除分类ID {} 时发生异常：{}", catIds, e.getMessage());
+            // 返回操作失败的响应，包含错误信息
+            return R.error("删除操作失败：" + e.getMessage());
+        }
     }
+
 
 }

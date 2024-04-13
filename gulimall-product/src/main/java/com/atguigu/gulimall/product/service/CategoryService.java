@@ -20,6 +20,14 @@ public interface CategoryService extends IService<CategoryEntity> {
 
     List<CategoryEntity> listWithTree();
 
+
+    /**
+     * 根据提供的ID列表移除菜单项。
+     *
+     * @param asList 包含需要移除的菜单项ID的列表。列表中的每个元素都应为Long类型。
+     *               该参数不应为null，且至少应包含一个元素。
+     * @return 无返回值。
+     */
     void removeMenuByIds(List<Long> asList);
 
     /**

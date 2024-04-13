@@ -44,7 +44,8 @@ public class CategoryEntity implements Serializable {
      */
     private Integer catLevel;
     /**
-     * 是否显示[0-不显示，1显示]
+     * 是否显示[0-不显示，1-显示]
+     * 通过@TableLogic注解，实现逻辑删除的功能。当showStatus的值为1时，表示数据正常展示；为0时，表示数据被逻辑删除。
      */
     @TableLogic(value = "1", delval = "0")
     private Integer showStatus;

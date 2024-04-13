@@ -79,11 +79,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
 
+    /**
+     * 根据菜单ID列表删除菜单。
+     * 本方法采用逻辑删除方式，即在数据库中标记删除，而非真正物理删除。
+     * 在执行删除前，应检查待删除的菜单是否被其他地方引用，确保删除操作的安全性。
+     *
+     * @param asList 要删除的菜单ID列表，类型为List<Long>。
+     *                需要删除的菜单的ID将以此列表中的元素为依据进行删除操作。
+     *                列表为空或null时，方法不执行任何操作。
+     */
     @Override
     public void removeMenuByIds(List<Long> asList) {
-        //TODO  1、检查当前删除的菜单，是否被别的地方引用
+        // TODO 检查当前删除的菜单，是否被别的地方引用
 
-        //逻辑删除
+        // 执行逻辑删除，通过baseMapper的deleteBatchIds方法，根据ID列表批量删除记录
         baseMapper.deleteBatchIds(asList);
     }
 

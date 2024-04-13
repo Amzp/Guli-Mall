@@ -14,10 +14,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient	// 注册到注册中心
 @SpringBootApplication	// SpringBoot启动类
-public class RenrenApplication {
+public class RenrenFastApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RenrenApplication.class, args);
+		SpringApplication.run(RenrenFastApplication.class, args);
 	}
 
 }

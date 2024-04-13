@@ -1,56 +1,49 @@
+# 配置Spring Cloud Gateway的路由规则
 spring:
   cloud:
     gateway:
-      routes:
-        - id: test_route
-          uri: https://www.baidu.com
-          predicates:
-            - Query=url,baidu
+      routes: # 路由规则列表
+        - id: product_route # 产品服务路由规则
+          uri: lb://gulimall-product # 目标服务地址，使用负载均衡
+          predicates: # 断言，确定请求是否应被此路由处理
+            - Path=/api/product/** # 判断请求路径是否匹配此模式
+          filters: # 过滤器，对匹配的请求进行处理
+            - RewritePath=/api/(?<segment>.*),/$\{segment} # 对请求路径进行重写
 
-        - id: qq_route
-          uri: https://www.qq.com
+        - id: third_party_route # 第三方服务路由规则
+          uri: lb://gulimall-third-party
           predicates:
-            - Query=url,qq
+            - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
 
-        #        - id: product_route
-        #          uri: lb://gulimall-product
-        #          predicates:
-        #            - Path=/api/product/**
-        #          filters:
-        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
-        #
-        #        - id: third_party_route
-        #          uri: lb://gulimall-third-party
-        #          predicates:
-        #            - Path=/api/thirdparty/**
-        #          filters:
-        #            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
-        #
-        #        - id: member_route
-        #          uri: lb://gulimall-member
-        #          predicates:
-        #            - Path=/api/member/**
-        #          filters:
-        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
-        #
-        #        - id: ware_route
-        #          uri: lb://gulimall-ware
-        #          predicates:
-        #            - Path=/api/ware/**
-        #          filters:
-        #            - RewritePath=/api/(?<segment>.*),/$\{segment}
-        #
+        - id: member_route # 会员服务路由规则
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: ware_route # 仓库服务路由规则
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
         # admin_route: 定义一个名为“admin_route”的路由规则
         - id: admin_route
           uri: lb://renren-fast # 将请求转发到名为“renren-fast”的服务上，lb://表示使用负载均衡
           predicates:
-            - Path=/api/** # 判断请求路径是否以“/api/”开头
+            - Path=/api/** # 判断请求路径是否以“/api/”开头，粗粒度路由放在细粒度路由后面
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} # 对请求路径进行重写，将“/api/”替换为“/renren-fast/”
+
             # RewritePath：表示要进行路径重写的操作。
             # /api/(?<segment>.*?)：是一个正则表达式，匹配以/api/开头的路径，并将后面的任意字符捕获为一个组，命名为segment。
             # /renren-fast/$\{segment}：是替换后的路径，其中$\{segment}会使用正则表达式中捕获的组内容进行替换，即将/api/替换为/renren-fast/
 
           ## 前端项目，默认带上：/api
-          ## http://localhost:88/api/captcha.jpg =>  http://localhost:8080/renren-fast/captcha.jpg
+          ## 通过RewritePath过滤器实现路径重写，便于将前端请求映射到后端实际的服务路径上。
+          ## 例如，前端发送的请求http://localhost:88/api/captcha.jpg 会被重写为http://localhost:8080/renren-fast/captcha.jpg 并发送到后端。
           ## http://localhost:88/api/product/category/list/tree => http://localhost:10000/product/category/list/tree

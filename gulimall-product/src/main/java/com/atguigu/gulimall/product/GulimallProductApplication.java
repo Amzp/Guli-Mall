@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -53,14 +54,27 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *  1）、编写异常处理类，使用@ControllerAdvice。
  *  2）、使用@ExceptionHandler标注方法可以处理的异常。
  */
+/**
+ * GulimallProductApplication类是商品的Spring Boot启动类。
+ *
+ * @EnableFeignClients 标注启用Feign客户端，指定扫描的包为"com.atguigu.gulimall.product.feign"，
+ *                       用于开启对分布式系统中服务之间调用的支持。
+ * @EnableDiscoveryClient 标注启用服务发现客户端，用于加入服务发现框架（如Nacos），以支持微服务架构中的服务自动注册与发现。
+ * @MapperScan 指定MyBatis Plus的Mapper接口所在的包，即"com.atguigu.gulimall.product.dao"，
+ *              以便Spring自动扫描并注册这些Mapper接口。
+ * @SpringBootApplication 标注这是一个Spring Boot应用，并自动包含@SpringBootConfiguration、@EnableAutoConfiguration和@ComponentScan注解，
+ *                           实现了Spring Boot应用的快速配置和启动。
+ */
 @EnableFeignClients(basePackages = "com.atguigu.gulimall.product.feign")
 @EnableDiscoveryClient
 @MapperScan("com.atguigu.gulimall.product.dao")
 @SpringBootApplication
+@Slf4j
 public class GulimallProductApplication {
-
     public static void main(String[] args) {
+        log.info("开始启动GulimallProductApplication...");
         SpringApplication.run(GulimallProductApplication.class, args);
+        log.info("GulimallProductApplication启动成功...");
     }
 
 }

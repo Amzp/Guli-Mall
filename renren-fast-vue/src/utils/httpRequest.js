@@ -21,7 +21,6 @@ const http = axios.create({
   }
 })
 
-
 /**
  * 请求拦截器：在http请求发送前拦截，统一配置请求头
  * @param {Object} config - 发送请求前的配置对象，可用于修改请求配置
@@ -35,7 +34,6 @@ http.interceptors.request.use(config => {
   // 请求错误处理：将错误信息包装成Promise并拒绝
   return Promise.reject(error)
 })
-
 
 /**
  * 响应拦截器：在HTTP响应拦截器中添加对响应的处理。
@@ -56,7 +54,6 @@ http.interceptors.response.use(response => {
   return Promise.reject(error)
 })
 
-
 /**
  * 请求地址处理函数
  * 该函数用于根据当前环境和配置，构造并返回一个完整的请求URL。
@@ -67,7 +64,6 @@ http.adornUrl = (actionName) => {
   // 判断是否为非生产环境且开启代理，若是，则使用'/proxyApi/'作为接口前缀进行代理拦截；否则，使用全局配置的baseUrl。
   return (process.env.NODE_ENV !== 'production' && process.env.OPEN_PROXY ? '/proxyApi/' : window.SITE_CONFIG.baseUrl) + actionName
 }
-
 
 /**
  * 处理HTTP请求参数，可以添加默认参数
@@ -83,7 +79,6 @@ http.adornParams = (params = {}, openDefaultParams = true) => {
   // 根据是否启用默认参数来合并参数对象
   return openDefaultParams ? merge(defaults, params) : params
 }
-
 
 /**
  * 处理并装饰POST请求的数据。
@@ -107,14 +102,13 @@ http.adornData = (data = {}, openDefaultData = true, contentType = 'json') => {
   return contentType === 'json' ? JSON.stringify(data) : qs.stringify(data)
 }
 
-
 /**
  * 处理delete请求的数据，可以添加默认参数
  * @param {*} data 提交的数据对象
  * @param {*} openDefaultData 是否启用默认数据附加，默认为true
  * @returns 返回经过JSON.stringify处理后的数据字符串
  */
-http.adornDeleteData = (data = {}, openDefaultData = true) => {
+http.adornDelete = (data = {}, openDefaultData = true) => {
   // 定义默认参数，包含当前时间戳
   var defaults = {
     't': new Date().getTime()
@@ -122,9 +116,8 @@ http.adornDeleteData = (data = {}, openDefaultData = true) => {
   // 根据openDefaultData的值决定是否合并默认数据
   data = openDefaultData ? merge(defaults, data) : data
   // 将处理后的数据转换成JSON字符串
-  return JSON.stringify(data);
+  return JSON.stringify(data)
 }
-
 
 /**
  * 处理put请求的数据，可以添加默认参数
@@ -132,7 +125,7 @@ http.adornDeleteData = (data = {}, openDefaultData = true) => {
  * @param {*} openDefaultData 是否启用默认数据附加，默认为true
  * @returns 返回经过JSON.stringify处理后的数据字符串
  */
-http.adornPutData = (data = {}, openDefaultData = true) => {
+http.adornPut = (data = {}, openDefaultData = true) => {
   // 定义默认参数
   var defaults = {
     't': new Date().getTime() // 时间戳作为默认参数
@@ -140,8 +133,7 @@ http.adornPutData = (data = {}, openDefaultData = true) => {
   // 根据是否启用默认数据，合并数据对象
   data = openDefaultData ? merge(defaults, data) : data
   // 将处理后的数据对象转换成JSON字符串
-  return JSON.stringify(data);
+  return JSON.stringify(data)
 }
-
 
 export default http

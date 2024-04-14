@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * 秒杀活动
  *
- * @author leifengyang
- * @email leifengyang@gmail.com
+ * @author Rain^
+ * @email 843524258@qq.com
  * @date 2019-10-08 09:36:40
  */
 public interface SeckillPromotionService extends IService<SeckillPromotionEntity> {

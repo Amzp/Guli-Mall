@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * spu图片
  *
- * @author leifengyang
- * @email leifengyang@gmail.com
+ * @author Rain^
+ * @email 843524258@qq.com
  * @date 2019-10-01 21:08:49
  */
 public interface SpuImagesService extends IService<SpuImagesEntity> {

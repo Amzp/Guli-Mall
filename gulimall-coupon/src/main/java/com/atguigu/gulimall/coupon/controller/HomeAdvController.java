@@ -20,8 +20,8 @@ import com.atguigu.common.utils.R;
 /**
  * 首页轮播广告
  *
- * @author leifengyang
- * @email leifengyang@gmail.com
+ * @author Rain^
+ * @email 843524258@qq.com
  * @date 2019-10-08 09:36:40
  */
 @RestController

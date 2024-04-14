@@ -20,8 +20,8 @@ import com.atguigu.common.utils.R;
 /**
  * 商品评价回复关系
  *
- * @author leifengyang
- * @email leifengyang@gmail.com
+ * @author Rain^
+ * @email 843524258@qq.com
  * @date 2019-10-01 22:50:32
  */
 @RestController

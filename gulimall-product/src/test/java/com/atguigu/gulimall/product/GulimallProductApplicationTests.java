@@ -34,7 +34,6 @@ public class GulimallProductApplicationTests {
     @Autowired
     BrandService brandService;
 
-
     @Autowired
     CategoryService categoryService;
 

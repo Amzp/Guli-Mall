@@ -149,8 +149,8 @@ export default {
     deleteCateRelationHandle (id, brandId) {
       this.$http({
         url: this.$http.adornUrl('/product/categorybrandrelation/delete'),
-        method: 'delete',
-        data: this.$http.adornDelete([id], false)
+        method: 'post',
+        data: this.$http.adornData([id], false)
       }).then(({ data }) => {
         this.getCateRelation()
       })

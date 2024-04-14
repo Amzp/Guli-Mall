@@ -30,13 +30,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
 
+    /**
+     * 查询分类信息的分页数据。
+     *
+     * @param params 包含查询参数的Map对象，可以用来指定分页信息和查询条件。
+     * @return 返回分类信息的分页工具对象，包含当前页的数据、总页数等信息。
+     */
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        // 使用PageHelper进行分页查询，设置查询条件
         IPage<CategoryEntity> page = this.page(
                 new Query<CategoryEntity>().getPage(params),
                 new QueryWrapper<CategoryEntity>()
         );
 
+        // 封装分页查询结果到PageUtils工具类中并返回
         return new PageUtils(page);
     }
 
@@ -96,40 +104,60 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         baseMapper.deleteBatchIds(asList);
     }
 
-    //[2,25,225]
+    /**
+     * 查找给定目录ID的目录路径。
+     * @param catelogId 目录的ID，表示要查找的目录。
+     * @return 返回一个Long类型的数组，表示从根目录到指定目录的路径。
+     */
     @Override
     public Long[] findCatelogPath(Long catelogId) {
+        // 初始化存储路径的列表
         List<Long> paths = new ArrayList<>();
+
+        // 查找父目录路径，并将路径中的每个目录ID添加到paths列表中
         List<Long> parentPath = findParentPath(catelogId, paths);
 
+        // 将父目录路径反转，使其从根目录开始
         Collections.reverse(parentPath);
 
-
+        // 将列表转换为数组并返回
         return parentPath.toArray(new Long[parentPath.size()]);
     }
+
 
     /**
      * 级联更新所有关联的数据
      *
-     * @param category
+     * 本方法用于当更新一个分类信息时，不仅更新分类本身，同时也会更新与该分类关联的品牌信息。
+     *
+     * @param category 分类实体对象，包含需要更新的分类信息。
      */
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
+        // 更新分类本身的信息
         this.updateById(category);
+        // 更新与该分类关联的品牌信息
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
-    //225,25,2
+
+    /**
+     * 查找给定分类ID的父级路径
+     * @param catelogId 当前分类的ID
+     * @param paths 存储已经遍历过的分类ID路径
+     * @return 返回包括当前分类ID及其所有父级分类ID的路径列表
+     */
     private List<Long> findParentPath(Long catelogId, List<Long> paths) {
-        //1、收集当前节点id
+        // 将当前分类ID加入路径列表
         paths.add(catelogId);
+        // 通过当前分类ID获取分类实体
         CategoryEntity byId = this.getById(catelogId);
+        // 如果当前分类还有父级分类，则递归查找父级分类的路径
         if (byId.getParentCid() != 0) {
             findParentPath(byId.getParentCid(), paths);
         }
         return paths;
-
     }
 
 

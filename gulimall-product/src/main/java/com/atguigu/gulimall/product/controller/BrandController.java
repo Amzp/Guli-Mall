@@ -145,7 +145,7 @@ public class BrandController {
      * @param brandIdList 品牌ID数组，需通过RequestBody接收，表示需要删除的品牌ID列表
      * @return 返回操作结果，成功返回R.ok()，失败返回错误信息
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     //@RequiresPermissions("product:brand:delete")
     public R deleteBrands(@RequestBody List<Long> brandIdList) {
         // 先进行输入验证

@@ -125,8 +125,8 @@ export default {
         .then(() => {
           this.$http({
             url: this.$http.adornUrl('/product/category/delete'),
-            method: 'delete',
-            data: this.$http.adornDelete(catIds, false)
+            method: 'post',
+            data: this.$http.adornData(catIds, false)
           }).then(({ data }) => {
             this.$message({
               message: '菜单批量删除成功',
@@ -358,8 +358,8 @@ export default {
           // 发起DELETE请求删除分类
           this.$http({
             url: this.$http.adornUrl('/product/category/delete'), // 构造请求URL
-            method: 'delete', // 使用DELETE方法
-            data: this.$http.adornDelete(ids, false) // 装饰请求数据
+            method: 'post', // 使用DELETE方法
+            data: this.$http.adornData(ids, false) // 装饰请求数据
           }).then(({data}) => {
             // 删除成功
             this.$message({

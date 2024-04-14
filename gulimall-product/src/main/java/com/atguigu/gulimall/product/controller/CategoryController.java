@@ -173,7 +173,7 @@ public class CategoryController {
      * @param catIds 需要删除的产品分类ID数组，通过POST请求的请求体以JSON格式传递
      * @return 返回操作结果，成功操作返回R.ok()，表示操作成功
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public R deleteProductCategoriesByIds(@RequestBody List<Long> catIds) {
         log.info("尝试删除分类ID：{} 的产品分类信息...", catIds);
 

@@ -23,23 +23,33 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
 
+    /**
+     * 查询品牌分页数据
+     * @param params 查询参数，包含页码和每页数量等信息
+     * @return 返回分页查询结果，包含当前页数据、总页数、总记录数等信息
+     */
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        //1、获取key
+        // 1、根据参数获取查询关键字
         String key = (String) params.get("key");
         QueryWrapper<BrandEntity> queryWrapper = new QueryWrapper<>();
+
+        // 如果关键字不为空，构建查询条件
         if(!StringUtils.isEmpty(key)){
             queryWrapper.eq("brand_id",key).or().like("name",key);
         }
 
+        // 执行分页查询
         IPage<BrandEntity> page = this.page(
                 new Query<BrandEntity>().getPage(params),
                 queryWrapper
 
         );
 
+        // 返回查询结果
         return new PageUtils(page);
     }
+
 
     @Transactional
     @Override

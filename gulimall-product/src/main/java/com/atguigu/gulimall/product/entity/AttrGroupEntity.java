@@ -46,7 +46,9 @@ public class AttrGroupEntity implements Serializable {
 	 */
 	private Long catelogId;
 
-
+	/**
+	 * 属于哪个分类的路径，这个字段不会映射到数据库中
+	 */
 	@TableField(exist = false)
 	private Long[] catelogPath;
 

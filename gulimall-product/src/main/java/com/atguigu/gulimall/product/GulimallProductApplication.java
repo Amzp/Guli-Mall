@@ -72,9 +72,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @Slf4j
 public class GulimallProductApplication {
     public static void main(String[] args) {
-        log.info("开始启动Gulimall商品应用...");
+        log.info("开始启动Gulimall商品服务应用...");
         SpringApplication.run(GulimallProductApplication.class, args);
-        log.info("Gulimall商品应用启动成功...");
+        log.info("Gulimall商品服务应用启动成功...");
     }
 
 }

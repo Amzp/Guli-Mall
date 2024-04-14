@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven项目配置文件 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <!--项目的groupId，用于唯一标识项目所属的组织或团队-->
+    <!-- 项目所属组织或团队的唯一标识符 -->
     <groupId>com.atguigu.gulimall</groupId>
-    <!--项目的artifactId，用于唯一标识项目的名称-->
+    <!-- 项目的唯一标识符，通常体现项目的名称 -->
     <artifactId>gulimall</artifactId>
+    <!-- 项目版本 -->
     <version>0.0.1-SNAPSHOT</version>
     <name>gulimall</name>
     <description>聚合服务</description>
+    <!-- 项目打包类型 -->
     <packaging>pom</packaging>
 
-
+    <!-- 项目模块结构，定义了项目包含的子模块 -->
     <modules>
+        <module>gulimall-common</module>
         <module>gulimall-coupon</module>
         <module>gulimall-member</module>
+        <module>gulimall-gateway</module>
         <module>gulimall-order</module>
         <module>gulimall-product</module>
+        <module>gulimall-third-party</module>
         <module>gulimall-ware</module>
-        <module>gulimall-gateway</module>
-        <module>gulimall-common</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
     </modules>
 
-
+    <!-- 构建配置 -->
     <build>
+        <!-- 插件配置 -->
         <plugins>
+            <!-- 编译插件配置，指定Java版本和编码格式 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

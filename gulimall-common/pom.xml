@@ -87,7 +87,6 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-
         <!--Java Validation API是Java EE和Jakarta EE的一部分，允许开发者以声明的方式对Java Bean中的字段、方法参数等进行约束定义和验证。-->
         <dependency>
             <groupId>javax.validation</groupId>

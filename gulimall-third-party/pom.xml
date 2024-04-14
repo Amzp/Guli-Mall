@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven项目配置文件 -->
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <!-- 引入Spring Boot的父工程 -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/> <!-- 从远程仓库获取父工程 -->
     </parent>
     <groupId>com.atguigu.gulimall</groupId>
     <artifactId>gulimall-third-party</artifactId>
@@ -15,40 +17,50 @@
     <description>第三方服务</description>
 
     <properties>
+        <!-- 指定Java版本 -->
         <java.version>1.8</java.version>
+        <!-- 指定Spring Cloud版本 -->
         <spring-cloud.version>Hoxton.RC1</spring-cloud.version>
     </properties>
 
     <dependencies>
+        <!-- 项目依赖 -->
         <dependency>
+            <!-- 项目内部依赖 -->
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <exclusions>
+                <!-- 排除mybatis-plus依赖 -->
                 <exclusion>
                     <groupId>com.baomidou</groupId>
                     <artifactId>mybatis-plus-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Spring Boot Web依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring Cloud OpenFeign依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
+        <!-- 阿里云OSS依赖 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
         </dependency>
 
+        <!-- 测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
             <exclusions>
+                <!-- 排除JUnit Vintage -->
                 <exclusion>
                     <groupId>org.junit.vintage</groupId>
                     <artifactId>junit-vintage-engine</artifactId>
@@ -58,6 +70,7 @@
     </dependencies>
 
     <dependencyManagement>
+        <!-- 管理依赖版本 -->
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -66,26 +79,41 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-                <dependency>
-                    <groupId>com.alibaba.cloud</groupId>
-                    <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                    <version>2.1.0.RELEASE</version>
-                    <type>pom</type>
-                    <scope>import</scope>
-                </dependency>
+            <dependency>
+                <!-- 阿里云Spring Cloud依赖管理 -->
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.1.0.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <!-- 构建配置 -->
         <plugins>
+            <!-- Spring Boot Maven插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--配置Maven编译插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
             </plugin>
         </plugins>
     </build>
 
     <repositories>
+        <!-- 添加Spring Milestones仓库 -->
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>

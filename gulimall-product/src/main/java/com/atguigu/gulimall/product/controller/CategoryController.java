@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.product.controller;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +38,32 @@ public class CategoryController {
 
     /**
      * 查出所有分类以及子分类，以树形结构组装起来
+     *
+     * 本方法不接受任何参数。
+     *
+     * @return 返回一个包含所有分类及其子分类的树形结构的信息。
      */
-    @RequestMapping("/list/tree")
+    @GetMapping("/list/tree")
     public R list() {
-        log.info("查出所有分类以及子分类，以树形结构组装起来...");
-        List<CategoryEntity> entities = categoryService.listWithTree();
+        Instant start = Instant.now();
+        log.info("开始查询所有分类及其子分类的树形结构...");
 
+        // 从categoryService获取所有分类及其子分类的树形结构
+        List<CategoryEntity> entities;
+        try {
+            entities = categoryService.listWithTree();
+        } catch (Exception e) {
+            log.error("查询分类树形结构时发生异常：", e);
+            return R.error("查询分类树形结构失败");
+        }
+
+        Instant end = Instant.now();
+        log.info("查询所有分类及其子分类的树形结构完成，耗时：{} 毫秒", Duration.between(start, end).toMillis());
+
+        // 将获取到的分类树形结构数据放入响应体中返回
         return R.ok().put("data", entities);
     }
+
 
 
     /**

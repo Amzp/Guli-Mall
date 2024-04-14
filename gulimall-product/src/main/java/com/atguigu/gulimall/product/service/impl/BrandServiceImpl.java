@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 
 @Service("brandService")
+@Slf4j
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
 
     @Autowired
@@ -51,17 +53,27 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     }
 
 
+    /**
+     * 更新品牌详细信息。
+     * 这个方法会更新品牌实体的信息，并且如果品牌名称不为空，会同步更新关联的分类品牌关系及其他相关的数据。
+     *
+     * @param brand 品牌实体，包含了需要更新的信息。
+     */
     @Transactional
     @Override
     public void updateDetail(BrandEntity brand) {
-        //保证冗余字段的数据一致
+        // 更新品牌实体信息
+        log.info("更新品牌信息：{}",brand);
         this.updateById(brand);
         if(!StringUtils.isEmpty(brand.getName())){
-            //同步更新其他关联表中的数据
+            // 如果品牌名称不为空，则进行以下操作
+            // 同步更新分类品牌关系表中的品牌名称
+            log.info("品牌名称不为空，继续更新分类品牌关系表中的品牌名称");
             categoryBrandRelationService.updateBrand(brand.getBrandId(),brand.getName());
 
-            //TODO 更新其他关联
+            // TODO: 更新其他可能关联的数据
         }
     }
+
 
 }

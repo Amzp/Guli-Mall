@@ -15,6 +15,13 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface CategoryBrandRelationDao extends BaseMapper<CategoryBrandRelationEntity> {
 
+    /**
+     * 更新分类信息。
+     *
+     * @param catId 分类的唯一标识符。
+     * @param name 分类的新名称。
+     * 该方法不返回任何内容。
+     */
     void updateCategory(@Param("catId") Long catId, @Param("name") String name);
 
 }

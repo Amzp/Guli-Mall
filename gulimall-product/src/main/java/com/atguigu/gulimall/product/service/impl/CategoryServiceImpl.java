@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import com.atguigu.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("categoryService")
+@Slf4j
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
     /*，CategoryServiceImpl 类继承自 MyBatis-Plus 提供的 ServiceImpl 抽象类，并通过泛型指定了 CategoryDao 和 CategoryEntity 类型，从而建立了对应的服务与 DAO 和实体类之间的关系。
      *   使用 MyBatis-Plus 的 ServiceImpl 抽象类提供了对数据访问对象（CategoryDao）和实体类（CategoryEntity）的通用 CRUD（增删改查）操作的支持。
@@ -136,8 +138,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public void updateCascade(CategoryEntity category) {
         // 更新分类本身的信息
+        log.info("更新分类本身的信息");
+        // this指向CategoryServiceImpl实例，调用的是ServiceImpl基类提供的或本类重写的updateById方法，用于更新分类本身的信息。
         this.updateById(category);
+
         // 更新与该分类关联的品牌信息
+        log.info("更新与该分类关联的品牌信息");
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 

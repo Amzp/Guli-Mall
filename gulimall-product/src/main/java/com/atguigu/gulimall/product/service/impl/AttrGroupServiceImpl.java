@@ -22,12 +22,14 @@ import com.atguigu.gulimall.product.entity.AttrGroupEntity;
 import com.atguigu.gulimall.product.service.AttrGroupService;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
+
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
-    @Autowired
-    AttrService attrService;
+    @Resource
+    private AttrService attrService;
 
     /**
      * 查询属性分组的分页数据
@@ -83,29 +85,29 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
 
     /**
-     * 根据分类id查出所有的分组以及这些组里面的属性
+     * 根据分类id查询所有的属性分组以及这些分组中的属性信息
      *
-     * @param catelogId
-     * @return
+     * @param catelogId 分类的ID，用于查询对应的属性分组信息。
+     * @return 返回一个包含属性分组及其属性的列表。
      */
     @Override
     public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId) {
-        //com.atguigu.gulimall.product.vo
-        //1、查询分组信息
+        // 根据分类ID查询属性分组信息
         List<AttrGroupEntity> attrGroupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
 
-        //2、查询所有属性
-        List<AttrGroupWithAttrsVo> collect = attrGroupEntities.stream().map(group -> {
-            AttrGroupWithAttrsVo attrsVo = new AttrGroupWithAttrsVo();
-            BeanUtils.copyProperties(group, attrsVo);
-            List<AttrEntity> attrs = attrService.getRelationAttr(attrsVo.getAttrGroupId());
-            attrsVo.setAttrs(attrs);
-            return attrsVo;
-        }).collect(Collectors.toList());
+        // 遍历属性分组信息，查询每个分组中的属性，并封装成AttrGroupWithAttrsVo对象
+        List<AttrGroupWithAttrsVo> collect = attrGroupEntities.stream()
+                .map(group -> {
+                    AttrGroupWithAttrsVo attrsVo = new AttrGroupWithAttrsVo();
+                    BeanUtils.copyProperties(group, attrsVo); // 将AttrGroupEntity的属性值复制到AttrGroupWithAttrsVo中
+                    List<AttrEntity> attrs = attrService.getRelationAttr(attrsVo.getAttrGroupId()); // 根据分组ID查询该分组下的属性
+                    attrsVo.setAttrs(attrs); // 将查询到的属性设置到AttrGroupWithAttrsVo中
+                    return attrsVo;
+                })
+                .collect(Collectors.toList());
 
         return collect;
-
-
     }
+
 
 }

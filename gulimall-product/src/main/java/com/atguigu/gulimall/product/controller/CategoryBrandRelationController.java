@@ -17,6 +17,8 @@ import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
+
 /**
  * 品牌分类关联
  *
@@ -28,7 +30,7 @@ import com.atguigu.common.utils.R;
 @RequestMapping("product/categorybrandrelation")
 @Slf4j
 public class CategoryBrandRelationController {
-    @Autowired
+    @Resource
     private CategoryBrandRelationService categoryBrandRelationService;
 
     /**
@@ -67,6 +69,7 @@ public class CategoryBrandRelationController {
     @GetMapping("/brands/list")
     public R relationBrandsList(@RequestParam(value = "catId") Long catId) {
         log.info("获取当前分类关联的所有品牌列表，catId:{}", catId);
+
         // 通过服务层方法获取指定分类ID下的所有品牌实体列表
         List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCatId(catId);
 
@@ -80,27 +83,36 @@ public class CategoryBrandRelationController {
     }
 
 
-
     /**
-     * 列表
+     * 查询分类品牌关系列表
+     *
+     * @param params 查询参数，包括分页和过滤条件等
+     * @return 返回查询结果的包装对象，包括分页信息和数据列表
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:categorybrandrelation:list")
     public R list(@RequestParam Map<String, Object> params) {
+        log.info("查询分类品牌关系列表，params:{}", params);
+        // 调用服务查询分类品牌关系的分页数据
         PageUtils page = categoryBrandRelationService.queryPage(params);
 
+        // 将查询结果包装成R对象返回，其中包含分页信息
         return R.ok().put("page", page);
     }
 
-
     /**
-     * 信息
+     * 获取指定ID的品牌类别关系信息
+     *
+     * @param id 品牌类别关系的ID
+     * @return 返回一个包含品牌类别关系信息的响应对象
      */
     @RequestMapping("/info/{id}")
-    //@RequiresPermissions("product:categorybrandrelation:info")
     public R info(@PathVariable("id") Long id) {
+        log.info("获取指定ID的品牌类别关系信息，id:{}", id);
+        // 通过ID从服务中获取品牌类别关系实体
         CategoryBrandRelationEntity categoryBrandRelation = categoryBrandRelationService.getById(id);
 
+        // 将获取到的品牌类别关系实体放入响应对象中并返回
         return R.ok().put("categoryBrandRelation", categoryBrandRelation);
     }
 
@@ -121,24 +133,32 @@ public class CategoryBrandRelationController {
         return R.ok();
     }
 
-
     /**
-     * 修改
+     * 修改商品类别与品牌关系
+     * @param categoryBrandRelation 类别品牌关系实体，包含需要更新的关系信息
+     * @return 返回操作结果，成功返回R.ok()表示操作成功
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:categorybrandrelation:update")
     public R update(@RequestBody CategoryBrandRelationEntity categoryBrandRelation) {
+        log.info("修改商品类别与品牌关系，categoryBrandRelation:{}", categoryBrandRelation);
+        // 通过服务更新类别品牌关系
         categoryBrandRelationService.updateById(categoryBrandRelation);
 
-        return R.ok();
+        return R.ok(); // 表示更新操作成功
     }
 
     /**
-     * 删除
+     * 删除指定的品牌类别关系
+     *
+     * @param ids 需要删除的品牌类别关系的ID数组
+     * @return 返回操作结果，成功返回OK
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("product:categorybrandrelation:delete")
     public R delete(@RequestBody Long[] ids) {
+        log.info("删除指定的品牌类别关系，ids:{}", (Object) ids);
+        // 根据提供的ID数组删除品牌类别关系
         categoryBrandRelationService.removeByIds(Arrays.asList(ids));
 
         return R.ok();

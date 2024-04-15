@@ -47,3 +47,8 @@ spring:
           ## 通过RewritePath过滤器实现路径重写，便于将前端请求映射到后端实际的服务路径上。
           ## 例如，前端发送的请求http://localhost:88/api/captcha.jpg 会被重写为http://localhost:8080/renren-fast/captcha.jpg 并发送到后端。
           ## http://localhost:88/api/product/category/list/tree => http://localhost:10000/product/category/list/tree
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug

@@ -20,6 +20,8 @@ import com.atguigu.gulimall.product.service.AttrGroupService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
+
 
 /**
  * 属性分组
@@ -32,13 +34,13 @@ import com.atguigu.common.utils.R;
 @RequestMapping("product/attrgroup")
 @Slf4j
 public class AttrGroupController {
-    @Autowired
+    @Resource
     private AttrGroupService attrGroupService;
-    @Autowired
+    @Resource
     private CategoryService categoryService;
-    @Autowired
+    @Resource
     AttrService attrService;
-    @Autowired
+    @Resource
     AttrAttrgroupRelationService relationService;
 
     /**
@@ -65,8 +67,10 @@ public class AttrGroupController {
     @GetMapping("/{catelogId}/withattr")
     public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId) {
         log.info("根据分类ID获取带有属性的属性分组信息：{}", catelogId);
+
         // 通过分类ID查询该分类下的所有属性分组及其属性信息
         List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+
         return R.ok().put("data", vos);
     }
 

@@ -1,22 +1,33 @@
+# 配置数据库连接信息
 spring:
   datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://192.168.56.10:3306/gulimall_ums
-    driver-class-name: com.mysql.jdbc.Driver
+    username: root # 数据库用户名
+    password: root # 数据库密码
+    url: jdbc:mysql://192.168.56.10:3306/gulimall_ums # 数据库连接URL
+    driver-class-name: com.mysql.jdbc.Driver # 数据库驱动类名
 
+  # 配置Nacos服务发现
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
 
+  # 应用名称配置
   application:
     name: gulimall-member
 
+# 配置Mybatis-plus
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml
+  mapper-locations: classpath:/mapper/**/*.xml # 指定mapper文件位置
   global-config:
     db-config:
-      id-type: auto
+      id-type: auto # 主键生成策略
+
+# 服务器端口配置
 server:
   port: 8000
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug

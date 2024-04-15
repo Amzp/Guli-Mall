@@ -35,19 +35,21 @@ import com.atguigu.gulimall.product.service.AttrService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
+
 
 @Service("attrService")
 @Slf4j
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
-    @Autowired
+    @Resource
     AttrAttrgroupRelationDao relationDao;
-    @Autowired
+    @Resource
     AttrGroupDao attrGroupDao;
-    @Autowired
+    @Resource
     CategoryDao categoryDao;
 
-    @Autowired
+    @Resource
     CategoryService categoryService;
 
 

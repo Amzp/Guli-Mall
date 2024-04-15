@@ -23,20 +23,22 @@ import com.atguigu.gulimall.product.dao.CategoryBrandRelationDao;
 import com.atguigu.gulimall.product.entity.CategoryBrandRelationEntity;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 
+import javax.annotation.Resource;
+
 
 @Service("categoryBrandRelationService")
 public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandRelationDao, CategoryBrandRelationEntity> implements CategoryBrandRelationService {
 
-    @Autowired
+    @Resource
     BrandDao brandDao;
 
-    @Autowired
+    @Resource
     CategoryDao categoryDao;
 
-    @Autowired
+    @Resource
     CategoryBrandRelationDao relationDao;
 
-    @Autowired
+    @Resource
     BrandService brandService;
 
     /**
@@ -123,10 +125,9 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
                 .selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
 
         // 遍历关联关系列表，获取每个关联品牌ID，并查询对应的BrandEntity，最后集合返回
-        List<BrandEntity> collect = catelogId.stream()
+        return catelogId.stream()
                 .map(item -> brandService.getById(item.getBrandId()))
                 .collect(Collectors.toList());
-        return collect;
     }
 
 

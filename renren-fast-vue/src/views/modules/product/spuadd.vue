@@ -349,6 +349,7 @@
 import CategoryCascader from '../common/category-cascader'
 import BrandSelect from '../common/brand-select'
 import MultiUpload from '@/components/upload/multiUpload'
+import PubSub from 'pubsub-js'
 export default {
   // import引入的组件需要注入到对象中才能使用
   components: { CategoryCascader, BrandSelect, MultiUpload },
@@ -616,7 +617,7 @@ export default {
             fullPrice: 0.0,
             reducePrice: 0.0,
             priceStatus: 0,
-            memberPrice: new Array().concat(memberPrices)
+            memberPrice: [].concat(memberPrices)
           })
         } else {
           skus.push(res)
@@ -751,6 +752,7 @@ export default {
 
       // 动态生成笛卡尔积
       while (true) {
+        // eslint-disable-next-line no-redeclare
         for (var index in list) {
           tempCount = point[index]['count']
           temp.push(list[index][tempCount])

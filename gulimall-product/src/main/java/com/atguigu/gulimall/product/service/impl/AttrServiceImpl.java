@@ -51,7 +51,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     CategoryService categoryService;
 
 
-
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<AttrEntity> page = this.page(
@@ -62,89 +61,117 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         return new PageUtils(page);
     }
 
+    /**
+     * 保存属性信息
+     *
+     * @param attr 属性信息对象，包含属性的基本信息和关联关系（组ID）
+     */
     @Transactional
     @Override
     public void saveAttr(AttrVo attr) {
         AttrEntity attrEntity = new AttrEntity();
-//        attrEntity.setAttrName(attr.getAttrName());
-        BeanUtils.copyProperties(attr,attrEntity);
-        //1、保存基本数据
+        // 1. 使用BeanUtils工具类将attrVo对象的属性值复制到attrEntity对象中
+        BeanUtils.copyProperties(attr, attrEntity);
+
+        // 2. 保存属性的基本信息到数据库
         this.save(attrEntity);
-        //2、保存关联关系
-        if(attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() && attr.getAttrGroupId()!=null){
-            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
-            relationEntity.setAttrGroupId(attr.getAttrGroupId());
-            relationEntity.setAttrId(attrEntity.getAttrId());
-            relationDao.insert(relationEntity);
+
+        // 3. 判断属性类型，如果是基础属性，并且存在属性组ID，则保存属性与属性组的关联关系
+        if ((attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) && (attr.getAttrGroupId() != null)) {
+            // 保存属性与属性组的关联关系到数据库
+            relationDao.insert(new AttrAttrgroupRelationEntity()
+                    // 设置属性组关联关系实体的属性组ID和属性ID
+                    .setAttrGroupId(attr.getAttrGroupId())
+                    .setAttrId(attrEntity.getAttrId()));
         }
-
-
     }
 
+    /**
+     * 查询基础属性分页信息
+     *
+     * @param params    查询参数，包括页码和每页数量等
+     * @param catelogId 商品目录ID，用于过滤属性
+     * @param type      属性类型，决定是查询基础属性还是销售属性
+     * @return 返回属性的分页工具类，包含分页信息和属性列表
+     */
     @Override
     public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type) {
-        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>().eq("attr_type","base".equalsIgnoreCase(type)?ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode():ProductConstant.AttrEnum.ATTR_TYPE_SALE.getCode());
+        // 构建查询条件，区分基础属性和销售属性
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>()
+                .eq("attr_type", "base".equalsIgnoreCase(type) ? ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() : ProductConstant.AttrEnum.ATTR_TYPE_SALE.getCode());
 
-        if(catelogId != 0){
-            queryWrapper.eq("catelog_id",catelogId);
+        // 如果目录ID不为0，则添加目录ID的查询条件
+        if (catelogId != 0) {
+            queryWrapper.eq("catelog_id", catelogId);
         }
 
+        // 如果存在关键字，则添加关键字查询条件：attr_id等于key或attr_name模糊匹配key
         String key = (String) params.get("key");
-        if(!StringUtils.isEmpty(key)){
-            //attr_id  attr_name
-            queryWrapper.and((wrapper)->{
-                wrapper.eq("attr_id",key).or().like("attr_name",key);
-            });
+        if (!StringUtils.isEmpty(key)) {
+            queryWrapper
+                    .and((wrapper) -> {
+                        wrapper.eq("attr_id", key).or().like("attr_name", key);
+                    });
         }
 
-        IPage<AttrEntity> page = this.page(
-                new Query<AttrEntity>().getPage(params),
-                queryWrapper
-        );
+        // 执行分页查询
+        IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), queryWrapper);
 
+        // 初始化分页工具类并设置查询结果
         PageUtils pageUtils = new PageUtils(page);
         List<AttrEntity> records = page.getRecords();
-        List<AttrRespVo> respVos = records.stream().map((attrEntity) -> {
-            AttrRespVo attrRespVo = new AttrRespVo();
-            BeanUtils.copyProperties(attrEntity, attrRespVo);
+        // 处理查询结果，转换为响应对象
+        List<AttrRespVo> respVos = records
+                .stream()
+                .map((attrEntity) -> {
+                    AttrRespVo attrRespVo = new AttrRespVo();
+                    BeanUtils.copyProperties(attrEntity, attrRespVo);
 
-            //1、设置分类和分组的名字
-            if("base".equalsIgnoreCase(type)){
-                AttrAttrgroupRelationEntity attrId = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
-                if (attrId != null && attrId.getAttrGroupId()!=null) {
-                    AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
-                    attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
-                }
+                    // 设置属性分组名称（仅适用于基础属性）
+                    // 判断属性类型是否为"base"，不区分大小写
+                    if ("base".equalsIgnoreCase(type)) {
+                        // 根据属性ID查询属性与属性组关系实体
+                        AttrAttrgroupRelationEntity attrId =
+                                relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
+                        // 检查关系实体是否存在，并且属性组ID不为空
+                        if (attrId != null && (attrId.getAttrGroupId() != null)) {
+                            // 根据属性组ID查询属性组实体
+                            AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
+                            // 设置响应体中的属性组名称
+                            attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+                        }
+                    }
 
-            }
+                    // 根据属性的目录ID，设置属性所属目录的名称
+                    CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
+                    if (categoryEntity != null) {
+                        // 如果找到了对应的目录实体，则将目录名称设置到属性响应实体中
+                        attrRespVo.setCatelogName(categoryEntity.getName());
+                    }
+                    return attrRespVo;
+                })
+                .collect(Collectors.toList());
 
-
-            CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
-            if (categoryEntity != null) {
-                attrRespVo.setCatelogName(categoryEntity.getName());
-            }
-            return attrRespVo;
-        }).collect(Collectors.toList());
-
+        // 更新分页工具类中的列表为处理后的响应对象列表
         pageUtils.setList(respVos);
         return pageUtils;
     }
+
 
     @Override
     public AttrRespVo getAttrInfo(Long attrId) {
         AttrRespVo respVo = new AttrRespVo();
         AttrEntity attrEntity = this.getById(attrId);
-        BeanUtils.copyProperties(attrEntity,respVo);
+        BeanUtils.copyProperties(attrEntity, respVo);
 
 
-
-        if(attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()){
+        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
             //1、设置分组信息
             AttrAttrgroupRelationEntity attrgroupRelation = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrId));
-            if(attrgroupRelation!=null){
+            if (attrgroupRelation != null) {
                 respVo.setAttrGroupId(attrgroupRelation.getAttrGroupId());
                 AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrgroupRelation.getAttrGroupId());
-                if(attrGroupEntity!=null){
+                if (attrGroupEntity != null) {
                     respVo.setGroupName(attrGroupEntity.getAttrGroupName());
                 }
             }
@@ -157,7 +184,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         respVo.setCatelogPath(catelogPath);
 
         CategoryEntity categoryEntity = categoryDao.selectById(catelogId);
-        if(categoryEntity!=null){
+        if (categoryEntity != null) {
             respVo.setCatelogName(categoryEntity.getName());
         }
 
@@ -169,10 +196,10 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public void updateAttr(AttrVo attr) {
         AttrEntity attrEntity = new AttrEntity();
-        BeanUtils.copyProperties(attr,attrEntity);
+        BeanUtils.copyProperties(attr, attrEntity);
         this.updateById(attrEntity);
 
-        if(attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()){
+        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
             //1、修改分组关联
             AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
 
@@ -180,11 +207,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             relationEntity.setAttrId(attr.getAttrId());
 
             Integer count = relationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-            if(count>0){
+            if (count > 0) {
 
-                relationDao.update(relationEntity,new UpdateWrapper<AttrAttrgroupRelationEntity>().eq("attr_id",attr.getAttrId()));
+                relationDao.update(relationEntity, new UpdateWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
 
-            }else{
+            } else {
                 relationDao.insert(relationEntity);
             }
         }
@@ -194,6 +221,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     /**
      * 根据分组id查找关联的所有基本属性
+     *
      * @param attrgroupId
      * @return
      */
@@ -205,7 +233,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             return attr.getAttrId();
         }).collect(Collectors.toList());
 
-        if(attrIds == null || attrIds.size() == 0){
+        if (attrIds == null || attrIds.size() == 0) {
             return null;
         }
         Collection<AttrEntity> attrEntities = this.listByIds(attrIds);
@@ -226,6 +254,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     /**
      * 获取当前分组没有关联的所有属性
+     *
      * @param params
      * @param attrgroupId
      * @return
@@ -249,14 +278,14 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }).collect(Collectors.toList());
 
         //2.3)、从当前分类的所有属性中移除这些属性；
-        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type",ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
-        if(attrIds!=null && attrIds.size()>0){
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type", ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
+        if (attrIds != null && attrIds.size() > 0) {
             wrapper.notIn("attr_id", attrIds);
         }
         String key = (String) params.get("key");
-        if(!StringUtils.isEmpty(key)){
-            wrapper.and((w)->{
-                w.eq("attr_id",key).or().like("attr_name",key);
+        if (!StringUtils.isEmpty(key)) {
+            wrapper.and((w) -> {
+                w.eq("attr_id", key).or().like("attr_name", key);
             });
         }
         IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), wrapper);

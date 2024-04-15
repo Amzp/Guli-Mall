@@ -34,18 +34,16 @@ import com.atguigu.common.utils.R;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
-
     @Autowired
     private CategoryService categoryService;
-
     @Autowired
     AttrService attrService;
-
     @Autowired
     AttrAttrgroupRelationService relationService;
 
     /**
      * 添加属性与属性组的关系
+     *
      * @param vos 属性组关系的集合，包含需要添加的属性和属性组的信息
      * @return 返回操作结果，成功返回ok
      */
@@ -60,6 +58,7 @@ public class AttrGroupController {
 
     /**
      * 根据分类ID获取带有属性的属性分组信息
+     *
      * @param catelogId 分类ID
      * @return 返回一个包含属性分组及其属性信息的列表
      */
@@ -70,7 +69,6 @@ public class AttrGroupController {
         List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
         return R.ok().put("data", vos);
     }
-
 
 
     /**
@@ -92,7 +90,7 @@ public class AttrGroupController {
      * 查询指定属性组中未关联的属性信息
      *
      * @param attrgroupId 属性组的ID，用于指定要查询的属性组
-     * @param params 其他查询参数，以Map形式传递，可用于进一步筛选未关联的属性
+     * @param params      其他查询参数，以Map形式传递，可用于进一步筛选未关联的属性
      * @return R对象，其中包含查询结果的分页信息。返回码为200表示成功，"page"字段包含分页数据。
      */
     @GetMapping("/{attrgroupId}/noattr/relation")
@@ -128,13 +126,14 @@ public class AttrGroupController {
      * @return 返回一个包含查询结果的页面信息的对象
      */
     @GetMapping("/list/{catelogId}")
-//@RequiresPermissions("product:attrgroup:list")
+    //@RequiresPermissions("product:attrgroup:list")
     public R list(@RequestParam Map<String, Object> params,
                   @PathVariable("catelogId") Long catelogId) {
         log.info("获取指定分类目录下的属性组列表：catelogId = {}", catelogId);
         // 根据查询参数和分类目录ID查询属性组信息，返回分页结果
         PageUtils page = attrGroupService.queryPage(params, catelogId);
         log.info("查询结果：总记录数 = {}", page.getTotalCount());
+
         // 将查询结果包装成成功响应并返回
         return R.ok().put("page", page);
     }
@@ -166,7 +165,6 @@ public class AttrGroupController {
     }
 
 
-
     /**
      * 保存属性组信息
      *
@@ -187,6 +185,7 @@ public class AttrGroupController {
 
     /**
      * 修改属性组信息
+     *
      * @param attrGroup 属性组实体对象，包含需要更新的属性组信息
      * @return 返回操作结果，成功返回R.ok()表示操作成功
      */

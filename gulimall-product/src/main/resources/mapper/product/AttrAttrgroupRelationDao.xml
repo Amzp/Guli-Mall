@@ -10,9 +10,11 @@
         <result property="attrGroupId" column="attr_group_id"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
-    <delete id="deleteBatchRelation">
 
+    <!-- 删除批量关联关系 -->
+    <delete id="deleteBatchRelation">
         DELETE FROM `pms_attr_attrgroup_relation` WHERE
+        <!-- 遍历entities集合，生成多个条件以OR连接 -->
         <foreach collection="entities" item="item" separator=" OR ">
             (attr_id=#{item.attrId} AND attr_group_id=#{item.attrGroupId})
         </foreach>

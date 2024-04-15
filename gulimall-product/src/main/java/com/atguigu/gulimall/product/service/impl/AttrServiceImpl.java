@@ -12,6 +12,7 @@ import com.atguigu.gulimall.product.vo.AttrGroupRelationVo;
 import com.atguigu.gulimall.product.vo.AttrRespVo;
 import com.atguigu.gulimall.product.vo.AttrVo;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,14 +37,13 @@ import org.springframework.util.StringUtils;
 
 
 @Service("attrService")
+@Slf4j
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
     @Autowired
     AttrAttrgroupRelationDao relationDao;
-
     @Autowired
     AttrGroupDao attrGroupDao;
-
     @Autowired
     CategoryDao categoryDao;
 
@@ -158,16 +158,23 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     }
 
 
+    /**
+     * 获取属性信息
+     *
+     * @param attrId 属性ID
+     * @return 返回属性的响应体对象，包含属性的详细信息
+     */
     @Override
     public AttrRespVo getAttrInfo(Long attrId) {
-        AttrRespVo respVo = new AttrRespVo();
-        AttrEntity attrEntity = this.getById(attrId);
-        BeanUtils.copyProperties(attrEntity, respVo);
+        AttrRespVo respVo = new AttrRespVo(); // 创建属性响应体对象
+        AttrEntity attrEntity = this.getById(attrId); // 根据属性ID获取属性实体
+        BeanUtils.copyProperties(attrEntity, respVo); // 将属性实体的属性值复制到响应体对象
 
-
+        // 1. 如果属性类型为基础属性，则设置属性分组信息
         if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
-            //1、设置分组信息
+            // 根据属性ID查询属性与分组关系，设置属性分组ID和分组名称
             AttrAttrgroupRelationEntity attrgroupRelation = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrId));
+            // 如果属性与分组关系存在，则设置属性分组ID和分组名称
             if (attrgroupRelation != null) {
                 respVo.setAttrGroupId(attrgroupRelation.getAttrGroupId());
                 AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrgroupRelation.getAttrGroupId());
@@ -177,122 +184,152 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             }
         }
 
-
-        //2、设置分类信息
+        // 2. 设置属性的分类信息，包括分类路径和分类名称
         Long catelogId = attrEntity.getCatelogId();
-        Long[] catelogPath = categoryService.findCatelogPath(catelogId);
+        Long[] catelogPath = categoryService.findCatelogPath(catelogId); // 获取分类路径
         respVo.setCatelogPath(catelogPath);
-
-        CategoryEntity categoryEntity = categoryDao.selectById(catelogId);
+        CategoryEntity categoryEntity = categoryDao.selectById(catelogId); // 根据分类ID获取分类实体
         if (categoryEntity != null) {
             respVo.setCatelogName(categoryEntity.getName());
         }
 
-
         return respVo;
     }
 
+
+    /**
+     * 更新属性信息
+     *
+     * @param attr 属性信息对象，包含属性的详细信息
+     */
     @Transactional
     @Override
     public void updateAttr(AttrVo attr) {
+        // 将传入的属性VO对象复制到属性实体对象中
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
+        // 通过ID更新属性实体
         this.updateById(attrEntity);
 
+        // 当属性类型为基本属性时，处理属性与属性组的关联关系
         if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
-            //1、修改分组关联
+            // 初始化属性与属性组关联实体
             AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
 
-            relationEntity.setAttrGroupId(attr.getAttrGroupId());
-            relationEntity.setAttrId(attr.getAttrId());
+            // 设置关联实体的属性组ID和属性ID
+            relationEntity.setAttrGroupId(attr.getAttrGroupId()).setAttrId(attr.getAttrId());
 
+            // 查询当前属性ID是否已关联属性组
             Integer count = relationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
+            // 如果已存在关联，则更新关联信息，否则插入新关联信息
             if (count > 0) {
-
                 relationDao.update(relationEntity, new UpdateWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-
             } else {
                 relationDao.insert(relationEntity);
             }
         }
-
-
     }
+
 
     /**
      * 根据分组id查找关联的所有基本属性
      *
-     * @param attrgroupId
-     * @return
+     * @param attrgroupId 分组id，用于查找关联属性的依据。
+     * @return 返回一个属性实体列表，这些实体与给定的分组id关联。如果没有找到关联的属性，则返回null。
      */
     @Override
     public List<AttrEntity> getRelationAttr(Long attrgroupId) {
-        List<AttrAttrgroupRelationEntity> entities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrgroupId));
+        // 通过分组id查询所有关联关系实体
+        List<AttrAttrgroupRelationEntity> entities =
+                relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrgroupId));
 
-        List<Long> attrIds = entities.stream().map((attr) -> {
-            return attr.getAttrId();
-        }).collect(Collectors.toList());
+        // 从关联关系实体中提取出所有属性id【注意：collect(Collectors.toList()) 方法在任何情况下都不会返回 null。即使源流为空（即 entities 为空列表），它也会返回一个空的 List<Long>】
+        List<Long> attrIds = entities.stream()
+                .map(AttrAttrgroupRelationEntity::getAttrId)
+                .collect(Collectors.toList());
 
-        if (attrIds == null || attrIds.size() == 0) {
+        // 如果没有提取到属性id，则直接返回null
+        if (attrIds.isEmpty()) {
+            log.info("没有找到关联的属性");
             return null;
         }
+        // 根据提取到的属性id列表查询所有对应的属性实体
         Collection<AttrEntity> attrEntities = this.listByIds(attrIds);
+        // 将查询结果转换为List类型并返回
         return (List<AttrEntity>) attrEntities;
     }
 
+
+    /**
+     * 删除属性与属性组的关系。
+     *
+     * @param vos 属性与属性组关系的视图对象数组，包含需要删除的关系信息。
+     *            每个视图对象代表一个属性与属性组的关系。
+     *
+     * 注：该方法首先将传入的视图对象数组转换为实体对象列表，然后批量删除这些关系。
+     */
     @Override
     public void deleteRelation(AttrGroupRelationVo[] vos) {
-        //relationDao.delete(new QueryWrapper<>().eq("attr_id",1L).eq("attr_group_id",1L));
-        //
-        List<AttrAttrgroupRelationEntity> entities = Arrays.asList(vos).stream().map((item) -> {
-            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
-            BeanUtils.copyProperties(item, relationEntity);
-            return relationEntity;
-        }).collect(Collectors.toList());
+        // 将视图对象数组转换为实体对象列表
+        List<AttrAttrgroupRelationEntity> entities = Arrays.stream(vos)
+                .map((item) -> {
+                    AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+                    BeanUtils.copyProperties(item, relationEntity); // 使用BeanUtils复制属性
+                    return relationEntity;
+                })
+                .collect(Collectors.toList());
+
+        // 批量删除转换后的实体关系
         relationDao.deleteBatchRelation(entities);
     }
+
 
     /**
      * 获取当前分组没有关联的所有属性
      *
-     * @param params
-     * @param attrgroupId
-     * @return
+     * @param params 请求参数，可包含分页信息和搜索关键字
+     * @param attrgroupId 当前属性分组的ID
+     * @return 返回属性分页信息，包含未关联的属性列表
      */
     @Override
     public PageUtils getNoRelationAttr(Map<String, Object> params, Long attrgroupId) {
-        //1、当前分组只能关联自己所属的分类里面的所有属性
+        // 确定当前分组只能关联自己所属的分类中的属性
         AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrgroupId);
         Long catelogId = attrGroupEntity.getCatelogId();
-        //2、当前分组只能关联别的分组没有引用的属性
-        //2.1)、当前分类下的其他分组
+
+        // 确定当前分组只能关联其他分组未引用的属性
+        // 1. 获取当前分类下的其他所有分组
         List<AttrGroupEntity> group = attrGroupDao.selectList(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
-        List<Long> collect = group.stream().map(item -> {
-            return item.getAttrGroupId();
-        }).collect(Collectors.toList());
+        // 2. 获取这些分组已关联的属性ID
+        List<Long> collect = group.stream()
+                .map(AttrGroupEntity::getAttrGroupId)
+                .collect(Collectors.toList());
 
-        //2.2)、这些分组关联的属性
         List<AttrAttrgroupRelationEntity> groupId = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().in("attr_group_id", collect));
-        List<Long> attrIds = groupId.stream().map(item -> {
-            return item.getAttrId();
-        }).collect(Collectors.toList());
+        List<Long> attrIds = groupId.stream()
+                .map(AttrAttrgroupRelationEntity::getAttrId)
+                .collect(Collectors.toList());
 
-        //2.3)、从当前分类的所有属性中移除这些属性；
+        // 3. 从当前分类的所有基础属性中排除已关联的属性，得到未关联的属性列表
         QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type", ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
-        if (attrIds != null && attrIds.size() > 0) {
+        if (!attrIds.isEmpty()) {
+            log.info("需要移除的属性ID：{}", attrIds);
             wrapper.notIn("attr_id", attrIds);
         }
+        // 处理搜索条件
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
+            log.info("搜索条件：{}", key);
             wrapper.and((w) -> {
                 w.eq("attr_id", key).or().like("attr_name", key);
             });
         }
+        // 执行查询并返回分页结果
         IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), wrapper);
+        log.info("返回的未关联的属性列表：Total = {}", page.getTotal());
 
-        PageUtils pageUtils = new PageUtils(page);
-
-        return pageUtils;
+        return new PageUtils(page);
     }
+
 
 }

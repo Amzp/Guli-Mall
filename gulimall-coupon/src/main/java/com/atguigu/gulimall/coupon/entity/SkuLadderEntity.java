@@ -6,7 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 商品阶梯价格
@@ -16,6 +21,10 @@ import lombok.Data;
  * @date 2019-10-08 09:36:40
  */
 @Data
+@Builder
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("sms_sku_ladder")
 public class SkuLadderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

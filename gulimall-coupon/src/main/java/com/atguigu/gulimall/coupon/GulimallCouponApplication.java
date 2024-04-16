@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.coupon;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -49,10 +50,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @EnableDiscoveryClient  // 开启nacos注册发现功能
 @SpringBootApplication
+@Slf4j
 public class GulimallCouponApplication {
 
     public static void main(String[] args) {
+        log.info("开始启动Gulimall优惠券服务应用...");
         SpringApplication.run(GulimallCouponApplication.class, args);
+        log.info("Gulimall优惠券服务应用启动成功...");
     }
 
 }

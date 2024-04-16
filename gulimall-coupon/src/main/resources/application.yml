@@ -21,6 +21,11 @@ mybatis-plus:
 server:
   port: 7000
 
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+
 # SpringBoot Actuator Endpoints，用于配置暴露的端点和健康检查的显示细节。
 management:
   endpoints:

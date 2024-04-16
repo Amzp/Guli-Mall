@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("productAttrValueService")
+@Slf4j
 public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao, ProductAttrValueEntity> implements ProductAttrValueService {
 
     @Override
@@ -31,9 +33,15 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
         return new PageUtils(page);
     }
 
+    /**
+     * 保存商品属性值列表
+     * @param collect 包含商品属性值的列表，类型为ProductAttrValueEntity的集合。
+     * 该方法通过调用saveBatch方法，以批量的方式保存传入的商品属性值集合。
+     */
     @Override
     public void saveProductAttr(List<ProductAttrValueEntity> collect) {
-        this.saveBatch(collect);
+        log.info("保存商品属性值列表");
+        this.saveBatch(collect); // 执行批量保存操作
     }
 
     @Override

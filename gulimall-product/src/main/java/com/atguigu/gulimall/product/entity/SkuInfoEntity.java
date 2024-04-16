@@ -6,7 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * sku信息
@@ -16,6 +21,10 @@ import lombok.Data;
  * @date 2019-10-01 21:08:49
  */
 @Data
+@Builder
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("pms_sku_info")
 public class SkuInfoEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

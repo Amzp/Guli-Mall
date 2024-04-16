@@ -3,6 +3,7 @@ package com.atguigu.gulimall.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import com.atguigu.common.utils.R;
  */
 @RestController
 @RequestMapping("coupon/spubounds")
+@Slf4j
 public class SpuBoundsController {
     @Autowired
     private SpuBoundsService spuBoundsService;
@@ -50,15 +52,20 @@ public class SpuBoundsController {
     }
 
     /**
-     * 保存
+     * 保存SPU的积分信息。
+     *
+     * @param spuBounds 包含SPU积分规则信息的实体对象。
+     * @return 返回操作结果，成功则返回一个包含成功标识的R对象。
      */
     @PostMapping("/save")
     //@RequiresPermissions("coupon:spubounds:save")
     public R save(@RequestBody SpuBoundsEntity spuBounds){
-		spuBoundsService.save(spuBounds);
+        log.info("保存积分信息：{}",spuBounds); // 记录保存的积分信息
+		spuBoundsService.save(spuBounds); // 调用服务保存积分信息
 
-        return R.ok();
+        return R.ok(); // 返回操作成功的标识
     }
+
 
     /**
      * 修改

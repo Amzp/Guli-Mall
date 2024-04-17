@@ -56,6 +56,7 @@ public class SpuImagesServiceImpl extends ServiceImpl<SpuImagesDao, SpuImagesEnt
             log.info("图片列表为空，不进行任何操作...");
         } else {
             // 将图片链接列表转换为SpuImagesEntity列表，并批量保存到数据库
+            log.info("保存图片信息到数据库...");
             List<SpuImagesEntity> collect = images.stream()
                     .map(img -> SpuImagesEntity.builder().spuId(id).imgUrl(img).build())
                     .collect(Collectors.toList());

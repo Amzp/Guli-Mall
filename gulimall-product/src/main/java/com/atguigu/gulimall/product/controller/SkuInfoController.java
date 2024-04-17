@@ -3,6 +3,7 @@ package com.atguigu.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.atguigu.gulimall.product.service.SkuInfoService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -26,32 +28,46 @@ import com.atguigu.common.utils.R;
  */
 @RestController
 @RequestMapping("product/skuinfo")
+@Slf4j
 public class SkuInfoController {
-    @Autowired
+    @Resource
     private SkuInfoService skuInfoService;
 
     /**
-     * 列表
+     * 查询SKU信息列表
+     *
+     * @param params 包含查询条件的参数映射
+     * @return 返回包含查询结果的页面信息
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:skuinfo:list")
     public R list(@RequestParam Map<String, Object> params){
+        log.info("查询SKU信息列表...");
+        // 根据条件查询SKU信息页面
         PageUtils page = skuInfoService.queryPageByCondition(params);
 
+        // 返回查询结果
         return R.ok().put("page", page);
     }
 
 
+
     /**
-     * 信息
+     * 获取指定SKU的信息
+     *
+     * @param skuId SKU的唯一标识符
+     * @return 返回一个包含SKU信息的响应对象
      */
     @RequestMapping("/info/{skuId}")
-    //@RequiresPermissions("product:skuinfo:info")
     public R info(@PathVariable("skuId") Long skuId){
-		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
+        log.info("获取指定SKU的信息：skuId = {}", skuId);
+        // 通过SKU ID从服务中获取SKU信息
+        SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
 
+        // 构建并返回一个包含SKU信息的成功响应
         return R.ok().put("skuInfo", skuInfo);
     }
+
 
     /**
      * 保存

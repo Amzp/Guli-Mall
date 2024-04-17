@@ -31,11 +31,14 @@ public class SpuInfoDescEntity implements Serializable {
 
 	/**
 	 * 商品id
+	 * 作为数据库表中的主键
 	 */
 	@TableId(type = IdType.INPUT)
 	private Long spuId;
+
 	/**
 	 * 商品介绍
+	 * 描述商品的详细信息
 	 */
 	private String decript;
 

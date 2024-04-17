@@ -15,6 +15,7 @@ import com.atguigu.gulimall.product.service.SkuImagesService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -27,7 +28,7 @@ import com.atguigu.common.utils.R;
 @RestController
 @RequestMapping("product/skuimages")
 public class SkuImagesController {
-    @Autowired
+    @Resource
     private SkuImagesService skuImagesService;
 
     /**

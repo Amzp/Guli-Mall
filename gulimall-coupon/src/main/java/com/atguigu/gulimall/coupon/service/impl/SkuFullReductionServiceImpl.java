@@ -33,7 +33,6 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
     @Resource
     SkuLadderService skuLadderService;
-
     @Resource
     MemberPriceService memberPriceService;
 
@@ -74,14 +73,12 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
             skuLadderService.save(skuLadderEntity);
         }
 
-
         //2、保存SKU满减优惠信息：sms_sku_full_reduction
         SkuFullReductionEntity reductionEntity = new SkuFullReductionEntity();
         BeanUtils.copyProperties(reductionTo, reductionEntity);
         if (reductionEntity.getFullPrice().compareTo(new BigDecimal("0")) > 0) {
             this.save(reductionEntity);
         }
-
 
         //3、保存SKU的会员价格信息：sms_member_price
         List<MemberPrice> memberPrice = reductionTo.getMemberPrice();

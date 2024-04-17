@@ -11,7 +11,6 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
-
   # Jackson配置，用于日期格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

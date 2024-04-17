@@ -70,15 +70,22 @@ public class SkuInfoController {
 
 
     /**
-     * 保存
+     * 保存SKU信息
+     *
+     * @param skuInfo SKU信息实体，通过RequestBody接收前端传来的JSON数据
+     * @return 返回操作结果，成功则返回一个OK标识
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:skuinfo:save")
     public R save(@RequestBody SkuInfoEntity skuInfo){
-		skuInfoService.save(skuInfo);
+        log.info("保存SKU信息：SkuId = {}", skuInfo.getSkuId());
+        // 调用SKU信息服务层方法，保存SKU信息
+        skuInfoService.save(skuInfo);
 
+        // 返回操作成功的标识
         return R.ok();
     }
+
 
     /**
      * 修改
@@ -86,6 +93,7 @@ public class SkuInfoController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:skuinfo:update")
     public R update(@RequestBody SkuInfoEntity skuInfo){
+        log.info("修改SKU信息：SkuId = {}", skuInfo.getSkuId());
 		skuInfoService.updateById(skuInfo);
 
         return R.ok();
@@ -97,6 +105,7 @@ public class SkuInfoController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:skuinfo:delete")
     public R delete(@RequestBody Long[] skuIds){
+        log.info("删除SKU信息：SkuIds = {}", Arrays.toString(skuIds));
 		skuInfoService.removeByIds(Arrays.asList(skuIds));
 
         return R.ok();

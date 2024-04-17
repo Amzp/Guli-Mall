@@ -38,7 +38,7 @@ public class SpuInfoController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:spuinfo:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         log.info("查询SPU信息列表：{}", params);
         // 根据条件查询SPU信息，并返回分页结果
         PageUtils page = spuInfoService.queryPageByCondition(params);
@@ -46,7 +46,6 @@ public class SpuInfoController {
         // 将查询结果包装成R对象，返回给前端
         return R.ok().put("page", page);
     }
-
 
 
     /**
@@ -57,7 +56,7 @@ public class SpuInfoController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("product:spuinfo:info")
-    public R info(@PathVariable("id") Long id){
+    public R info(@PathVariable("id") Long id) {
         log.info("获取指定ID的产品基本信息：{}", id);
         // 通过ID从服务中获取SPU信息
         SpuInfoEntity spuInfo = spuInfoService.getById(id);
@@ -69,12 +68,13 @@ public class SpuInfoController {
 
     /**
      * 保存SPU（商品）信息
+     *
      * @param vo SPU的保存视图对象，包含需要保存的SPU信息
      * @return 返回操作结果，成功则为R.ok()
      */
     @PostMapping("/save")
     //@RequiresPermissions("product:spuinfo:save")
-    public R save(@RequestBody SpuSaveVo vo){
+    public R save(@RequestBody SpuSaveVo vo) {
         log.info("保存SPU信息：{}", vo);
         // 调用服务层方法，保存SPU信息
         spuInfoService.saveSpuInfo(vo);
@@ -85,12 +85,13 @@ public class SpuInfoController {
 
     /**
      * 修改SPU信息
+     *
      * @param spuInfo 要更新的SPU信息实体
      * @return 返回操作结果，成功返回OK
      */
     @PostMapping("/update")
     //@RequiresPermissions("product:spuinfo:update")
-    public R update(@RequestBody SpuInfoEntity spuInfo){
+    public R update(@RequestBody SpuInfoEntity spuInfo) {
         log.info("修改SPU信息：{}", spuInfo);
         // 通过ID更新SPU信息
         spuInfoService.updateById(spuInfo);
@@ -107,10 +108,10 @@ public class SpuInfoController {
      */
     @PostMapping("/delete")
     //@RequiresPermissions("product:spuinfo:delete")
-    public R delete(@RequestBody Long[] ids){
+    public R delete(@RequestBody Long[] ids) {
         log.info("删除指定的SPU信息：{}", ids);
         // 批量删除指定ID的SPU信息
-		spuInfoService.removeByIds(Arrays.asList(ids));
+        spuInfoService.removeByIds(Arrays.asList(ids));
 
         // 返回操作成功的响应
         return R.ok();

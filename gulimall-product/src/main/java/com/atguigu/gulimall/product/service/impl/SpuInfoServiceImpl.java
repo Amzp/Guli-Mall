@@ -7,6 +7,7 @@ import com.atguigu.gulimall.product.entity.*;
 import com.atguigu.gulimall.product.feign.CouponFeignService;
 import com.atguigu.gulimall.product.service.*;
 import com.atguigu.gulimall.product.vo.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,46 +198,54 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         this.baseMapper.insert(infoEntity); // 将商品信息实体插入数据库
     }
 
+    /**
+     * 根据条件查询SPU信息分页数据。
+     *
+     * @param params 查询参数，可包含key（搜索关键字）、status（发布状态）、brandId（品牌ID）、catelogId（分类ID）。
+     * @return 返回分页查询结果，包含查询到的数据和分页信息。
+     */
     @Override
     public PageUtils queryPageByCondition(Map<String, Object> params) {
 
-        QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<>();
+        // 创建查询条件包装器
+        LambdaQueryWrapper<SpuInfoEntity> wrapper = new LambdaQueryWrapper<>();
 
+        // 处理关键字搜索逻辑
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
             wrapper.and((w) -> {
-                w.eq("id", key).or().like("spu_name", key);
+                w.eq(SpuInfoEntity::getId, key).or().like(SpuInfoEntity::getSpuName, key);
             });
         }
-        // status=1 and (id=1 or spu_name like xxx)
+
+        // 处理发布状态查询逻辑
         String status = (String) params.get("status");
         if (!StringUtils.isEmpty(status)) {
-            wrapper.eq("publish_status", status);
+            wrapper.eq(SpuInfoEntity::getPublishStatus, status);
         }
 
+        // 处理品牌ID查询逻辑，排除无效品牌ID
         String brandId = (String) params.get("brandId");
         if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
-            wrapper.eq("brand_id", brandId);
+            wrapper.eq(SpuInfoEntity::getBrandId, brandId);
         }
 
+        // 处理分类ID查询逻辑，排除无效分类ID
         String catelogId = (String) params.get("catelogId");
         if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
-            wrapper.eq("catalog_id", catelogId);
+            wrapper.eq(SpuInfoEntity::getCatalogId, catelogId);
         }
 
-        /**
-         * status: 2
-         * key:
-         * brandId: 9
-         * catelogId: 225
-         */
+        // 执行分页查询
         IPage<SpuInfoEntity> page = this.page(
                 new Query<SpuInfoEntity>().getPage(params),
                 wrapper
         );
 
+        // 返回查询结果
         return new PageUtils(page);
     }
+
 
 
 }

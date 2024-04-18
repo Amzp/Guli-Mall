@@ -31,6 +31,23 @@ public class SpuInfoController {
     private SpuInfoService spuInfoService;
 
     /**
+     * 商品上架，更新Spu信息
+     *
+     * @param spuId 商品主体信息ID，用于指定需要上架更新的SPU
+     * @return 返回操作结果，成功返回OK
+     */
+    @PostMapping("/{spuId}/up")
+    public R spuUp(@PathVariable("spuId") Long spuId){
+        log.info("商品上架，更新Spu信息：spuId = {}", spuId);
+        // 调用服务层方法，执行SPU更新操作
+        spuInfoService.up(spuId);
+
+        // 返回成功响应
+        return R.ok();
+    }
+
+
+    /**
      * 查询SPU信息列表
      *
      * @param params 查询条件参数，封装了前端传来的各种查询条件

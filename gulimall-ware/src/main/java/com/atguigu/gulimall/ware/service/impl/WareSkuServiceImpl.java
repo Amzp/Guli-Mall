@@ -18,47 +18,55 @@ import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
+
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
 
-    @Autowired
+    @Resource
     WareSkuDao wareSkuDao;
 
-    @Autowired
+    @Resource
     ProductFeignService productFeignService;
 
+    /**
+     * 根据传入的参数查询指定的SKU库存信息分页列表。
+     *
+     * @param params 包含查询参数的Map，其中可以包含skuId和wareId。
+     * @return 返回查询结果的分页工具类PageUtils，包含当前页的数据和分页信息。
+     */
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        /**
-         * skuId: 1
-         * wareId: 2
-         */
         QueryWrapper<WareSkuEntity> queryWrapper = new QueryWrapper<>();
+        // 根据传入的skuId参数构建查询条件
         String skuId = (String) params.get("skuId");
         if(!StringUtils.isEmpty(skuId)){
             queryWrapper.eq("sku_id",skuId);
         }
 
+        // 根据传入的wareId参数构建查询条件
         String wareId = (String) params.get("wareId");
         if(!StringUtils.isEmpty(wareId)){
             queryWrapper.eq("ware_id",wareId);
         }
 
-
+        // 执行分页查询
         IPage<WareSkuEntity> page = this.page(
                 new Query<WareSkuEntity>().getPage(params),
                 queryWrapper
         );
 
+        // 封装查询结果为PageUtils对象并返回
         return new PageUtils(page);
     }
+
 
     @Override
     public void addStock(Long skuId, Long wareId, Integer skuNum) {
         //1、判断如果还没有这个库存记录新增
         List<WareSkuEntity> entities = wareSkuDao.selectList(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
-        if(entities == null || entities.size() == 0){
+        if(entities == null || entities.isEmpty()){
             WareSkuEntity skuEntity = new WareSkuEntity();
             skuEntity.setSkuId(skuId);
             skuEntity.setStock(skuNum);

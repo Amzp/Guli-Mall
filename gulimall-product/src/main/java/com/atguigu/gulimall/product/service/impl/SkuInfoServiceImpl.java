@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -115,6 +117,18 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
         // 返回分页结果
         return new PageUtils(page);
+    }
+
+    /**
+     * 根据SPU ID查询其对应的全部SKU信息以及品牌名称。
+     *
+     * @param spuId 商品属性组合ID，用于查询相应的SKU信息。
+     * @return 返回一个SKU信息实体列表，包含指定SPU ID下的所有SKU信息。
+     */
+    @Override
+    public List<SkuInfoEntity> getSkusBySpuOd(Long spuId) {
+        // 使用LambdaQueryWrapper构造查询条件，查询指定spuId的所有sku信息
+        return this.list(new LambdaQueryWrapper<SkuInfoEntity>().eq(SkuInfoEntity::getSpuId, spuId));
     }
 
 }

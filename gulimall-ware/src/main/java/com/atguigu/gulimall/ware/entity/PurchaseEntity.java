@@ -6,7 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 采购信息
@@ -16,6 +21,10 @@ import lombok.Data;
  * @date 2019-11-17 13:50:10
  */
 @Data
+@Builder
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("wms_purchase")
 public class PurchaseEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

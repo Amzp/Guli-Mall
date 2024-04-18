@@ -2,6 +2,7 @@ package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.common.to.SkuReductionTo;
 import com.atguigu.common.to.SpuBoundTo;
+import com.atguigu.common.to.es.SkuEsModel;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.product.entity.*;
 import com.atguigu.gulimall.product.feign.CouponFeignService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,49 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private SkuSaleAttrValueService skuSaleAttrValueService;
     @Resource
     private CouponFeignService couponFeignService;
+    @Resource
+    private BrandService brandService;
+    @Resource
+    private CategoryService categoryService;
+
+    /**
+     * 商品上架，更新Spu信息
+     *
+     * @param spuId
+     */
+    @Override
+    public void up(Long spuId) {
+
+        // 1 查询当前spuId对应的所有sku信息，品牌的名字
+        List<SkuInfoEntity> skus = skuInfoService.getSkusBySpuOd(spuId);
+
+        // TODO 查询当前sku所有可以被用来检索的规格属性
+
+        // 2 封装每个Sku的信息
+        skus.stream().map(sku -> {
+            //  组装需要的数据
+            SkuEsModel esModel = SkuEsModel.builder()
+                    .skuPrice(sku.getPrice())
+                    .skuImg(sku.getSkuDefaultImg())
+                    .build();
+            BeanUtils.copyProperties(sku, esModel);
+            // TODO 1. 发送远程调用，库存系统查询是否有库存
+            // TODO 2. 热度评分
+            // 3. 查询品牌和分类的名字信息
+            BrandEntity brand = brandService.getById(esModel.getBrandId());
+            esModel.setBrandName(brand.getName())
+                    .setBrandImg(brand.getLogo());
+            CategoryEntity category = categoryService.getById(esModel.getCatalogId());
+            esModel.setCatalogName(category.getName());
+
+
+            return esModel;
+        }).collect(Collectors.toList());
+
+
+        // TODO 保存到ES中
+
+    }
 
     /**
      * 查询SPU信息的分页数据。
@@ -245,7 +290,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 返回查询结果
         return new PageUtils(page);
     }
-
 
 
 }

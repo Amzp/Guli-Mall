@@ -1,30 +1,39 @@
+# 服务器配置
 server:
   port: 11000
 
+# 数据源配置
 spring:
   datasource:
+    # 数据库连接配置
     username: root
     password: root
     url: jdbc:mysql://192.168.56.10:3306/gulimall_wms
     driver-class-name: com.mysql.jdbc.Driver
 
+  # 服务发现配置
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+  # 应用名称配置
   application:
     name: gulimall-ware
 
+  # Jackson日期格式配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 
-
+# MyBatis Plus配置
 mybatis-plus:
+  # Mapper文件位置
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:
     db-config:
+      # 主键类型配置
       id-type: auto
 
+# 日志级别配置
 logging:
   level:
     com.atguigu: debug

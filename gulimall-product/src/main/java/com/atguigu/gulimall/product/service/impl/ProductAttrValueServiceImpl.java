@@ -35,8 +35,9 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 
     /**
      * 保存商品属性值列表
+     *
      * @param collect 包含商品属性值的列表，类型为ProductAttrValueEntity的集合。
-     * 该方法通过调用saveBatch方法，以批量的方式保存传入的商品属性值集合。
+     *                该方法通过调用saveBatch方法，以批量的方式保存传入的商品属性值集合。
      */
     @Override
     public void saveProductAttr(List<ProductAttrValueEntity> collect) {
@@ -44,24 +45,40 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
         this.saveBatch(collect); // 执行批量保存操作
     }
 
+    /**
+     * 根据SPU ID获取基础属性列表
+     *
+     * @param spuId 商品规格实体的ID
+     * @return 返回对应SPU的基础属性值列表
+     */
     @Override
     public List<ProductAttrValueEntity> baseAttrlistforspu(Long spuId) {
-        List<ProductAttrValueEntity> entities = this.baseMapper.selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
-        return entities;
+        // 使用QueryWrapper构造查询条件，查询SPU_ID等于指定ID的所有属性值
+        return this.baseMapper.selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
     }
 
+
+    /**
+     * 更新SPU的属性值。首先删除该SPU已有的属性值，然后批量保存新的属性值。
+     *
+     * @param spuId 商品基本单元ID，用于标识需要更新属性的SPU。
+     * @param entities 属性值实体列表，包含了需要更新的属性信息。
+     */
     @Transactional
     @Override
     public void updateSpuAttr(Long spuId, List<ProductAttrValueEntity> entities) {
-        //1、删除这个spuId之前对应的所有属性
-        this.baseMapper.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id",spuId));
+        // 删除当前SPU已有的所有属性值
+        this.baseMapper.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
 
-
-        List<ProductAttrValueEntity> collect = entities.stream().map(item -> {
-            item.setSpuId(spuId);
-            return item;
-        }).collect(Collectors.toList());
+        // 将传入的属性值实体列表中的SPU ID统一设置为当前要更新的SPU ID，然后批量保存
+        List<ProductAttrValueEntity> collect = entities.stream()
+                .map(item -> {
+                    item.setSpuId(spuId);
+                    return item;
+                })
+                .collect(Collectors.toList());
         this.saveBatch(collect);
     }
+
 
 }

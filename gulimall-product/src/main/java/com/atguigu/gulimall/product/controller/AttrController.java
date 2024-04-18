@@ -18,6 +18,8 @@ import com.atguigu.gulimall.product.service.AttrService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
+
 
 /**
  * 商品属性
@@ -30,10 +32,10 @@ import com.atguigu.common.utils.R;
 @RequestMapping("product/attr")
 @Slf4j
 public class AttrController {
-    @Autowired
+    @Resource
     private AttrService attrService;
 
-    @Autowired
+    @Resource
     ProductAttrValueService productAttrValueService;
 
 

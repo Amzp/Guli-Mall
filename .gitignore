@@ -34,4 +34,3 @@ gulimall.iml
 **/.gitignore
 
 ### 配置文件 ###
-gulimall-third-party/src/main/resources/application.yml

@@ -2,11 +2,15 @@ package com.atguigu.gulimall.ware.service.impl;
 
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
+import com.atguigu.gulimall.ware.vo.SkuHasStockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,14 +45,14 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         QueryWrapper<WareSkuEntity> queryWrapper = new QueryWrapper<>();
         // 根据传入的skuId参数构建查询条件
         String skuId = (String) params.get("skuId");
-        if(!StringUtils.isEmpty(skuId)){
-            queryWrapper.eq("sku_id",skuId);
+        if (!StringUtils.isEmpty(skuId)) {
+            queryWrapper.eq("sku_id", skuId);
         }
 
         // 根据传入的wareId参数构建查询条件
         String wareId = (String) params.get("wareId");
-        if(!StringUtils.isEmpty(wareId)){
-            queryWrapper.eq("ware_id",wareId);
+        if (!StringUtils.isEmpty(wareId)) {
+            queryWrapper.eq("ware_id", wareId);
         }
 
         // 执行分页查询
@@ -66,7 +70,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public void addStock(Long skuId, Long wareId, Integer skuNum) {
         //1、判断如果还没有这个库存记录新增
         List<WareSkuEntity> entities = wareSkuDao.selectList(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
-        if(entities == null || entities.isEmpty()){
+        if (entities == null || entities.isEmpty()) {
             WareSkuEntity skuEntity = new WareSkuEntity();
             skuEntity.setSkuId(skuId);
             skuEntity.setStock(skuNum);
@@ -77,21 +81,37 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             //TODO 还可以用什么办法让异常出现以后不回滚？高级
             try {
                 R info = productFeignService.info(skuId);
-                Map<String,Object> data = (Map<String, Object>) info.get("skuInfo");
+                Map<String, Object> data = (Map<String, Object>) info.get("skuInfo");
 
-                if(info.getCode() == 0){
+                if (info.getCode() == 0) {
                     skuEntity.setSkuName((String) data.get("skuName"));
                 }
-            }catch (Exception e){
-
+            } catch (Exception e) {
+                log.error("远程查询sku信息失败");
             }
-
-
             wareSkuDao.insert(skuEntity);
-        }else{
-            wareSkuDao.addStock(skuId,wareId,skuNum);
+        } else {
+            wareSkuDao.addStock(skuId, wareId, skuNum);
         }
-
     }
 
+    /**
+     * 查询指定SKU是否具有库存
+     * @param skuIds
+     * @return
+     */
+    @Override
+    public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
+        skuIds.stream()
+                .map(skuId -> {
+                    // 查询当前sku总库存量
+                    Long count = this.baseMapper.getSkuStock(skuId);
+                    return SkuHasStockVo.builder()
+                            .skuId(skuId)
+                            .hasStock(count != null && count > 0).build();
+                })
+                .collect(Collectors.toList());
+
+        return Collections.emptyList();
+    }
 }

@@ -17,10 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -333,5 +330,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         return new PageUtils(page);
     }
 
-
+    /**
+     * 在指定的所有属性集合里，挑出检索属性
+     * @param attrIds
+     * @return
+     */
+    @Override
+    public List<Long> selectSearchAttrs(List<Long> attrIds) {
+        return this.baseMapper.selectSearchAttrIds(attrIds);
+    }
 }

@@ -34,7 +34,7 @@ public class GenUtils {
     private static String currentTableName;
 
     public static List<String> getTemplates() {
-        List<String> templates = new ArrayList<String>();
+        List<String> templates = new ArrayList<>();
         templates.add("template/Entity.java.vm");
         templates.add("template/Dao.xml.vm");
 
@@ -58,7 +58,7 @@ public class GenUtils {
     }
 
     public static List<String> getMongoChildTemplates() {
-        List<String> templates = new ArrayList<String>();
+        List<String> templates = new ArrayList<>();
         templates.add("template/MongoChildrenEntity.java.vm");
         return templates;
     }
@@ -100,7 +100,7 @@ public class GenUtils {
             columnEntity.setAttrType(attrType);
 
 
-            if (!hasBigDecimal && attrType.equals("BigDecimal")) {
+            if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
                 hasBigDecimal = true;
             }
             if (!hasList && "array".equals(columnEntity.getExtra())) {

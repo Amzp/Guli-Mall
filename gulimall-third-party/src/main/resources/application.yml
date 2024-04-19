@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    alicloud:
+      access-key:
+      secret-key:
+      oss:
+        endpoint: oss-cn-beijing.aliyuncs.com
+        bucket:
+
+  application:
+    name: gulimall-third-party
+
+server:
+  port: 30000
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+

@@ -26,8 +26,9 @@
         <module>gulimall-third-party</module>
         <module>gulimall-ware</module>
         <module>gulimall-search</module>
+
         <module>renren-fast</module>
-        <module>renren-generator</module>
+<!--        <module>renren-generator</module>-->
     </modules>
 
     <!-- 构建配置 -->

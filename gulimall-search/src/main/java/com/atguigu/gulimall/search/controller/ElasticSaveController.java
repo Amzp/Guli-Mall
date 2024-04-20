@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * ClassName: ElasticSaveController
- * Package: com.atguigu.gulimall.search.controller
+ * Package: com.atguigu.gulimall.search.app
  * Description:
  *
  * @Author Rainbow

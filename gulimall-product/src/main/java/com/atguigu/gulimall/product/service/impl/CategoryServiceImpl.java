@@ -1,6 +1,8 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import com.atguigu.gulimall.product.vo.Catalog2Vo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,8 +97,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * 在执行删除前，应检查待删除的菜单是否被其他地方引用，确保删除操作的安全性。
      *
      * @param asList 要删除的菜单ID列表，类型为List<Long>。
-     *                需要删除的菜单的ID将以此列表中的元素为依据进行删除操作。
-     *                列表为空或null时，方法不执行任何操作。
+     *               需要删除的菜单的ID将以此列表中的元素为依据进行删除操作。
+     *               列表为空或null时，方法不执行任何操作。
      */
     @Override
     public void removeMenuByIds(List<Long> asList) {
@@ -108,6 +110,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 查找给定目录ID的目录路径。
+     *
      * @param catelogId 目录的ID，表示要查找的目录。
      * @return 返回一个Long类型的数组，表示从根目录到指定目录的路径。
      */
@@ -129,7 +132,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 级联更新所有关联的数据
-     *
+     * <p>
      * 本方法用于当更新一个分类信息时，不仅更新分类本身，同时也会更新与该分类关联的品牌信息。
      *
      * @param category 分类实体对象，包含需要更新的分类信息。
@@ -150,8 +153,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 查找给定分类ID的父级路径
+     *
      * @param catelogId 当前分类的ID
-     * @param paths 存储已经遍历过的分类ID路径
+     * @param paths     存储已经遍历过的分类ID路径
      * @return 返回包括当前分类ID及其所有父级分类ID的路径列表
      */
     private List<Long> findParentPath(Long catelogId, List<Long> paths) {
@@ -199,5 +203,62 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return children;
     }
 
+    /**
+     * 查询所有的一级分类
+     * 该方法不接受任何参数，查询数据库中父分类ID为0的所有分类实体，并返回其列表。
+     *
+     * @return 返回包含所有一级分类的CategoryEntity列表
+     */
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        // 使用LambdaQueryWrapper构造查询条件，查询父分类ID为0的所有分类
+        return baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, 0));
+    }
 
+    /**
+     * 获取分类的JSON格式数据
+     * 该方法用于查询并封装所有的分类信息，包括一级分类、二级分类以及三级分类，并以特定的JSON格式返回。
+     * 一级分类对应父级分类ID，二级分类和三级分类则分别属于一级分类的子级。
+     *
+     * @return Map<String, List<Catalog2Vo>> 分类信息的映射表，键为一级分类的ID，值为该一级分类下所有二级分类及其三级子分类的列表。
+     */
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        // 1. 查询所有的一级分类
+        List<CategoryEntity> level1Categorys = getLevel1Categorys();
+
+        // 2. 使用Stream API将查询结果封装为指定的JSON格式
+        Map<String, List<Catalog2Vo>> parentCid = level1Categorys.stream()
+                .collect(Collectors
+                        .toMap(
+                                key -> key.getCatId().toString(), // 将一级分类的ID作为键
+                                value -> {
+                                    // 查询指定一级分类下的所有二级分类
+                                    List<CategoryEntity> categoryEntities = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, value.getCatId()));
+                                    // 将查询到的二级分类封装为Catalog2Vo对象
+                                    List<Catalog2Vo> catalog2Vos = null;
+                                    if (categoryEntities != null && !categoryEntities.isEmpty()) {
+                                        catalog2Vos = categoryEntities.stream()
+                                                .map(l2 -> {
+                                                            Catalog2Vo catalog2Vo = new Catalog2Vo(value.getCatId().toString(), null, l2.getCatId().toString(), l2.getName());
+                                                            // 查询并封装每个二级分类下的三级分类
+                                                            List<CategoryEntity> level3Catalog = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, l2.getCatId()));
+                                                            if (level3Catalog != null && !level3Catalog.isEmpty()) {
+                                                                // 将三级分类信息封装为Catalog2Vo的内部类Catalog3Vo
+                                                                List<Catalog2Vo.Catalog3Vo> collect = level3Catalog.stream()
+                                                                        .map(l3 -> new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName()))
+                                                                        .collect(Collectors.toList());
+                                                                catalog2Vo.setCatalog3List(collect);
+                                                            }
+                                                            return catalog2Vo;
+                                                        }
+                                                )
+                                                .collect(Collectors.toList());
+                                    }
+                                    return catalog2Vos;
+                                }
+                        )
+                );
+        return parentCid;
+    }
 }

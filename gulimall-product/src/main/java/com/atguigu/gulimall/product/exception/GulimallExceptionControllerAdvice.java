@@ -20,9 +20,9 @@ import java.util.Map;
 @Slf4j
 /**
  * 该注解用于定义一个全局异常处理控制器，它会捕获指定包下所有控制器层抛出的异常。
- * @param basePackages 指定需要扫描的控制器所在的包，此处为"com.atguigu.gulimall.product.controller"。
+ * @param basePackages 指定需要扫描的控制器所在的包，此处为"com.atguigu.gulimall.product.app"。
  */
-@RestControllerAdvice(basePackages = "com.atguigu.gulimall.product.controller")
+@RestControllerAdvice(basePackages = "com.atguigu.gulimall.product.app")
 
 public class GulimallExceptionControllerAdvice {
 

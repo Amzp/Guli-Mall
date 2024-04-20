@@ -14,6 +14,12 @@ spring:
   # Jackson配置，用于日期格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  # Thymeleaf配置
+  thymeleaf:
+    # 是否启用缓存
+    cache: false
+    prefix: classpath:/templates/ # 模板前缀
+    suffix: .html # 模板后缀
 
 # MyBatis Plus配置
 mybatis-plus:

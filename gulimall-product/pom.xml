@@ -56,6 +56,27 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- Redis依赖，用于实现缓存功能-->
+        <!-- 引入Spring Boot的Redis支持，采用starter方式，自动配置简化开发 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <!-- 排除默认的Lettuce客户端，选择使用Jedis -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.lettuce</groupId>
+                    <artifactId>lettuce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 引入Jedis作为Redis的客户端库 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
+
         <!-- Spring Boot Actuator依赖，用于提供应用监控和管理的端点 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

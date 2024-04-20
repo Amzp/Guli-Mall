@@ -44,6 +44,17 @@ public class AttrController {
      */
     @GetMapping("/base/listforspu/{spuId}")
     public R baseAttrlistforspu(@PathVariable("spuId") Long spuId) {
+        /**
+         * TODO 压测时会出现堆外内存溢出：OutOfDirectMemoryError
+         * 原因： 1. springboot2.0 默认使用lettuce作为redis的客户端，使用netty通信
+         *       2. lettuce的bug导致netty堆外内存溢出，-Xmx300m，netty如果没有指定堆外内存，则默认使用-Xmx300m的配置
+         *       3. 可以通过修改netty堆外内存，-Dio.netty.maxDirectMemory
+         * 解决方案： 1. 不能使用-Dio.netty.maxDirectMemory参数
+         *          2. 升级lettuce客户端
+         *          3. 使用jedis
+         */
+
+
         log.info("根据SPU ID获取基础属性列表：spuId = {}", spuId);
         // 通过productAttrValueService查询指定spuId的基础属性列表
         List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrlistforspu(spuId);

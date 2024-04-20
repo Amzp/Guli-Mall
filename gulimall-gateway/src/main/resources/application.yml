@@ -6,7 +6,7 @@ spring:
         - id: product_route # 产品服务路由规则
           uri: lb://gulimall-product # 目标服务地址，使用负载均衡
           predicates: # 断言，确定请求是否应被此路由处理
-            - Path=/api/product/** # 判断请求路径是否匹配此模式
+            - Path=/api/product/**, /hello # 判断请求路径是否匹配此模式
           filters: # 过滤器，对匹配的请求进行处理
             - RewritePath=/api/(?<segment>.*),/$\{segment} # 对请求路径进行重写
 

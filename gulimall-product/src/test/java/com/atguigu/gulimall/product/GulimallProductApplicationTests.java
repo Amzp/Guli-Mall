@@ -1,7 +1,6 @@
 package com.atguigu.gulimall.product;
 
 import com.atguigu.gulimall.product.entity.BrandEntity;
-import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.service.BrandService;
 import com.atguigu.gulimall.product.service.CategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,15 +9,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import javax.annotation.Resource;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -36,6 +34,26 @@ public class GulimallProductApplicationTests {
 
     @Autowired
     CategoryService categoryService;
+    
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    @Test
+    public void testRedisTemplate(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("testRedisTemplate()\n");
+        
+        
+        // testRedisTemplate Code
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        ops.set("name","zhangsan_"+ UUID.randomUUID());
+
+        String name = ops.get("name");
+        System.out.println("name = " + name);
+
+        long endTime = System.currentTimeMillis();
+        System.out.printf("\ntestRedisTemplate  Execution time: %d ms", (endTime - startTime));
+    }
+    
 
     @Test
     public void testFindPath(){

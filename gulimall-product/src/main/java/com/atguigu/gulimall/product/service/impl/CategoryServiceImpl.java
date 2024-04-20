@@ -1,25 +1,30 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.Query;
+import com.atguigu.gulimall.product.dao.CategoryDao;
+import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.product.vo.Catalog2Vo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.Query;
+import lombok.extern.slf4j.Slf4j;
 
-import com.atguigu.gulimall.product.dao.CategoryDao;
-import com.atguigu.gulimall.product.entity.CategoryEntity;
-import com.atguigu.gulimall.product.service.CategoryService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("categoryService")
 @Slf4j
@@ -31,8 +36,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 //    @Autowired
 //    CategoryDao categoryDao;
 
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
+
     @Autowired
-    CategoryBrandRelationService categoryBrandRelationService;
+    private StringRedisTemplate redisTemplate;
+
 
     /**
      * 查询分类信息的分页数据。
@@ -211,21 +220,53 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
+        long l = System.currentTimeMillis();
         // 使用LambdaQueryWrapper构造查询条件，查询父分类ID为0的所有分类
-        return baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, 0));
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, 0));
+        System.out.println("查询一级分类时间：" + (System.currentTimeMillis() - l));
+        return categoryEntities;
     }
+
+
+    /**
+     * 获取分类的JSON数据，首先尝试从缓存中获取，如果缓存中不存在，则从数据库中查询，并将查询结果存入缓存。
+     * 使用Redis作为缓存工具，以提升数据的访问速度，并确保数据在不同平台间的兼容性。
+     *
+     * @return 返回一个Map，其中键是分类的名称，值是该分类下的商品列表。
+     */
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        // 尝试从缓存中获取分类的JSON数据
+        String catalogJson = redisTemplate.opsForValue().get("catalogJSON");
+        if (StringUtils.isEmpty(catalogJson)) {
+            // 缓存中未找到，从数据库查询并存入缓存
+            log.info("查询三级分类数据，Redis缓存未命中，查询数据库");
+            Map<String, List<Catalog2Vo>> catalogJsonFromDb = getCatalogJsonFromDb();
+            redisTemplate.opsForValue().set("catalogJSON", JSON.toJSONString(catalogJsonFromDb));
+            return catalogJsonFromDb;
+        }
+        // 将缓存中的JSON数据转换为对象
+        log.info("查询三级分类数据，Redis缓存命中，直接返回");
+        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJson, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        });
+        return result;
+    }
+
 
     /**
      * 获取分类的JSON格式数据
      * 该方法用于查询并封装所有的分类信息，包括一级分类、二级分类以及三级分类，并以特定的JSON格式返回。
      * 一级分类对应父级分类ID，二级分类和三级分类则分别属于一级分类的子级。
      *
-     * @return Map<String, List<Catalog2Vo>> 分类信息的映射表，键为一级分类的ID，值为该一级分类下所有二级分类及其三级子分类的列表。
+     * @return Map<String, List < Catalog2Vo>> 分类信息的映射表，键为一级分类的ID，值为该一级分类下所有二级分类及其三级子分类的列表。
      */
-    @Override
-    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+    public Map<String, List<Catalog2Vo>> getCatalogJsonFromDb() {
+
+        // 将数据库的多次查询变为1次查询
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+
         // 1. 查询所有的一级分类
-        List<CategoryEntity> level1Categorys = getLevel1Categorys();
+        List<CategoryEntity> level1Categorys = getParentCid(selectList, 0L);
 
         // 2. 使用Stream API将查询结果封装为指定的JSON格式
         Map<String, List<Catalog2Vo>> parentCid = level1Categorys.stream()
@@ -234,7 +275,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                                 key -> key.getCatId().toString(), // 将一级分类的ID作为键
                                 value -> {
                                     // 查询指定一级分类下的所有二级分类
-                                    List<CategoryEntity> categoryEntities = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, value.getCatId()));
+                                    List<CategoryEntity> categoryEntities = getParentCid(selectList, value.getCatId());
                                     // 将查询到的二级分类封装为Catalog2Vo对象
                                     List<Catalog2Vo> catalog2Vos = null;
                                     if (categoryEntities != null && !categoryEntities.isEmpty()) {
@@ -242,7 +283,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                                                 .map(l2 -> {
                                                             Catalog2Vo catalog2Vo = new Catalog2Vo(value.getCatId().toString(), null, l2.getCatId().toString(), l2.getName());
                                                             // 查询并封装每个二级分类下的三级分类
-                                                            List<CategoryEntity> level3Catalog = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>().eq(CategoryEntity::getParentCid, l2.getCatId()));
+                                                            List<CategoryEntity> level3Catalog = getParentCid(selectList, l2.getCatId());
                                                             if (level3Catalog != null && !level3Catalog.isEmpty()) {
                                                                 // 将三级分类信息封装为Catalog2Vo的内部类Catalog3Vo
                                                                 List<Catalog2Vo.Catalog3Vo> collect = level3Catalog.stream()
@@ -260,5 +301,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         )
                 );
         return parentCid;
+    }
+
+
+    /**
+     * 根据父级分类ID获取所有子分类实体列表。
+     *
+     * @param selectList 待筛选的分类实体列表。
+     * @param parentCid  父级分类的ID。
+     * @return 过滤后的包含指定父级ID的分类实体列表。
+     */
+    private List<CategoryEntity> getParentCid(List<CategoryEntity> selectList, Long parentCid) {
+        // 使用Stream API过滤出父级分类ID为指定值的分类实体，并收集到List中
+        return selectList.stream().filter(item -> Objects.equals(item.getParentCid(), parentCid)).collect(Collectors.toList());
     }
 }

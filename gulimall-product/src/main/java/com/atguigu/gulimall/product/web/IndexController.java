@@ -63,4 +63,12 @@ public class IndexController {
         // 调用categoryService获取分类数据
         return categoryService.getCatalogJson();
     }
+
+    @ResponseBody
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+
+
 }

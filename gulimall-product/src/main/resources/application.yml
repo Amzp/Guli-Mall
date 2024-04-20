@@ -17,9 +17,12 @@ spring:
   # Thymeleaf配置
   thymeleaf:
     # 是否启用缓存
-    cache: false
+    cache: true
     prefix: classpath:/templates/ # 模板前缀
     suffix: .html # 模板后缀
+  redis:
+    host: 192.168.56.10
+    port: 6379
 
 # MyBatis Plus配置
 mybatis-plus:

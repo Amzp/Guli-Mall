@@ -48,6 +48,16 @@ spring:
           ## 例如，前端发送的请求http://localhost:88/api/captcha.jpg 会被重写为http://localhost:8080/renren-fast/captcha.jpg 并发送到后端。
           ## http://localhost:88/api/product/category/list/tree => http://localhost:10000/product/category/list/tree
 
+        # 定义一个路由规则
+        - id: gulimall_host_route
+          # 指定服务的URI，这里使用负载均衡模式访问gulimall-product服务
+          uri: lb://gulimall-product
+          # 定义路由断言，只有满足条件的请求才会被路由到指定的服务
+          predicates:
+            # 当请求的域名匹配**.gulimall.com时，路由生效
+            - Host=**.gulimall.com,gulimall.com
+
+
 # 日志配置
 logging:
   level:

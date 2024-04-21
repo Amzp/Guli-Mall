@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -37,6 +38,24 @@ public class GulimallProductApplicationTests {
     
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    @Test
+    public void testRedissonClient(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("testRedissonClient()\n");
+
+
+        // testRedissonClient Code
+        System.out.println(redissonClient);
+
+
+        long endTime = System.currentTimeMillis();
+        System.out.printf("\ntestRedissonClient  Execution time: %d ms", (endTime - startTime));
+    }
+
     @Test
     public void testRedisTemplate(){
         long startTime = System.currentTimeMillis();

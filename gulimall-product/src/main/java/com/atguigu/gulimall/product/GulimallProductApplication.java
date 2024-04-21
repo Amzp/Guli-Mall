@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+
+import java.util.Arrays;
 
 /**
  * 1、整合MyBatis-Plus
@@ -65,6 +68,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @SpringBootApplication 标注这是一个Spring Boot应用，并自动包含@SpringBootConfiguration、@EnableAutoConfiguration和@ComponentScan注解，
  *                           实现了Spring Boot应用的快速配置和启动。
  */
+@EnableCaching
 @EnableFeignClients(basePackages = "com.atguigu.gulimall.product.feign")
 @EnableDiscoveryClient
 @MapperScan("com.atguigu.gulimall.product.dao")
@@ -72,9 +76,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @Slf4j
 public class GulimallProductApplication {
     public static void main(String[] args) {
-        log.info("开始启动Gulimall商品服务应用...");
+        log.info("开始启动Gulimall商品服务应用：args = {}", Arrays.toString(args));
         SpringApplication.run(GulimallProductApplication.class, args);
-        log.info("Gulimall商品服务应用启动成功...");
+        log.info("Gulimall商品服务应用启动成功：args = {}", Arrays.toString(args));
     }
 
 }

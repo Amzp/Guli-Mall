@@ -7,5 +7,3 @@ spring:
       config:
         server-addr: localhost:8848
         namespace: 9c2b8ce6-5f83-4790-a671-12a074f48809
-
-

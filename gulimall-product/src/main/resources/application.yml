@@ -17,7 +17,7 @@ spring:
   # Thymeleaf配置
   thymeleaf:
     # 是否启用缓存
-    cache: true
+    cache: false
     prefix: classpath:/templates/ # 模板前缀
     suffix: .html # 模板后缀
   redis:

@@ -55,8 +55,32 @@ spring:
           # 定义路由断言，只有满足条件的请求才会被路由到指定的服务
           predicates:
             # 当请求的域名匹配**.gulimall.com时，路由生效
-            - Host=**.gulimall.com,gulimall.com
+            - Host=gulimall.com,item.gulimall.com
 
+        - id: gulimall_search_route
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com
+
+        - id: gulimall_auth_route
+          uri: lb://gulimall-auth-server
+          predicates:
+            - Host=auth.gulimall.com
+
+        - id: gulimall_cart_route
+          uri: lb://gulimall-cart
+          predicates:
+            - Host=cart.gulimall.com
+
+        - id: gulimall_order_route
+          uri: lb://gulimall-order
+          predicates:
+            - Host=order.gulimall.com
+
+        - id: gulimall_member_route
+          uri: lb://gulimall-member
+          predicates:
+            - Host=member.gulimall.com
 
 # 日志配置
 logging:

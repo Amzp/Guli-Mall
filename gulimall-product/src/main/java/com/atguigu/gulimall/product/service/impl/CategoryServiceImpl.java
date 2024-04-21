@@ -234,7 +234,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @return 返回包含所有一级分类的CategoryEntity列表
      */
-    @Cacheable(value = {"category"}, key = "#root.method.name")
+    @Cacheable(value = {"category"}, key = "#root.method.name",sync = true)
     // 代表当前方法的结果需要缓存，注解参数{"category"}指定了缓存名称为"category"，表明缓存结果将存储在名为"category"的缓存区域中。
     @Override
     public List<CategoryEntity> getLevel1Categorys() {

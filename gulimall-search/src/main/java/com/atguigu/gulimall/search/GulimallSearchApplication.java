@@ -21,7 +21,7 @@ public class GulimallSearchApplication {
   public static void main(String[] args) {
     log.info("开始启动Gulimall搜索服务应用...");
     SpringApplication.run(GulimallSearchApplication.class, args);
-    log.info("Gulimall商品服务应用启动成功...");
+    log.info("Gulimall搜索服务应用启动成功...");
   }
 
 }

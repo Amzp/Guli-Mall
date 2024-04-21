@@ -1,4 +1,4 @@
-package com.atguigu.common.to.es;
+package com.atguigu.common.es;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

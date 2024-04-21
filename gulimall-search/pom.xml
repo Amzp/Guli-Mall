@@ -56,11 +56,11 @@
             <scope>test</scope>
         </dependency>
 
-<!--        &lt;!&ndash; Thymeleaf模板引擎依赖 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-thymeleaf</artifactId>-->
-<!--        </dependency>-->
+        <!-- Thymeleaf模板引擎依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
 
 <!--        &lt;!&ndash; Spring Boot开发者工具，用于自动重载等 &ndash;&gt;-->
 <!--        <dependency>-->

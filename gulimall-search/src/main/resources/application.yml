@@ -37,10 +37,6 @@ logging:
     com.atguigu.gulimall.search: debug
     # 设置根日志级别的级别为warn
     root: warn
-#  # 配置日志输出格式
-#  pattern:
-#    # 配置控制台日志输出格式
-#    console: "%d{yyyy-MM-dd} [%thread] - %msg%n"
 
 
 ##暴露所有端点

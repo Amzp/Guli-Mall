@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -33,16 +34,23 @@ public class SearchController {
      *
      * @param param 用户的搜索参数，用于商品搜索。
      * @param model 用于在视图和控制器之间传递数据的模型对象。
+     * @param request 用户的请求对象，可以从中获取请求信息。
      * @return 返回页面视图名，此处为"list"，即展示商品列表的页面。
      */
     @GetMapping(value = {"/list.html"})
-    public String listPage(SearchParam param, Model model) {
+    public String listPage(SearchParam param, Model model, HttpServletRequest request) {
         log.info("处理用户请求，展示商品列表页面");
+
+        param.set_queryString(request.getQueryString()); // 设置搜索参数中的查询字符串，用于后续的商品搜索
+
         // 执行商品搜索，根据搜索参数获取搜索结果
         SearchResult result = mallSearchService.search(param);
+
         // 将搜索结果添加到模型中，以便在页面上展示
         model.addAttribute("result", result);
+
         // 返回页面视图名
         return "list";
     }
+
 }

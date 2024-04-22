@@ -29,6 +29,27 @@ public class R extends HashMap<String, Object> {
     }
 
     /**
+     * 根据给定的键获取数据，并将其转换为指定的泛型类型。
+     *
+     * @param key 用于获取数据的键。
+     * @param typeReference 指定数据应被转换成的泛型类型引用。
+     * @return 转换后的数据对象，其类型由typeReference指定。
+     * @param <T> 数据的泛型类型。
+     */
+    public <T> T getData(String key, TypeReference<T> typeReference) {
+
+        // 通过键获取数据
+        Object data = get(key);
+
+        // 将获取到的数据转换为JSON字符串
+        String jsonString = JSON.toJSONString(data);
+
+        // 将JSON字符串转换为指定的泛型类型
+        T t = JSON.parseObject(jsonString, typeReference);
+        return t;
+    }
+
+    /**
      * 从特定数据源获取数据，并将其转换为指定类型。
      *
      * @param typeReference 用于指定目标数据类型的 TypeReference 实例。这允许泛型类型的精确转换。

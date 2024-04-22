@@ -1,9 +1,13 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -75,5 +79,8 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         }
     }
 
-
+    @Override
+    public List<BrandEntity> getBrandsByIds(List<Long> brandIds) {
+        return baseMapper.selectList(new LambdaQueryWrapper<BrandEntity>().in(BrandEntity::getBrandId,brandIds));
+    }
 }

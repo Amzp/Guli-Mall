@@ -100,8 +100,11 @@
 
 
 
+    <!-- 依赖管理 -->
     <dependencyManagement>
+        <!-- 定义依赖集合，统一管理依赖的版本 -->
         <dependencies>
+            <!-- 引入Spring Cloud的依赖版本管理 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -111,6 +114,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>

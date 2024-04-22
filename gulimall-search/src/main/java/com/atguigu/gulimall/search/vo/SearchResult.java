@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,7 +23,7 @@ public class SearchResult {
      */
 
     // 查询到的所有商品信息
-    private List<SkuEsModel> product;
+    private List<SkuEsModel> products;
 
     // 当前页码
     private Integer pageNum;
@@ -48,7 +49,8 @@ public class SearchResult {
     //===========================以上是返回给页面的所有信息============================//
 
     // 面包屑导航数据
-    private List<NavVo> navs;
+    private List<NavVo> navs = new ArrayList<>();
+    private List<Long> attrIds = new ArrayList<>();
 
     /**
      * NavVo 类封装了面包屑导航的名称、值和链接

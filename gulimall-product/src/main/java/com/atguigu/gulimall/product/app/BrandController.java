@@ -82,6 +82,14 @@ public class BrandController {
         }
     }
 
+    @GetMapping("/infos")
+    public R info(@RequestParam("brandIds") List<Long> brandIds) {
+        log.info("查询品牌信息，参数：{}", brandIds);
+
+        List<BrandEntity> brandEntities = brandService.getBrandsByIds(brandIds);
+
+        return R.ok().put("brand", brandEntities);
+    }
 
     /**
      * 保存品牌信息
@@ -101,6 +109,7 @@ public class BrandController {
         // 返回操作成功的响应
         return R.ok();
     }
+
 
 
     /**

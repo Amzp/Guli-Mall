@@ -102,6 +102,7 @@ public class AttrController {
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId) {
         log.info("获取属性信息：attrId = {}", attrId);
+
         // 通过属性ID获取属性信息，返回一个响应体，其中包含属性的详细信息
         AttrRespVo respVo = attrService.getAttrInfo(attrId);
 

@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -163,6 +164,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
      * @param attrId 属性ID
      * @return 返回属性的响应体对象，包含属性的详细信息
      */
+    @Cacheable(value = {"attr"}, key = "'attrInfo:'+#root.args[0]")
     @Override
     public AttrRespVo getAttrInfo(Long attrId) {
         AttrRespVo respVo = new AttrRespVo(); // 创建属性响应体对象
@@ -264,8 +266,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
      *
      * @param vos 属性与属性组关系的视图对象数组，包含需要删除的关系信息。
      *            每个视图对象代表一个属性与属性组的关系。
-     *
-     * 注：该方法首先将传入的视图对象数组转换为实体对象列表，然后批量删除这些关系。
+     *            <p>
+     *            注：该方法首先将传入的视图对象数组转换为实体对象列表，然后批量删除这些关系。
      */
     @Override
     public void deleteRelation(AttrGroupRelationVo[] vos) {
@@ -286,7 +288,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     /**
      * 获取当前分组没有关联的所有属性
      *
-     * @param params 请求参数，可包含分页信息和搜索关键字
+     * @param params      请求参数，可包含分页信息和搜索关键字
      * @param attrgroupId 当前属性分组的ID
      * @return 返回属性分页信息，包含未关联的属性列表
      */
@@ -332,6 +334,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     /**
      * 在指定的所有属性集合里，挑出检索属性
+     *
      * @param attrIds
      * @return
      */

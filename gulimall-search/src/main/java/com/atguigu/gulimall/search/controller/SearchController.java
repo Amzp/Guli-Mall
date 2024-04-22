@@ -37,6 +37,7 @@ public class SearchController {
      */
     @GetMapping(value = {"/list.html"})
     public String listPage(SearchParam param, Model model) {
+        log.info("处理用户请求，展示商品列表页面");
         // 执行商品搜索，根据搜索参数获取搜索结果
         SearchResult result = mallSearchService.search(param);
         // 将搜索结果添加到模型中，以便在页面上展示

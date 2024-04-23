@@ -3,7 +3,7 @@
 
 <mapper namespace="com.atguigu.gulimall.product.dao.SkuSaleAttrValueDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.atguigu.gulimall.product.entity.SkuSaleAttrValueEntity" id="skuSaleAttrValueMap">
         <result property="id" column="id"/>
         <result property="skuId" column="sku_id"/>
@@ -12,6 +12,35 @@
         <result property="attrValue" column="attr_value"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
+
+    <!-- 定义一个结果映射，用于将查询结果映射到SkuItemSaleAttrVo对象中 -->
+    <resultMap id="skuItemSaleAttrVo" type="com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo">
+        <!-- 映射属性id -->
+        <result column="attr_id" property="attrId"></result>
+        <!-- 映射属性名称 -->
+        <result column="attr_name" property="attrName"></result>
+        <!-- 映射属性值集合，每个属性值包含属性值本身和对应的sku_id集合 -->
+        <collection property="attrValues" ofType="com.atguigu.gulimall.product.vo.AttrValueWithSkuIdVo">
+            <!-- 映射属性值 -->
+            <result column="attr_value" property="attrValue"></result>
+            <!-- 映射对应的sku_id集合 -->
+            <result column="sku_ids" property="skuIds"></result>
+        </collection>
+    </resultMap>
+
+    <select id="getSaleAttrsBySpuId" resultMap="skuItemSaleAttrVo">
+        select sale_attr.attr_id                      as attr_id,
+               sale_attr.attr_name                    as attr_name,
+               sale_attr.attr_value                   as attr_value,
+               group_concat(distinct sku_info.sku_id) as sku_ids
+        from gulimall_pms.pms_sku_info as sku_info
+                 left join gulimall_pms.pms_sku_sale_attr_value as sale_attr
+                           on sku_info.sku_id = sale_attr.sku_id
+        where sku_info.spu_id = #{spuId}
+        group by sale_attr.attr_id,
+                 sale_attr.attr_name,
+                 sale_attr.attr_value
+    </select>
 
 
 </mapper>

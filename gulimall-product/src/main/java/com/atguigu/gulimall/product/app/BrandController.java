@@ -15,6 +15,8 @@ import com.atguigu.gulimall.product.service.BrandService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
+import javax.annotation.Resource;
+
 
 /**
  * 品牌
@@ -27,7 +29,7 @@ import com.atguigu.common.utils.R;
 @RequestMapping("product/brand")
 @Slf4j
 public class BrandController {
-    @Autowired
+    @Resource
     private BrandService brandService;
 
     /**

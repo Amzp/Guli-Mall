@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement //开启事务
 @MapperScan("com.atguigu.gulimall.product.dao")
+@Slf4j
 public class MyBatisConfig {
 
     /**
@@ -20,6 +22,7 @@ public class MyBatisConfig {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        log.debug("MyBatis分页插件，统一配置");
 
         // 配置分页参数
         // 设置当请求的页面大于最大页后的行为，true为回到首页，false为继续请求当前页
@@ -27,6 +30,7 @@ public class MyBatisConfig {
         // 设置最大单页限制数量，默认为500条，设置为1000条以适应需求
         paginationInterceptor.setLimit(1000);
 
+        log.debug("分页插件，统一配置：{}", paginationInterceptor);
         return paginationInterceptor;
     }
 

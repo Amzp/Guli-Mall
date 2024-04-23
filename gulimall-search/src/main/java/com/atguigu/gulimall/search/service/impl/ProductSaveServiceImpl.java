@@ -53,10 +53,13 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         for (SkuEsModel skuEsModel : skuEsModels) {
             // 为每个商品创建索引请求
             IndexRequest indexRequest = new IndexRequest(EsConstant.PRODUCT_INDEX);
+
             // 使用商品的ID作为该索引的ID
             indexRequest.id(skuEsModel.getSkuId().toString());
+
             // 将商品信息转换为JSON字符串，作为索引的源数据
             String jsonString = JSON.toJSONString(skuEsModel);
+
             indexRequest.source(jsonString, XContentType.JSON);
 
             // 将索引请求添加到批量请求中

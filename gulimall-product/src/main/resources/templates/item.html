@@ -459,7 +459,7 @@
 
                     <div class="box-lh-one">
                         <ul>
-                            <li th:each="img : ${item.images}"><img th:src="${img.imgUrl}"/></li>
+                            <li th:each="img : ${item.images}" th:if="${!#strings.isEmpty(img.imgUrl)}" ><img th:src="${img.imgUrl}"/></li>
                         </ul>
                     </div>
                     <div id="left">
@@ -633,29 +633,6 @@
                             </dd>
                         </dl>
                     </div>
-                    <!--							<div class="box-attr-2 clear">-->
-                    <!--								<dl>-->
-                    <!--									<dt>选择版本</dt>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">标准版</a>-->
-                    <!--									</dd>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">套装版</a>-->
-                    <!--									</dd>-->
-                    <!--								</dl>-->
-                    <!--							</div>-->
-
-                    <!--							<div class="box-attr-2 clear">-->
-                    <!--								<dl>-->
-                    <!--									<dt>选择内存</dt>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">64GB</a>-->
-                    <!--									</dd>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">128GB</a>-->
-                    <!--									</dd>-->
-                    <!--								</dl>-->
-                    <!--							</div>-->
                 </div>
 
                 <div class="box-btns clear">

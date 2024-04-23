@@ -11,23 +11,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+
+
+
 /**
  * 品牌分类关联
- * 
+ *
  * @author Rain^
  * @email 843524258@qq.com
  * @date 2019-11-17 21:25:25
  */
 @Data
-@TableName("pms_category_brand_relation")
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@TableName("pms_category_brand_relation")
 public class CategoryBrandRelationEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Long id;
@@ -40,11 +43,11 @@ public class CategoryBrandRelationEntity implements Serializable {
 	 */
 	private Long catelogId;
 	/**
-	 * 
+	 *
 	 */
 	private String brandName;
 	/**
-	 * 
+	 *
 	 */
 	private String catelogName;
 

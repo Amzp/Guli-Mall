@@ -101,7 +101,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         try {
             R skuHasStock = wareFeignService.getSkuHasStock(skuIdList);
             // 创建一个TypeReference实例，用于指定泛型列表的类型，其中列表元素类型为SkuHasStockVo。
-            TypeReference<List<SkuHasStockVo>> typeReference = new TypeReference<List<SkuHasStockVo>>(){};
+            TypeReference<List<SkuHasStockVo>> typeReference = new TypeReference<List<SkuHasStockVo>>() {
+            };
 
 
             stockMap = skuHasStock.getData(typeReference).stream()
@@ -145,11 +146,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // 将封装好的商品信息保存到ES中
         R r = searchFeignService.productStatusUp(upProducts);
-        if (r.getCode() == 0){
+        if (r.getCode() == 0) {
             // 远程调用成功
             // 修改当前spu状态
             this.baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
-        }else {
+        } else {
             // 远程调用失败
             // TODO 重复调用的问题：接口幂等性、重试机制
         }

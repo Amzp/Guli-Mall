@@ -56,6 +56,13 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- 引入spring-boot配置处理器依赖，用于自动处理和生成应用的配置类 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+
         <!-- Redis依赖，用于实现缓存功能-->
         <!-- 引入Spring Boot的Redis支持，采用starter方式，自动配置简化开发 -->
         <dependency>
@@ -94,6 +101,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+
 
     </dependencies>
     <!-- 依赖管理结束 -->

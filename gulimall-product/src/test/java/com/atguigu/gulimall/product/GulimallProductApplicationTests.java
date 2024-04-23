@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product;
 
 import com.atguigu.gulimall.product.dao.AttrGroupDao;
+import com.atguigu.gulimall.product.dao.SkuSaleAttrValueDao;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.service.BrandService;
 import com.atguigu.gulimall.product.service.CategoryService;
@@ -45,6 +46,24 @@ public class GulimallProductApplicationTests {
 
     @Resource
     private AttrGroupDao attrGroupDao;
+
+    @Resource
+    private SkuSaleAttrValueDao skuSaleAttrValueDao;
+
+
+    @Test
+    public void testSkuSaleAttrValueDao(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("testSkuSaleAttrValueDao()\n");
+
+
+        // testSkuSaleAttrValueDao Code
+        skuSaleAttrValueDao.getSaleAttrsBySpuId(13L).forEach(System.out::println);
+
+
+        System.out.printf("\ntestSkuSaleAttrValueDao  Execution time: %d ms", (System.currentTimeMillis() - startTime));
+    }
+
 
     @Test
     public void testAttrGroupDao(){

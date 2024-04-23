@@ -1,10 +1,10 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.entity.SpuInfoDescEntity;
-import com.atguigu.gulimall.product.service.AttrGroupService;
-import com.atguigu.gulimall.product.service.SkuImagesService;
-import com.atguigu.gulimall.product.service.SpuInfoDescService;
+import com.atguigu.gulimall.product.service.*;
+import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.atguigu.gulimall.product.vo.SkuItemVo;
 import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,9 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,7 +26,6 @@ import com.atguigu.common.utils.Query;
 
 import com.atguigu.gulimall.product.dao.SkuInfoDao;
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
-import com.atguigu.gulimall.product.service.SkuInfoService;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -33,12 +34,19 @@ import javax.annotation.Resource;
 @Service("skuInfoService")
 @Slf4j
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
+
     @Resource
     private SkuImagesService skuImagesService;
     @Resource
     private SpuInfoDescService spuInfoDescService;
     @Resource
     private AttrGroupService attrGroupService;
+    @Resource
+    private SkuSaleAttrValueService skuSaleAttrValueService;
+
+    @Resource
+    private ThreadPoolExecutor executor;
+
 
     /**
      * 查询SKU信息的分页数据。
@@ -146,30 +154,68 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         return this.list(new LambdaQueryWrapper<SkuInfoEntity>().eq(SkuInfoEntity::getSpuId, spuId));
     }
 
+    /**
+     * 查询商品详情信息
+     *
+     * @param skuId 商品ID，用于唯一标识需要查询的商品
+     * @return SkuItemVo 商品详情视图对象，封装了商品的基本信息、销售属性、描述、规格参数、图片等详细信息
+     */
     @Override
     public SkuItemVo item(Long skuId) {
-        SkuItemVo skuItemVo = new SkuItemVo();
-        // 1. sku基本信息获取
-        SkuInfoEntity info = this.getById(skuId);
-        skuItemVo.setInfo(info);
-        Long catalogId = info.getCatalogId();
-        Long spuId = info.getSpuId();
+        SkuItemVo skuItemVo = new SkuItemVo(); // 创建商品详情视图对象
 
-        // 2. sku图片信息
-        List<SkuImagesEntity> images = skuImagesService.getImagesBySkuId(skuId);
-        skuItemVo.setImages(images);
+        // 异步获取SKU基本信息
+        CompletableFuture<SkuInfoEntity> infoFuture = CompletableFuture.supplyAsync(() -> {
+            // 通过商品ID查询并获取SKU基本信息
+            SkuInfoEntity info = this.getById(skuId);
+            // 将查询到的SKU基本信息设置到商品详情视图对象中
+            skuItemVo.setInfo(info);
+            return info; // 返回获取到的SKU基本信息
+        }, executor);
 
-        // 3. 获取spu的销售属性组合
+        // 异步获取SKU销售属性组合
+        CompletableFuture<Void> saleAttrFuture = infoFuture.thenAcceptAsync(res -> {
+            // 根据获取到的SKU基本信息中的SPU ID，查询并获取该SPU的所有销售属性组合
+            List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueService.getSaleAttrsBySpuId(res.getSpuId());
+            // 将查询到的销售属性组合设置到商品详情视图对象中
+            skuItemVo.setSaleAttr(saleAttrVos);
+        }, executor);
 
-        // 4. 获取spu的介绍
-        SpuInfoDescEntity spuInfoDesc = spuInfoDescService.getById(spuId);
-        skuItemVo.setDesc(spuInfoDesc);
+        // 异步获取SPU介绍信息
+        CompletableFuture<Void> descFuture = infoFuture.thenAcceptAsync(res -> {
+            // 根据获取到的SKU基本信息中的SPU ID，查询并获取该SPU的详细介绍信息
+            SpuInfoDescEntity spuInfoDesc = spuInfoDescService.getById(res.getSpuId());
+            // 将查询到的SPU详细介绍信息设置到商品详情视图对象中
+            skuItemVo.setDesc(spuInfoDesc);
+        }, executor);
 
+        // 异步获取SPU规格参数信息
+        CompletableFuture<Void> baseAttrFuture = infoFuture.thenAcceptAsync(res -> {
+            // 根据获取到的SKU基本信息中的SPU ID和Catalog ID，查询并获取该SPU的规格参数信息
+            List<SpuItemAttrGroupVo> attrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(), res.getCatalogId());
+            // 将查询到的SPU规格参数信息设置到商品详情视图对象中
+            skuItemVo.setGroupAttrs(attrGroupVos);
+        }, executor);
 
-        // 5. 获取spu的规格参数信息
-        List<SpuItemAttrGroupVo> attrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
-        skuItemVo.setGroupAttrs(attrGroupVos);
+        // 异步获取SKU图片信息
+        CompletableFuture<Void> imageFuture = CompletableFuture.runAsync(() -> {
+            // 通过商品ID查询并获取该SKU的所有图片信息
+            List<SkuImagesEntity> images = skuImagesService.getImagesBySkuId(skuId);
+            // 将查询到的SKU图片信息设置到商品详情视图对象中
+            skuItemVo.setImages(images);
+        }, executor);
 
-        return null;
+        // 等待所有异步任务完成
+        try {
+            // 使用CompletableFuture.allOf()方法等待所有异步任务完成
+            CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture).get();
+        } catch (InterruptedException | ExecutionException e) {
+            // 若在等待过程中发生异常，抛出运行时异常
+            log.error("商品详情信息获取失败", e);
+            throw new RuntimeException(e);
+        }
+
+        return skuItemVo; // 返回填充完毕的商品详情视图对象
     }
+
 }

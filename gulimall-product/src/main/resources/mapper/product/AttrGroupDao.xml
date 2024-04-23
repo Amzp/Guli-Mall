@@ -3,7 +3,7 @@
 
 <mapper namespace="com.atguigu.gulimall.product.dao.AttrGroupDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.atguigu.gulimall.product.entity.AttrGroupEntity" id="attrGroupMap">
         <result property="attrGroupId" column="attr_group_id"/>
         <result property="attrGroupName" column="attr_group_name"/>
@@ -12,6 +12,39 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+
+    <!-- 定义一个 resultMap，用于将数据库查询结果映射到 com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo 对象中 -->
+    <resultMap id="spuAttrGroup" type="com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo">
+        <!-- 映射 groupName 属性到数据库中的 attr_group_name 列 -->
+        <result property="groupName" column="attr_group_name"/>
+        <!-- 定义一个集合属性 attrs，用于映射多个 com.atguigu.gulimall.product.vo.Attr 对象 -->
+        <collection property="attrs" ofType="com.atguigu.gulimall.product.vo.Attr">
+            <!-- 映射 attrId 属性到数据库中的 attr_id 列 -->
+            <result property="attrId" column="attr_id"></result>
+            <!-- 映射 attrName 属性到数据库中的 attr_name 列 -->
+            <result property="attrName" column="attr_name"></result>
+            <!-- 映射 attrValue 属性到数据库中的 attr_value 列 -->
+            <result property="attrValue" column="attr_value"></result>
+        </collection>
+    </resultMap>
+
+    <!-- 根据SPU ID和目录ID获取属性组及其属性信息 -->
+    <select id="getAttrGroupWithAttrsBySpuId" resultType="com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo">
+        SELECT product.spu_id,  -- SPU ID
+               pag.attr_group_id,  -- 属性组ID
+               pag.attr_group_name,  -- 属性组名称
+               product.attr_id,  -- 属性ID
+               product.attr_name,  -- 属性名称
+               product.attr_value  -- 属性值
+        FROM gulimall_pms.pms_product_attr_value as product  -- 商品属性值表
+                 LEFT JOIN gulimall_pms.pms_attr_attrgroup_relation as paar  -- 属性和属性组关系表
+                           ON product.attr_id = paar.attr_id
+                 LEFT JOIN gulimall_pms.pms_attr_group as pag  -- 属性组表
+                           ON paar.attr_group_id = pag.attr_group_id
+        WHERE product.spu_id = #{spuId}  -- 指定的SPU ID
+          AND pag.catelog_id = #{catalogId}  -- 指定的目录ID
+    </select>
+
 
 
 </mapper>

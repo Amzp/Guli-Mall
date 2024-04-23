@@ -1,16 +1,16 @@
-/**
-  * Copyright 2019 bejson.com 
-  */
 package com.atguigu.gulimall.product.vo;
 
 import lombok.Data;
+import lombok.ToString;
+
 
 
 @Data
-public class Attr {
+@ToString
+public class SpuBaseAttrVo {
 
-    private Long attrId;
     private String attrName;
+
     private String attrValue;
 
 }

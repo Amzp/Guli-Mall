@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product;
 
+import com.atguigu.gulimall.product.dao.AttrGroupDao;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.service.BrandService;
 import com.atguigu.gulimall.product.service.CategoryService;
@@ -41,6 +42,24 @@ public class GulimallProductApplicationTests {
 
     @Resource
     private RedissonClient redissonClient;
+
+    @Resource
+    private AttrGroupDao attrGroupDao;
+
+    @Test
+    public void testAttrGroupDao(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("testAttrGroupDao()\n");
+
+
+        // testAttrGroupDao Code
+//        attrGroupDao.selectList(null).forEach(System.out::println);
+
+        attrGroupDao.getAttrGroupWithAttrsBySpuId(100L,225L).forEach(System.out::println);
+
+
+        System.out.printf("\ntestAttrGroupDao  Execution time: %d ms", (System.currentTimeMillis() - startTime));
+    }
 
     @Test
     public void testRedissonClient(){

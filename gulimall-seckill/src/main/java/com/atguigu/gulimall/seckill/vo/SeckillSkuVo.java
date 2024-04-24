@@ -1,4 +1,4 @@
-package com.atguigu.gulimall.product.vo;
+package com.atguigu.gulimall.seckill.vo;
 
 import lombok.Data;
 
@@ -8,12 +8,13 @@ import java.math.BigDecimal;
  * @Description:
  * @Created: with IntelliJ IDEA.
  * @author: Rain^
- * @createTime: 2020-07-10 15:57
+ * @createTime: 2020-07-09 21:13
  **/
 
 @Data
 public class SeckillSkuVo {
 
+    private Long id;
     /**
      * 活动id
      */
@@ -42,14 +43,5 @@ public class SeckillSkuVo {
      * 排序
      */
     private Integer seckillSort;
-
-    //当前商品秒杀的开始时间
-    private Long startTime;
-
-    //当前商品秒杀的结束时间
-    private Long endTime;
-
-    //当前商品秒杀的随机码
-    private String randomCode;
 
 }

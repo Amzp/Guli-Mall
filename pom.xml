@@ -17,17 +17,22 @@
 
     <!-- 项目模块结构，定义了项目包含的子模块 -->
     <modules>
+        <module>gulimall-auth-server</module>
+        <module>gulimall-cart</module>
         <module>gulimall-common</module>
         <module>gulimall-coupon</module>
-        <module>gulimall-member</module>
         <module>gulimall-gateway</module>
+        <module>gulimall-member</module>
         <module>gulimall-order</module>
         <module>gulimall-product</module>
+        <module>gulimall-search</module>
+        <module>gulimall-seckill</module>
+        <module>gulimall-test-sso-client</module>
+        <module>gulimall-test-sso-server</module>
         <module>gulimall-third-party</module>
         <module>gulimall-ware</module>
-        <module>gulimall-search</module>
 
-        <module>renren-fast</module>
+<!--        <module>renren-fast</module>-->
 <!--        <module>renren-generator</module>-->
     </modules>
 

@@ -1,18 +1,19 @@
-package com.atguigu.gulimall.product.vo;
+package com.atguigu.gulimall.seckill.to;
 
+import com.atguigu.gulimall.seckill.vo.SkuInfoVo;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 /**
- * @Description:
+ * @Description: 给Redis中存放的skuInfo的信息
  * @Created: with IntelliJ IDEA.
  * @author: Rain^
- * @createTime: 2020-07-10 15:57
+ * @createTime: 2020-07-09 21:39
  **/
 
 @Data
-public class SeckillSkuVo {
+public class SeckillSkuRedisTo {
 
     /**
      * 活动id
@@ -43,6 +44,9 @@ public class SeckillSkuVo {
      */
     private Integer seckillSort;
 
+    //sku的详细信息
+    private SkuInfoVo skuInfo;
+
     //当前商品秒杀的开始时间
     private Long startTime;
 
@@ -51,5 +55,4 @@ public class SeckillSkuVo {
 
     //当前商品秒杀的随机码
     private String randomCode;
-
 }

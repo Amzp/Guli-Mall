@@ -2,11 +2,9 @@ package com.atguigu.gulimall.thirdparty.controller;
 
 
 import com.atguigu.common.utils.R;
-import com.atguigu.gulimall.thirdparty.component.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

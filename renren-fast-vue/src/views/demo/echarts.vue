@@ -35,8 +35,9 @@
 </template>
 
 <script>
-  import echarts from 'echarts'
-  export default {
+import echarts from 'echarts'
+
+export default {
     data () {
       return {
         chartLine: null,

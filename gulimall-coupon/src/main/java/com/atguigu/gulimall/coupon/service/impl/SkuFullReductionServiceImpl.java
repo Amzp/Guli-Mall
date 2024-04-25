@@ -2,30 +2,26 @@ package com.atguigu.gulimall.coupon.service.impl;
 
 import com.atguigu.common.to.MemberPrice;
 import com.atguigu.common.to.SkuReductionTo;
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.Query;
+import com.atguigu.gulimall.coupon.dao.SkuFullReductionDao;
 import com.atguigu.gulimall.coupon.entity.MemberPriceEntity;
+import com.atguigu.gulimall.coupon.entity.SkuFullReductionEntity;
 import com.atguigu.gulimall.coupon.entity.SkuLadderEntity;
 import com.atguigu.gulimall.coupon.service.MemberPriceService;
+import com.atguigu.gulimall.coupon.service.SkuFullReductionService;
 import com.atguigu.gulimall.coupon.service.SkuLadderService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.Query;
-
-import com.atguigu.gulimall.coupon.dao.SkuFullReductionDao;
-import com.atguigu.gulimall.coupon.entity.SkuFullReductionEntity;
-import com.atguigu.gulimall.coupon.service.SkuFullReductionService;
-
-import javax.annotation.Resource;
 
 
 @Service("skuFullReductionService")

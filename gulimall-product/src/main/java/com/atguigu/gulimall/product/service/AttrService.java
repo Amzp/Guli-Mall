@@ -1,11 +1,11 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.gulimall.product.entity.AttrEntity;
 import com.atguigu.gulimall.product.vo.AttrGroupRelationVo;
 import com.atguigu.gulimall.product.vo.AttrRespVo;
 import com.atguigu.gulimall.product.vo.AttrVo;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.gulimall.product.entity.AttrEntity;
 
 import java.util.List;
 import java.util.Map;

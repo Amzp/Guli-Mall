@@ -2,13 +2,8 @@ package com.atguigu.gulimall.thirdparty.component;
 
 
 import lombok.Data;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @ConfigurationProperties(prefix = "spring.cloud.alicloud.sms")

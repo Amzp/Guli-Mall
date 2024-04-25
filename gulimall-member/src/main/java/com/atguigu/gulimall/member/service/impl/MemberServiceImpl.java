@@ -1,27 +1,25 @@
 package com.atguigu.gulimall.member.service.impl;
 
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.Query;
+import com.atguigu.gulimall.member.dao.MemberDao;
 import com.atguigu.gulimall.member.dao.MemberLevelDao;
+import com.atguigu.gulimall.member.entity.MemberEntity;
 import com.atguigu.gulimall.member.entity.MemberLevelEntity;
 import com.atguigu.gulimall.member.exception.PhoneException;
 import com.atguigu.gulimall.member.exception.UsernameException;
+import com.atguigu.gulimall.member.service.MemberService;
+import com.atguigu.gulimall.member.vo.MemberUserLoginVo;
 import com.atguigu.gulimall.member.vo.MemberUserRegisterVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.Query;
-
-import com.atguigu.gulimall.member.dao.MemberDao;
-import com.atguigu.gulimall.member.entity.MemberEntity;
-import com.atguigu.gulimall.member.service.MemberService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 
 @Service("memberService")
@@ -94,5 +92,37 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         if (memberDao.selectCount(new LambdaQueryWrapper<MemberEntity>().eq(MemberEntity::getUsername, userName)) > 0) {
             throw new UsernameException(); // 抛出用户名不唯一的异常
         }
+    }
+
+
+    /**
+     * 用户登录。
+     *
+     * @param vo 包含登录账号和密码的会员用户登录信息对象
+     * @return 如果登录成功，返回对应的会员实体；如果登录失败，返回null
+     */
+    @Override
+    public MemberEntity login(MemberUserLoginVo vo) {
+        String loginacct = vo.getLoginacct(); // 获取登录账号
+        String password = vo.getPassword(); // 获取密码
+
+        // 通过账号查询会员实体，支持使用用户名或手机号登录
+        MemberDao memberDao = this.baseMapper;
+        MemberEntity memberEntity = memberDao.selectOne(new LambdaQueryWrapper<MemberEntity>().eq(MemberEntity::getUsername, loginacct).or().eq(MemberEntity::getMobile, loginacct));
+
+        if (memberEntity != null) {
+            // 验证密码
+            String passwordDb = memberEntity.getPassword(); // 从数据库获取的密码
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // 使用BCrypt加密算法进行密码匹配
+            boolean matches = passwordEncoder.matches(password, passwordDb); // 检查密码是否匹配
+
+            if (matches) {
+                // 密码匹配成功，返回会员实体
+                return memberEntity;
+            }
+        }
+
+        // 登录失败，返回null
+        return null;
     }
 }

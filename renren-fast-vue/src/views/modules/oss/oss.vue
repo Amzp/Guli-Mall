@@ -67,9 +67,10 @@
 </template>
 
 <script>
-  import Config from './oss-config'
-  import Upload from './oss-upload'
-  export default {
+import Config from './oss-config'
+import Upload from './oss-upload'
+
+export default {
     data () {
       return {
         dataForm: {},

@@ -15,6 +15,6 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface MemberLevelDao extends BaseMapper<MemberLevelEntity> {
 
-    @Select("select * from gulimall_ums.ums_member_level where default_status = 1")
+    @Select("select * from gulimall_ums.ums_member_level where default_status = 0")
     MemberLevelEntity getDefaultLevel();
 }

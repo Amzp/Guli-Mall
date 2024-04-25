@@ -1,9 +1,9 @@
 package com.atguigu.gulimall.product.service;
 
-import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.SkuSaleAttrValueEntity;
+import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;

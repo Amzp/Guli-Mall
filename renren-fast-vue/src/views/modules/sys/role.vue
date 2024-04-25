@@ -75,8 +75,9 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
-  export default {
+import AddOrUpdate from './role-add-or-update'
+
+export default {
     data () {
       return {
         dataForm: {

@@ -83,9 +83,10 @@
 </template>
 
 <script>
-  import AddOrUpdate from './menu-add-or-update'
-  import { treeDataTranslate } from '@/utils'
-  export default {
+import AddOrUpdate from './menu-add-or-update'
+import {treeDataTranslate} from '@/utils'
+
+export default {
     data () {
       return {
         dataForm: {},

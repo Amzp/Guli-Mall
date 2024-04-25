@@ -1,7 +1,5 @@
 package com.atguigu.common.constant;
 
-import lombok.Data;
-
 /**
  * ProductConstant类用于定义商品相关的常量。
  */

@@ -1,21 +1,20 @@
 package com.atguigu.gulimall.product.app;
 
-import java.util.*;
-
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.R;
 import com.atguigu.common.valid.AddGroup;
 import com.atguigu.common.valid.UpdateGroup;
 import com.atguigu.common.valid.UpdateStatusGroup;
+import com.atguigu.gulimall.product.entity.BrandEntity;
+import com.atguigu.gulimall.product.service.BrandService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gulimall.product.entity.BrandEntity;
-import com.atguigu.gulimall.product.service.BrandService;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.R;
-
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 /**

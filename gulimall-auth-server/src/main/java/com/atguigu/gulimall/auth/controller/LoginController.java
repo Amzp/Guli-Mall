@@ -4,12 +4,13 @@ import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.constant.AuthServerConstant;
 import com.atguigu.common.exception.BizCodeEnume;
 import com.atguigu.common.utils.R;
+import com.atguigu.gulimall.auth.feign.MemberFeignService;
 import com.atguigu.gulimall.auth.feign.ThirdPartFeignService;
+import com.atguigu.gulimall.auth.vo.UserLoginVo;
 import com.atguigu.gulimall.auth.vo.UserRegisterVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,9 @@ public class LoginController {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private MemberFeignService memberFeignService;
 
     /**
      * 发送验证码
@@ -98,13 +103,15 @@ public class LoginController {
         if (result.hasErrors()) {
             // 收集并整理验证错误信息
             Map<String, String> errors = result.getFieldErrors()
-                    .stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+                    .stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
 
             // 将错误信息添加至重定向属性中，以便在重定向至注册页面时显示给用户
             attributes.addFlashAttribute("errors", errors);
 
             log.debug("注册信息有误，返回注册页面...");
             return "redirect:http://auth.gulimall.com/reg.html"; // 重定向回注册页面
+
         }
 
         // 开始处理验证码验证与用户注册逻辑
@@ -158,6 +165,30 @@ public class LoginController {
             log.debug("验证码错误（未找到或已过期），返回注册页面...");
             return "redirect:http://auth.gulimall.com/reg.html"; // 重定向回注册页面
         }
+    }
+
+
+    @PostMapping("/login")
+    public String login(UserLoginVo vo, RedirectAttributes attributes) {
+        log.debug("开始登录...");
+
+        // 远程登陆
+        R login = memberFeignService.login(vo);
+        if (login.getCode() == 0) {
+            // 登录成功
+            log.debug("登录成功，重定向至首页...");
+            return "redirect:http://gulimall.com";
+        } else {
+            // 登录失败
+            Map<String, String> errors = new HashMap<>();
+            errors.put("msg", login.getData("msg", new TypeReference<String>() {
+            }));
+            attributes.addFlashAttribute("errors", errors);
+
+            log.debug("登录失败，重定向至登录页面...");
+            return "redirect:http://auth.gulimall.com/login.html";
+        }
+
     }
 
 

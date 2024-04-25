@@ -1,23 +1,21 @@
 package com.atguigu.gulimall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.atguigu.common.exception.BizCodeEnume;
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.R;
+import com.atguigu.gulimall.member.entity.MemberEntity;
 import com.atguigu.gulimall.member.exception.PhoneException;
 import com.atguigu.gulimall.member.exception.UsernameException;
 import com.atguigu.gulimall.member.feign.CouponFeignService;
+import com.atguigu.gulimall.member.service.MemberService;
+import com.atguigu.gulimall.member.vo.MemberUserLoginVo;
 import com.atguigu.gulimall.member.vo.MemberUserRegisterVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gulimall.member.entity.MemberEntity;
-import com.atguigu.gulimall.member.service.MemberService;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.R;
-import com.atguigu.common.exception.BizCodeEnume;
-
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -38,24 +36,54 @@ public class MemberController {
     CouponFeignService couponFeignService;
 
 
-    @PostMapping("/register")
-    public R register(@RequestBody MemberUserRegisterVo vo) {
+    /**
+     * 处理用户登录请求。
+     *
+     * @param vo 包含登录所需信息的会员用户登录视图对象，例如账号和密码。
+     * @return 返回一个结果对象，如果登录成功，返回成功标志；如果登录失败，返回错误信息。
+     */
+    @PostMapping("/login")
+    public R login(@RequestBody MemberUserLoginVo vo) {
+        log.debug("开始登录...");
 
-//        try {
-//            log.debug("开始注册用户信息...");
-//            memberService.register(vo);
-//        } catch (PhoneException e) {
-//            return R.error(BizCodeEnume.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEnum.PHONE_EXIST_EXCEPTION.getMessage());
-//        } catch (UsernameException e) {
-//            return R.error(BizCodeEnum.USER_EXIST_EXCEPTION.getCode(),BizCodeEnum.USER_EXIST_EXCEPTION.getMessage());
-//        }
+        // 尝试登录，根据提供的账号和密码信息验证用户
+        MemberEntity memberEntity = memberService.login(vo);
 
+        // 如果登录失败（用户不存在或密码错误），返回相应的错误信息
+        if (memberEntity == null) {
+            log.debug("用户名或密码错误...");
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getCode(), BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+
+        // 登录成功，返回成功标志
+        log.debug("登录成功...");
         return R.ok();
     }
 
 
+    /**
+     * 用户注册接口
+     *
+     * @param vo 用户注册信息对象，包含用户名、密码、手机号等信息
+     * @return 返回操作结果，成功返回操作成功的标识，失败返回错误信息
+     */
+    @PostMapping("/register")
+    public R register(@RequestBody MemberUserRegisterVo vo) {
+        try {
+            log.debug("开始注册用户信息...");
+            memberService.register(vo);
+        } catch (PhoneException e) {
+            // 捕获手机号已存在的异常
+            log.debug("手机号已存在...");
+            return R.error(BizCodeEnume.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEnume.PHONE_EXIST_EXCEPTION.getMsg());
+        } catch (UsernameException e) {
+            // 捕获用户名已存在的异常
+            log.debug("用户名已存在...");
+            return R.error(BizCodeEnume.USER_EXIST_EXCEPTION.getCode(),BizCodeEnume.USER_EXIST_EXCEPTION.getMsg());
+        }
 
-
+        return R.ok();
+    }
 
 
     /**

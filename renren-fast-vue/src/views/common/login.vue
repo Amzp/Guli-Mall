@@ -37,8 +37,9 @@
 </template>
 
 <script>
-  import { getUUID } from '@/utils'
-  export default {
+import {getUUID} from '@/utils'
+
+export default {
     data () {
       return {
         dataForm: {

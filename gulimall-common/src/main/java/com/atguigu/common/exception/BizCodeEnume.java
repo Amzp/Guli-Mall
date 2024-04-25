@@ -14,29 +14,32 @@ package com.atguigu.common.exception;
  * <p>    - 12: 订单
  * <p>    - 13: 购物车
  * <p>    - 14: 物流
+ * <p>    - 15: 用户
  */
 public enum BizCodeEnume {
-    // 系统未知异常，错误码为10000，错误信息为"系统未知异常"
+    // 定义系统中可能出现的各种异常类型，包括异常编码和异常信息
     UNKNOW_EXCEPTION(10000, "系统未知异常"),
-    // 参数格式校验失败，错误码为10001，错误信息为"参数格式校验失败"
+    // 表示参数格式校验失败的异常
     VAILD_EXCEPTION(10001, "参数格式校验失败"),
-    // 验证码获取频率过高，错误码为10002，错误信息为"验证码已发送，请稍后再试"
+    // 表示在短时间内频繁获取验证码导致的异常
     SMS_CODE_EXCEPTION(10002, "验证码已发送，请稍后再试"),
-    // 商品上架异常，错误码为11000，错误信息为"商品上架异常"
+    // 表示商品上架过程中出现的异常
     PRODUCT_UP_EXCEPTION(11000, "商品上架异常"),
 
-    // 购物车服务异常，错误码为12000，错误信息为"购物车服务异常"
-    CART_SERVICE_EXCEPTION(12000, "购物车服务异常"),
-    // 订单服务异常，错误码为13000，错误信息为"订单服务异常"
-    ORDER_SERVICE_EXCEPTION(13000, "订单服务异常"),
-    // 订单服务异常，错误码为14000，错误信息为"物流服务异常"
-    WARE_SERVICE_EXCEPTION(14000, "物流服务异常"),
-    // 订单服务异常，错误码为15000，错误信息为"秒杀服务异常"
-    SECKILL_SERVICE_EXCEPTION(15000, "秒杀服务异常");
+    // 用户注册时，发现已存在相同用户名的异常
+    USER_EXIST_EXCEPTION(15001,"存在相同的用户"),
+    // 用户注册时，发现已存在相同手机号的异常
+    PHONE_EXIST_EXCEPTION(15002,"存在相同的手机号"),
+    // 下单时，发现商品库存不足的异常
+    NO_STOCK_EXCEPTION(21000,"商品库存不足"),
+    // 用户登录时，账号或密码错误的异常
+    LOGINACCT_PASSWORD_EXCEPTION(15003,"账号或密码错误"),
+    ;
+
 
 
     // 错误码
-    private int code;
+    private Integer code;
     // 错误信息
     private String msg;
 
@@ -46,7 +49,7 @@ public enum BizCodeEnume {
      * @param code 错误码
      * @param msg  错误信息
      */
-    BizCodeEnume(int code, String msg) {
+    BizCodeEnume(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
@@ -56,7 +59,7 @@ public enum BizCodeEnume {
      *
      * @return 错误码
      */
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 

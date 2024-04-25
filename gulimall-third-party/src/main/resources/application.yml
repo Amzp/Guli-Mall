@@ -1,23 +1,64 @@
+# 配置Nacos服务发现
 spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
+
+    # 配置阿里云服务
     alicloud:
-      access-key:
-      secret-key:
-      oss:
-        endpoint: oss-cn-beijing.aliyuncs.com
-        bucket:
+      access-key: # 阿里云访问密钥的Access Key
+      secret-key: # 阿里云访问密钥的Secret Key
+      oss: # 阿里云对象存储服务配置
+        endpoint: oss-cn-beijing.aliyuncs.com # OSS服务的Endpoint
+        bucket: # OSS的存储桶名称
 
+
+#  mail:
+#    # 邮箱服务器的主机名，这里配置的是QQ邮箱的SMTP服务器
+#    host: smtp.qq.com
+#    # 邮箱服务器的端口号，QQ邮箱的SMTP端口为465
+#    port: 465
+#    # 邮箱的用户名，即你的QQ邮箱地址
+#    username:
+#    # 邮箱的授权码，用于身份验证，需要在邮箱设置中获取
+#    password:
+#    # 是否测试连接以验证配置的正确性
+#    test-connection: true
+#    # 邮件发送的属性配置，这里主要配置SSL加密
+#    properties:
+#      mail:
+#        smtp:
+#          ssl:
+#            # 是否启用SSL加密发送邮件
+#            enable: true
+#  mail:
+#    host: smtp.qq.com
+#    username: 发件的邮箱
+#    password: 发件邮箱的授权码
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#            required: true
+
+
+# 应用配置
   application:
-    name: gulimall-third-party
+    name: gulimall-third-party # 应用名称
 
+# 服务器配置
 server:
-  port: 30000
+  port: 30000 # 服务端口号
 
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug，用于调试信息输出
+
+
+
+
 

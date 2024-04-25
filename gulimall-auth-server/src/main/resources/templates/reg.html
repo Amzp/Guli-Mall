@@ -5988,8 +5988,8 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 		</div>
 		<div class="register-box">
 			<label class="other_label">
-				<span>中国 0086∨</span>
-				<input name="phone" class="phone" id="phoneNum" maxlength="20" type="text" placeholder="建议使用常用手机">
+				<span>手 机 号</span>
+				<input name="phone" class="phone" id="phoneNum" maxlength="20" type="text" placeholder="后台默认使用qq邮箱">
 			</label>
 			<div class="tips" style="color: red" th:text="${errors != null ? (#maps.containsKey(errors, 'phone') ? errors.phone : '') : ''}">
 
@@ -6263,7 +6263,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 			} else {
 				//1、给指定手机号发送验证码
 				$.get("/sms/sendCode?phone=" + $("#phoneNum").val(),function (data) {
-					if(data.code != 0) {
+					if(data.code !== 0) {
 						alert(data.msg);
 					}
 				});
@@ -6275,7 +6275,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
     var num = 60;
     function timeoutChangeStyle() {
     	$("#sendCode").attr("class","disabled");
-    	if(num == 0) {
+    	if(num === 0) {
 			$("#sendCode").text("发送验证码");
 			num = 60;
 			$("#sendCode").attr("class","");

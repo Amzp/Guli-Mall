@@ -1,0 +1,60 @@
+# 配置服务器端口
+server:
+  port: 20000
+
+  # 配置servlet会话超时时间
+  servlet:
+    session:
+      timeout: 30m
+
+# 配置应用名称及服务发现
+spring:
+  application:
+    name: gulimall-auth-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848  # Nacos服务发现地址
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+
+  # 配置Redis连接信息
+  redis:
+    host: 192.168.56.10
+    port: 6379
+
+  # 关闭Thymeleaf缓存
+  thymeleaf:
+    cache: false
+
+  # 使用Redis存储Session
+  session:
+    store-type: redis
+
+# 启用Feign对Sentinel的支持配置
+feign:
+  sentinel:
+    # 启用Sentinel
+    enabled: true
+  client:
+    config:
+      default:
+        # Feign默认配置
+        connect-timeout: 10000 # 连接超时时间
+        read-timeout: 10000 # 读取超时时间
+
+
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+
+# 暴露所有Actuator端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'  # 包括所有端点

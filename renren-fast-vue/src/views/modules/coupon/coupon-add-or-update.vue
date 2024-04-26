@@ -92,6 +92,7 @@
 
 <script>
 import SingleUpload from '@/components/upload/singleUpload'
+
 export default {
   components: { SingleUpload },
   data () {

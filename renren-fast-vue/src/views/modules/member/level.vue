@@ -102,6 +102,7 @@
 
 <script>
 import AddOrUpdate from './memberlevel-add-or-update'
+
 export default {
   data () {
     return {

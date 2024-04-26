@@ -103,6 +103,7 @@
 
 <script>
 import AddOrUpdate from './purchasedetail-add-or-update'
+
 export default {
   data () {
     return {

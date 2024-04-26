@@ -6,6 +6,7 @@ import com.atguigu.gulimall.member.exception.PhoneException;
 import com.atguigu.gulimall.member.exception.UsernameException;
 import com.atguigu.gulimall.member.vo.MemberUserLoginVo;
 import com.atguigu.gulimall.member.vo.MemberUserRegisterVo;
+import com.atguigu.gulimall.member.vo.SocialUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -28,5 +29,7 @@ public interface MemberService extends IService<MemberEntity> {
     void checkUsernameUnique(String userName) throws UsernameException;
 
     MemberEntity login(MemberUserLoginVo vo);
+
+    MemberEntity login(SocialUser socialUser);
 }
 

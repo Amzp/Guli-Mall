@@ -6,11 +6,11 @@ import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
 import com.atguigu.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 public class OssController {
     // OSS客户端
-    @Autowired
+    @Resource
     OSS ossClient;
 
     // OSS的Endpoint

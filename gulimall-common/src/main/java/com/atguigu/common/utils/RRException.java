@@ -14,7 +14,7 @@ package com.atguigu.common.utils;
  * @author Mark sunlightcs@gmail.com
  */
 public class RRException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1333322616554450887L;
 	
     private String msg;
     private int code = 500;

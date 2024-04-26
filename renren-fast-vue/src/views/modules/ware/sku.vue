@@ -57,6 +57,7 @@
 
 <script>
 import AddOrUpdate from './waresku-add-or-update'
+
 export default {
   data () {
     return {

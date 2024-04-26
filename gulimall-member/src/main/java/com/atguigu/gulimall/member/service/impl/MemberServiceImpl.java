@@ -11,6 +11,7 @@ import com.atguigu.gulimall.member.exception.UsernameException;
 import com.atguigu.gulimall.member.service.MemberService;
 import com.atguigu.gulimall.member.vo.MemberUserLoginVo;
 import com.atguigu.gulimall.member.vo.MemberUserRegisterVo;
+import com.atguigu.gulimall.member.vo.SocialUser;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -41,7 +42,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
      * 注册会员用户。
      *
      * @param vo 包含会员用户注册信息的Vo对象，其中应包括用户名、手机号等必要信息。
-     *          Vo对象中应至少包含用户名、手机号和密码。
+     *           Vo对象中应至少包含用户名、手机号和密码。
      */
     @Override
     public void register(MemberUserRegisterVo vo) {
@@ -67,7 +68,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         memberDao.insert(memberEntity); // 将会员实体插入到数据库
     }
-
 
 
     @Override
@@ -124,5 +124,47 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         // 登录失败，返回null
         return null;
+    }
+
+    /**
+     * 社交用户登录方法。
+     * 该方法首先会尝试根据社交用户的UID（唯一标识）查找系统中是否已有该用户，
+     * 如果已存在，则更新用户的访问令牌和过期时间，并返回该用户实体；
+     * 如果不存在，则创建新用户，并保存其社交UID、访问令牌、过期时间等信息，然后返回该新用户实体。
+     *
+     * @param socialUser 社交用户信息，包含UID、访问令牌、过期时间等。
+     * @return MemberEntity 登录或注册后的用户实体。
+     */
+    @Override
+    public MemberEntity login(SocialUser socialUser) {
+        // 判断当前社交用户是否已经登陆过系统
+        String uid = socialUser.getUid();
+        MemberDao memberDao = this.baseMapper;
+        MemberEntity memberEntity = memberDao.selectOne(new LambdaQueryWrapper<MemberEntity>().eq(MemberEntity::getSocialUid, uid));
+        if (memberEntity != null) {
+            // 已经注册的用户，更新访问令牌和过期时间
+            MemberEntity update = MemberEntity.builder()
+                    .id(memberEntity.getId())
+                    .accessToken(socialUser.getAccess_token())
+                    .expiresIn(socialUser.getExpires_in()).build();
+
+            memberDao.updateById(update);
+
+            memberEntity.setAccessToken(socialUser.getAccess_token());
+            memberEntity.setExpiresIn(socialUser.getExpires_in());
+
+            return memberEntity;
+        } else {
+            // 未注册的用户，创建新用户并保存相关信息
+            MemberEntity register = new MemberEntity();
+            register.setUsername(socialUser.getUserName())
+                    .setSocialUid(socialUser.getUid())
+                    .setAccessToken(socialUser.getAccess_token())
+                    .setExpiresIn(socialUser.getExpires_in());
+
+            memberDao.insert(register);
+
+            return register;
+        }
     }
 }

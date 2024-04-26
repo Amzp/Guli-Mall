@@ -64,6 +64,7 @@
 
 <script>
 import AddOrUpdate from './seckillskurelation-add-or-update'
+
 export default {
   data () {
     return {

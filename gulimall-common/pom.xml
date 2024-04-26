@@ -30,44 +30,44 @@
         </plugins>
     </build>
 
+    <!-- 项目依赖配置 -->
     <dependencies>
-        <!--mybatis-plus-->
+        <!-- MyBatis Plus：一个MyBatis的扩展，提供了CRUD操作的简化，动态 SQL 支持等 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.2.0</version>
         </dependency>
 
+        <!-- Project Lombok：一个注解处理器，简化JavaBean的开发 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
         </dependency>
 
-        <!--Apache httpclient依赖，用于发送http请求-->
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+        <!-- Apache HttpClient：用于发送HTTP请求的客户端库 -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>4.4.12</version>
         </dependency>
 
-        <!--导入commons-lang依赖，用于字符串处理-->
+        <!-- Commons Lang：提供了对字符串操作的工具类 -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
 
-        <!--导入mysql驱动-->
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <!-- MySQL Connector：用于连接MySQL数据库的驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.17</version>
         </dependency>
 
-
+        <!-- Servlet API：用于开发Web应用的标准接口 -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -75,26 +75,82 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- nacos服务注册/发现：Spring Cloud应用将能够自动注册到Nacos服务注册中心，并从中发现其他服务，可以在微服务架构中实现服务的自动化管理。-->
+        <!-- Nacos Discovery：用于服务发现和注册的功能依赖 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!--nacos作为配置中心来做配置管理：Spring Cloud应用将能够从Nacos配置中心获取配置信息，实现配置的集中管理和动态刷新。-->
+        <!-- Nacos Config：用于配置管理的功能依赖 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!--Java Validation API是Java EE和Jakarta EE的一部分，允许开发者以声明的方式对Java Bean中的字段、方法参数等进行约束定义和验证。-->
+        <!-- Java Validation API：用于验证Java Bean字段的约束 -->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>2.0.1.Final</version>
         </dependency>
 
+        <!-- Fastjson：一个快速的JSON解析器和生成器 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.15</version>
+        </dependency>
+
+        <!-- Apache HttpClient：一个更高级的HTTP客户端库 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <!-- Apache HttpCore：提供了HTTP协议处理的底层API -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <!-- Commons Lang：提供了各种实用的工具方法 -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <!-- Jetty Util：提供了HTTP连接和处理的工具类 -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>9.3.7.v20160115</version>
+        </dependency>
+
+        <!-- Alibaba Sentinel：一个流量控制、熔断、降级的开源库 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+
+        <!-- 链路追踪Sleuth依赖（已注释） -->
+        <!-- 引入链路追踪sleuth -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-sleuth</artifactId>-->
+        <!--            <version>2.1.0.RELEASE</version>-->
+        <!--        </dependency>-->
+        <!-- 引入Zipkin进行链路追踪的依赖（已注释） -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-zipkin -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-zipkin</artifactId>-->
+        <!--        </dependency>-->
     </dependencies>
+
+
     <dependencyManagement>
         <dependencies>
             <!-- Spring Cloud Alibaba 依赖管理 -->

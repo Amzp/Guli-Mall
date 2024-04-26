@@ -19,7 +19,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 public class PageUtils implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6716236283727584402L;
 	/**
 	 * 总记录数
 	 */

@@ -68,6 +68,7 @@
 
 <script>
 import AddOrUpdate from './member-add-or-update'
+
 export default {
   data () {
     return {

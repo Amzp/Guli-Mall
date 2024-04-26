@@ -1,23 +1,23 @@
 package com.atguigu.common.vo;
 
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Description:
- * @Created: with IntelliJ IDEA.
- * @author: Rain^
- * @createTime: 2020-06-28 14:51
- **/
-
-@ToString
+ * ClassName: MemberRespVo
+ * Package: com.atguigu.gulimall.auth.vo
+ * Description:
+ *
+ * @Author Rainbow
+ * @Create 2024/4/26 下午2:23
+ * @Version 1.0
+ */
 @Data
-public class MemberResponseVo implements Serializable {
+public class MemberRespVo implements Serializable {
+    private static final long serialVersionUID = 7336672633848904294L;
 
-    private static final long serialVersionUID = 5573669251256409786L;
 
     private Long id;
     /**
@@ -88,20 +88,16 @@ public class MemberResponseVo implements Serializable {
      * 注册时间
      */
     private Date createTime;
-
     /**
-     * 社交登录UID
+     * 社交账号ID
      */
     private String socialUid;
-
     /**
-     * 社交登录TOKEN
+     * 社交账号Token
      */
     private String accessToken;
-
     /**
-     * 社交登录过期时间
+     * 社交账号Token过期时间
      */
-    private long expiresIn;
-
+    private Long expiresIn;
 }

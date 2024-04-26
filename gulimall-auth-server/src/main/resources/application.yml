@@ -45,8 +45,6 @@ feign:
         connect-timeout: 10000 # 连接超时时间
         read-timeout: 10000 # 读取超时时间
 
-
-
 # 日志配置
 logging:
   level:
@@ -58,3 +56,12 @@ management:
     web:
       exposure:
         include: '*'  # 包括所有端点
+
+## gitee OAuth2 相关配置，在Nacos中配置
+gitee-oauth2-info:
+  grant-type:
+  code:
+  client-id:
+  redirect-uri:
+  client-secret:
+

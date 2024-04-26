@@ -70,6 +70,7 @@
 <script>
 import AddOrUpdate from './seckillsession-add-or-update'
 import SeckillskuRelation from './seckillskurelation'
+
 export default {
   data () {
     return {

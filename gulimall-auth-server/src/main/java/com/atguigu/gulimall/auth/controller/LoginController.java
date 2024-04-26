@@ -4,6 +4,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.constant.AuthServerConstant;
 import com.atguigu.common.exception.BizCodeEnume;
 import com.atguigu.common.utils.R;
+import com.atguigu.common.vo.MemberRespVo;
 import com.atguigu.gulimall.auth.feign.MemberFeignService;
 import com.atguigu.gulimall.auth.feign.ThirdPartFeignService;
 import com.atguigu.gulimall.auth.vo.UserLoginVo;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.atguigu.common.constant.AuthServerConstant.LOGIN_USER;
 
 /**
  * ClassName: LoginController
@@ -169,13 +173,16 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public String login(UserLoginVo vo, RedirectAttributes attributes) {
+    public String login(UserLoginVo vo, RedirectAttributes attributes, HttpSession session) {
         log.debug("开始登录...");
 
         // 远程登陆
         R login = memberFeignService.login(vo);
         if (login.getCode() == 0) {
             // 登录成功
+            MemberRespVo data = login.getData("data", new TypeReference<MemberRespVo>() {
+            });
+            session.setAttribute(AuthServerConstant.LOGIN_USER, data);
             log.debug("登录成功，重定向至首页...");
             return "redirect:http://gulimall.com";
         } else {
@@ -189,6 +196,13 @@ public class LoginController {
             return "redirect:http://auth.gulimall.com/login.html";
         }
 
+    }
+
+    @GetMapping(value = "/loguot.html")
+    public String logout(HttpServletRequest request) {
+        request.getSession().removeAttribute(AuthServerConstant.LOGIN_USER);
+        request.getSession().invalidate();
+        return "redirect:http://gulimall.com";
     }
 
 

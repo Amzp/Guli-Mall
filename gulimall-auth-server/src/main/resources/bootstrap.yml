@@ -1,9 +1,18 @@
+# 配置spring应用的基本信息
 spring:
+  # 应用名称
   application:
     name: gulimall-auth-server
 
+  # 配置Nacos云服务
   cloud:
     nacos:
+      # 配置Nacos服务器地址和命名空间
       config:
-        server-addr: localhost:8848
-        namespace: 01a75484-d6ad-4d22-80c9-f8cd0ca77bb1
+        server-addr: localhost:8848  # Nacos服务器地址
+        namespace: 01a75484-d6ad-4d22-80c9-f8cd0ca77bb1  # 命名空间ID
+        # 配置外部扩展配置，从Gitee加载OAuth2信息
+        ext-config[0]:
+          data-id: gitee-oauth2-info.yml  # 配置数据ID
+          group: DEFAULT_GROUP  # 配置所属分组
+          refresh: true  # 是否启用自动刷新

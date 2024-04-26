@@ -10,6 +10,7 @@ import com.atguigu.gulimall.member.feign.CouponFeignService;
 import com.atguigu.gulimall.member.service.MemberService;
 import com.atguigu.gulimall.member.vo.MemberUserLoginVo;
 import com.atguigu.gulimall.member.vo.MemberUserRegisterVo;
+import com.atguigu.gulimall.member.vo.SocialUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,32 @@ public class MemberController {
 
 
     /**
+     * 处理OAuth2登录请求。
+     *
+     * @param socialUser 包含用户社交登录信息的对象，例如用户名、密码、社交平台标识等。
+     * @return R 返回一个结果对象，如果登录成功，包含登录用户的信息；如果登录失败，返回错误信息。
+     */
+    @PostMapping("/oauth2/login")
+    public R oauthLogin(@RequestBody SocialUser socialUser) {
+        log.debug("使用提供的社交用户信息进行登录...");
+        // 尝试使用提供的社交用户信息进行登录
+        MemberEntity memberEntity = memberService.login(socialUser);
+
+        // 判断登录是否成功
+        if (memberEntity != null) {
+            // 登录成功，返回用户信息
+            log.debug("使用提供的社交用户信息登录成功，返回用户信息...");
+            return R.ok().setData(memberEntity);
+        } else {
+            // 登录失败，返回登录错误信息
+            log.debug("使用提供的社交用户信息登录失败，返回登录错误信息...");
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getCode(),BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
+
+
+
+    /**
      * 处理用户登录请求。
      *
      * @param vo 包含登录所需信息的会员用户登录视图对象，例如账号和密码。
@@ -57,7 +84,7 @@ public class MemberController {
 
         // 登录成功，返回成功标志
         log.debug("登录成功...");
-        return R.ok();
+        return R.ok().setData(memberEntity);
     }
 
 

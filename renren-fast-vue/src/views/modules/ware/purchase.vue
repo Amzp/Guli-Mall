@@ -97,6 +97,7 @@
 
 <script>
 import AddOrUpdate from './purchase-add-or-update'
+
 export default {
   data () {
     return {

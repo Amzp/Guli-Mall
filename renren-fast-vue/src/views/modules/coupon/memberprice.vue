@@ -66,6 +66,7 @@
 
 <script>
 import AddOrUpdate from './memberprice-add-or-update'
+
 export default {
   data () {
     return {

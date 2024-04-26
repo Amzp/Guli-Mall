@@ -14,36 +14,6 @@ spring:
         bucket: # OSS的存储桶名称
 
 
-#  mail:
-#    # 邮箱服务器的主机名，这里配置的是QQ邮箱的SMTP服务器
-#    host: smtp.qq.com
-#    # 邮箱服务器的端口号，QQ邮箱的SMTP端口为465
-#    port: 465
-#    # 邮箱的用户名，即你的QQ邮箱地址
-#    username:
-#    # 邮箱的授权码，用于身份验证，需要在邮箱设置中获取
-#    password:
-#    # 是否测试连接以验证配置的正确性
-#    test-connection: true
-#    # 邮件发送的属性配置，这里主要配置SSL加密
-#    properties:
-#      mail:
-#        smtp:
-#          ssl:
-#            # 是否启用SSL加密发送邮件
-#            enable: true
-#  mail:
-#    host: smtp.qq.com
-#    username: 发件的邮箱
-#    password: 发件邮箱的授权码
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#            required: true
-
 
 # 应用配置
   application:

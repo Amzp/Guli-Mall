@@ -20,7 +20,7 @@ import java.util.Map;
  * R类继承自HashMap<String, Object>用于方便地构建和返回包含特定代码和消息的结果对象。
  */
 public class R extends HashMap<String, Object> {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2848956382133587386L;
 
     public R setData(Object data) {
         this.put("data", data);

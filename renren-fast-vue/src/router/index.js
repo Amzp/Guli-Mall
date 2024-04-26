@@ -7,8 +7,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import http from '@/utils/httpRequest'
-import { isURL } from '@/utils/validate'
-import { clearLoginInfo } from '@/utils'
+import {isURL} from '@/utils/validate'
+import {clearLoginInfo} from '@/utils'
 
 Vue.use(Router)
 

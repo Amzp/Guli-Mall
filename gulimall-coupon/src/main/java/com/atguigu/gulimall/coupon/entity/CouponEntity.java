@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @TableName("sms_coupon")
 public class CouponEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4031373332537103857L;
 
 	/**
 	 * id

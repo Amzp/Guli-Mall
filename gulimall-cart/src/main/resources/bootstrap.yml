@@ -1,0 +1,18 @@
+# 配置spring应用的基本信息
+spring:
+  # 应用名称
+  application:
+    name: gulimall-cart
+
+  # 配置云服务相关信息
+  cloud:
+    # 配置Nacos服务
+    nacos:
+      # 配置Nacos服务器地址
+      config:
+        server-addr: localhost:8848
+        # 配置Nacos命名空间
+        namespace: 32010c83-62c0-4c18-94c0-7541045e5d80
+
+
+

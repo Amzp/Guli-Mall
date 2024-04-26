@@ -37,8 +37,8 @@ public class IndexController {
     @Resource
     private RedissonClient redissonClient;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 
     /**
@@ -121,7 +121,7 @@ public class IndexController {
             // 模拟写入操作的延时，以示例锁的使用场景
             Thread.sleep(30000);
             // 将生成的字符串存储到Redis中
-            redisTemplate.opsForValue().set("writeValue", string);
+            stringRedisTemplate.opsForValue().set("writeValue", string);
         } catch (InterruptedException e) {
             // 当线程被中断时，抛出运行时异常
 
@@ -157,7 +157,7 @@ public class IndexController {
         log.info("线程 {} 获取读锁", Thread.currentThread().getId());
         try {
             // 从Redis中读取值
-            s = redisTemplate.opsForValue().get("writeValue");
+            s = stringRedisTemplate.opsForValue().get("writeValue");
             log.info("线程 {} 读取数据 {}", Thread.currentThread().getId(), s);
             Thread.sleep(30000);
         } catch (Exception e) {

@@ -1,0 +1,52 @@
+# 配置服务器端口
+server:
+  port: 40000
+
+# 应用配置
+spring:
+  # 应用名称
+  application:
+    name: gulimall-cart
+
+  # 服务发现配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848  # Nacos服务地址
+
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+
+  # Redis配置
+  redis:
+    port: 6379  # Redis端口
+    host: 192.168.56.10  # Redis主机地址
+
+  # 会话管理配置
+  session:
+    store-type: redis  # 使用Redis存储会话信息
+
+# Feign配置
+feign:
+  sentinel:
+    enabled: true  # 开启对Sentinel的支持
+
+
+
+##配置线程池
+#gulimall:
+#  thread:
+#    coreSize: 20
+#    maxSize: 200
+#    keepAliveTime: 10
+
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+

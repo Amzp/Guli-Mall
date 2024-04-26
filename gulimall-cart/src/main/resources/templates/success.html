@@ -7,9 +7,9 @@
     <script type="text/javascript" src="/static/cart/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="/static/cart/js/swiper.min.js"></script>
     <script src="/static/cart/js/swiper.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/cart//css/swiper.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/cart//bootstrap/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/cart//css/success.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/cart/css/swiper.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/cart/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/cart/css/success.css"/>
 
 </head>
 
@@ -26,7 +26,8 @@
 
         <ul class="hd_wrap_right">
             <li>
-                <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/login.html" class="li_2">请登录</a>
+                <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/login.html"
+                   class="li_2">请登录</a>
                 <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.nickname}]]</a>
             </li>
             <li>
@@ -77,9 +78,11 @@
                             <div class="p-info">
                                 <div class="p-name">
                                     <a th:href="'http://item.gulimall.com/'+${cartItem.skuId}+'.html'"
-                                       th:text="${cartItem.title}">TCL 55A950C 55英寸32核人工智能 HDR曲面超薄4K电视金属机身（枪色）</a>
+                                       th:text="${cartItem.title}">TCL 55A950C 55英寸32核人工智能
+                                        HDR曲面超薄4K电视金属机身（枪色）</a>
                                 </div>
-                                <div class="p-extra"><span class="txt" th:text="'数量：'+${cartItem.count}">  数量：1</span></div>
+                                <div class="p-extra"><span class="txt"
+                                                           th:text="'数量：'+${cartItem.count}">  数量：1</span></div>
                             </div>
                             <div class="clr"></div>
                         </div>

@@ -43,8 +43,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Resource
     private CategoryBrandRelationService categoryBrandRelationService;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Resource
     private RedissonClient redissonClient;
@@ -316,7 +316,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
          * 3. 缓存击穿：加锁
          */
         // 尝试从缓存中获取分类的JSON数据
-        String catalogJson = redisTemplate.opsForValue().get("catalogJSON");
+        String catalogJson = stringRedisTemplate.opsForValue().get("catalogJSON");
         if (StringUtils.isEmpty(catalogJson)) {
             // 缓存中未找到，从数据库查询并存入缓存
             log.info("查询三级分类数据，Redis缓存未命中，查询数据库");
@@ -361,7 +361,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedisLock() {
         // 尝试使用UUID作为锁标识加锁
         String uuid = UUID.randomUUID().toString();
-        Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid, 300, TimeUnit.SECONDS);
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", uuid, 300, TimeUnit.SECONDS);
         if (Boolean.TRUE.equals(lock)) {
             // 加锁成功，尝试从数据库获取数据
             log.debug("获取分布式锁成功，线程id = {}", Thread.currentThread().getId());
@@ -371,7 +371,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             } finally {
                 // 使用Lua脚本确保解锁操作的原子性
                 String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-                Long lock1 = redisTemplate
+                Long lock1 = stringRedisTemplate
                         .execute(new DefaultRedisScript<Long>(script, Long.class),
                                 Arrays.asList("lock"), uuid);
             }
@@ -405,7 +405,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     private Map<String, List<Catalog2Vo>> getDataFromDb() {
-        String catalogJson = redisTemplate.opsForValue().get("catalogJSON");
+        String catalogJson = stringRedisTemplate.opsForValue().get("catalogJSON");
         if (!StringUtils.isEmpty(catalogJson)) {
             // 缓存不为空，直接返回
             log.info("线程 {}：拿到了锁，但缓存命中，直接返回", Thread.currentThread().getId());
@@ -452,7 +452,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         )
                 );
         // 在释放锁之前，要将查到的数据先放入缓存
-        redisTemplate.opsForValue().set("catalogJSON", JSON.toJSONString(parentCid), 1, TimeUnit.DAYS);
+        stringRedisTemplate.opsForValue().set("catalogJSON", JSON.toJSONString(parentCid), 1, TimeUnit.DAYS);
         return parentCid;
     }
 

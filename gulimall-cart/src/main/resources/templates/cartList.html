@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>购物车</title>
-    <link rel="icon" href="/static/cart//img/心04.png" type="/image/x-icon"/>
-    <link rel="stylesheet" href="/static/cart//css/One_bdyStyle.css">
-    <link rel="stylesheet" href="/static/cart//css/index.css">
+    <link rel="icon" href="/static/cart/img/心04.png" type="/image/x-icon"/>
+    <link rel="stylesheet" href="/static/cart/css/One_bdyStyle.css">
+    <link rel="stylesheet" href="/static/cart/css/index.css">
     <script src="/static/cart/js/jquery-3.1.1.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="/static/cart//css/One_mainFoot.css">
-    <link rel="stylesheet" href="/static/cart//css/font-awesome-4.7.0/css/font-awesome.css"/>
+    <link rel="stylesheet" href="/static/cart/css/One_mainFoot.css">
+    <link rel="stylesheet" href="/static/cart/css/font-awesome-4.7.0/css/font-awesome.css"/>
 </head>
 <body>
 <header>
@@ -94,7 +94,8 @@
                     </div>
                     <div>
                         <ol>
-                            <li><input type="checkbox" th:attr="skuId=${item.skuId}" class="itemChecked" th:checked="${item.check}"></li>
+                            <li><input type="checkbox" th:attr="skuId=${item.skuId}" class="itemChecked"
+                                       th:checked="${item.check}"></li>
                             <li>
                                 <dt><img th:src="${item.image}" alt=""></dt>
                                 <dd style="width: 300px;">
@@ -117,7 +118,8 @@
                                 </p>
 
                             </li>
-                            <li style="font-weight:bold"><p class="zj">￥[[${#numbers.formatDecimal(item.totalPrice,3,2)}]]</p></li>
+                            <li style="font-weight:bold"><p class="zj">
+                                ￥[[${#numbers.formatDecimal(item.totalPrice,3,2)}]]</p></li>
                             <li>
                                 <p class="deleteItemBtn" th:attr="skuId=${item.skuId}">删除</p>
                             </li>
@@ -125,7 +127,7 @@
                     </div>
                 </li>
 
-            </ul >
+            </ul>
         </div>
         <div class="One_ShopFootBuy fix1">
             <div>
@@ -311,9 +313,9 @@
         $(this).children("ol").toggle();
         $(this).children("ul").toggle();
         var dis = $(".One_ShopFootBuy>div:nth-child(2) ol").css("display");
-        if (dis == "none") {
+        if (dis === "none") {
             $(".One_ShopFootBuy>div:nth-child(2) img").css("transform", "rotateX(0)")
-        } else if (dis == "block") {
+        } else if (dis === "block") {
             $(".One_ShopFootBuy>div:nth-child(2) img").css("transform", "rotateX(180deg)")
         }
     })
@@ -437,14 +439,14 @@
     //如果子选择框没有选中则父选框取消全选
     $(".check").click(function () {
         $(".check").each(function () {
-            if ($(this).prop("checked") == true) {
+            if ($(this).prop("checked") === true) {
                 $(".allCheck").prop("checked", false);
             }
         })
     })
     //子选择框全部选中复选框也选中
     $(".check").click(function () {
-        if ($(".check[class='check']:checked").length == $(".check[class='check']").length) {
+        if ($(".check[class='check']:checked").length === $(".check[class='check']").length) {
             $(".allCheck").prop("checked", true);
         } else {
             $(".allCheck").prop("checked", false)
@@ -453,7 +455,7 @@
     //删除已选的商品
     $(".One_ShopFootBuy>div:first-child ul li:nth-child(2)").click(function () {
         // $(".check").each(function(){
-        if ($(".check").is(":checked") == false) {
+        if ($(".check").is(":checked") === false) {
             $(".One_mb").show();
             $(".One_moveGzIfNull").show();
         } else {
@@ -491,7 +493,7 @@
     //移到我的关注
     $(".One_ShopFootBuy>div:first-child ul li:nth-child(3)").click(function () {
         $(".check").each(function (index) {
-            if ($(this).is(":checked") == false) {
+            if ($(this).is(":checked") === false) {
                 $(".One_mb").show();
                 $(".One_moveGzIfNull").show();
             } else {
@@ -789,7 +791,6 @@
     function deleteItem() {
         location.href = "http://cart.gulimall.com/deleteItem?skuId=" + deleteId;
     }
-
 
 
 </script>

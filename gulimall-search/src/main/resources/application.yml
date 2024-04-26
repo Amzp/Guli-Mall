@@ -1,34 +1,41 @@
+# 服务器配置
 server:
   port: 12000
 
+# Spring应用配置
 spring:
+  # 应用基本信息
   application:
     name: gulimall-search
+  # 云服务配置
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
-#
+        server-addr: localhost:8848 # Nacos服务发现地址
+  # Redis配置
+  redis:
+    host: 192.168.56.10 # Redis服务器地址
+    port: 6379 # Redis服务器端口
+
+  # Thymeleaf模板引擎配置
+  thymeleaf:
+    cache: false # 关闭模板缓存
+
+  # Session配置
+  session:
+    store-type: redis # 使用Redis存储Session
+
 #    sentinel:
 #      transport:
 #        #配置sentinel dashboard地址
 #        dashboard: localhost:8080
 #
-#  redis:
-#    host: 192.168.56.10
-#    port: 6379
-#
+
 ##开启feign对sentinel的支持
 #feign:
 #  sentinel:
 #    enabled: true
-#
-#  thymeleaf:
-#    cache: false
-#
-#  session:
-#    store-type: redis
-#
+
 # 配置日志信息
 logging:
   # 设置日志级别

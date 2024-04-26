@@ -46,6 +46,7 @@ public class MemberController {
     @PostMapping("/oauth2/login")
     public R oauthLogin(@RequestBody SocialUser socialUser) {
         log.debug("使用提供的社交用户信息进行登录...");
+
         // 尝试使用提供的社交用户信息进行登录
         MemberEntity memberEntity = memberService.login(socialUser);
 

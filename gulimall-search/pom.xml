@@ -74,17 +74,17 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; Redis整合SpringSession，用于会话管理 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.session</groupId>-->
-<!--            <artifactId>spring-session-data-redis</artifactId>-->
-<!--        </dependency>-->
+        <!-- Redis整合SpringSession，用于会话管理 -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
 
-<!--        &lt;!&ndash; Spring Boot Redis依赖，用于数据存储 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
-<!--        </dependency>-->
+        <!-- Spring Boot Redis依赖，用于数据存储 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 
 <!--        &lt;!&ndash; Spring Boot Actuator依赖，用于应用监控 &ndash;&gt;-->
 <!--        <dependency>-->

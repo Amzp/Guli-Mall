@@ -198,12 +198,44 @@ public class LoginController {
 
     }
 
+    /**
+     * 处理登录页面的请求。
+     *
+     * @param session HttpSession对象，用于获取和存储用户会话信息。
+     * @return 返回字符串类型，表示视图的名称或重定向的URL。
+     *         如果用户未登录，则返回"login"，重定向到登录页面。
+     *         如果用户已登录，则重定向到主页面"http://gulimall.com"。
+     */
+    @GetMapping(value = "/login.html")
+    public String loginPage(HttpSession session) {
+        // 从会话中获取登录用户的信息，判断用户是否登录
+        Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);
+        // 如果用户未登录，返回登录页面
+        if (attribute == null) {
+            return "login";
+        } else {
+            // 如果用户已登录，重定向到主页面
+            return "redirect:http://gulimall.com";
+        }
+    }
+
+    /**
+     * 处理用户登出请求的函数。
+     *
+     * @param request HttpServletRequest对象，用于获取和操作HTTP请求信息。
+     * @return 返回一个字符串，表示页面重定向的URL，此处为登出后跳转的页面。
+     */
     @GetMapping(value = "/loguot.html")
     public String logout(HttpServletRequest request) {
+        // 从会话中移除当前登录用户的信息
         request.getSession().removeAttribute(AuthServerConstant.LOGIN_USER);
+        // 销毁会话，确保用户无法再次访问之前会话中的信息
         request.getSession().invalidate();
+        // 重定向到指定的URL，此处为gulimall.com的首页
         return "redirect:http://gulimall.com";
     }
+
+
 
 
 }

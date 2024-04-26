@@ -29,8 +29,8 @@ public class GulimallWebConfig implements WebMvcConfigurer {
         log.debug("添加视图控制器到注册表...");
 
         // 将"login.html"路径映射到"login"视图
-        registry.addViewController("login.html").setViewName("login");
-        log.debug("映射login.html到login视图...");
+//        registry.addViewController("login.html").setViewName("login");
+//        log.debug("映射login.html到login视图...");
 
         // 将"reg.html"路径映射到"reg"视图
         registry.addViewController("reg.html").setViewName("reg");

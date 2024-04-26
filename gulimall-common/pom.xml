@@ -135,6 +135,8 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
+
+
         <!-- 链路追踪Sleuth依赖（已注释） -->
         <!-- 引入链路追踪sleuth -->
         <!--        <dependency>-->

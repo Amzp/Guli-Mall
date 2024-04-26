@@ -58,6 +58,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         checkUsernameUnique(vo.getUserName()); // 检查用户名是否唯一
         memberEntity.setMobile(vo.getPhone()); // 设置手机号
         memberEntity.setUsername(vo.getUserName()); // 设置用户名
+        memberEntity.setNickname(vo.getUserName());
 
         // 密码加密处理
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -158,6 +159,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             // 未注册的用户，创建新用户并保存相关信息
             MemberEntity register = new MemberEntity();
             register.setUsername(socialUser.getUserName())
+                    .setNickname(socialUser.getUserName())
                     .setSocialUid(socialUser.getUid())
                     .setAccessToken(socialUser.getAccess_token())
                     .setExpiresIn(socialUser.getExpires_in());

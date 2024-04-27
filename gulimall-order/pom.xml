@@ -20,43 +20,136 @@
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
     </properties>
 
-    <!-- 依赖声明部分 -->
+    <!-- 依赖声明部分，定义了项目所依赖的外部库 -->
     <dependencies>
-        <!-- Gulimall通用模块依赖 -->
+        <!-- Gulimall通用模块依赖，用于提供项目中通用的工具类和配置 -->
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!-- Spring Boot Web依赖，用于构建基于Spring Boot的Web应用 -->
+
+        <!-- Spring Boot Web依赖，是构建基于Spring Boot的Web应用的基础 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- Spring Cloud OpenFeign依赖，用于实现服务间的调用 -->
+
+        <!-- Spring Cloud OpenFeign依赖，用于简化服务间调用的实现 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- Spring Boot Test依赖，用于单元测试和集成测试 -->
+        <!-- Spring Boot Test依赖，支持进行单元测试和集成测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Spring Boot AMQP依赖，用于集成RabbitMQ实现消息队列功能 -->
+        <!-- Spring Boot AMQP依赖，用于与RabbitMQ集成实现消息队列功能 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+        <!-- 模板引擎Thymeleaf依赖，用于动态生成HTML页面 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- Redis依赖，用于缓存和消息队列等场景 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- 整合Spring Session与Redis，实现会话管理 -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+
+        <!-- AOP依赖，用于实现切面编程 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- 配置处理器依赖，用于自动处理配置类 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Seata依赖，用于分布式事务处理 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.seata</groupId>
+                    <artifactId>seata-all</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 单独指定Seata版本，以确保版本一致性 -->
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <!-- 支付宝SDK依赖，用于实现支付宝支付功能 -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.9.28.ALL</version>
+        </dependency>
+
+        <!-- 第三方支付SDK依赖，用于实现其他支付功能 -->
+        <dependency>
+            <groupId>cn.springboot</groupId>
+            <artifactId>best-pay-sdk</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <!-- Spring Boot Actuator依赖，用于提供应用监控和管理的端点 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
     </dependencies>
 
 
+    <!--
+    <dependencyManagement> 元素用于定义项目中所有依赖的管理策略。
+    它允许在项目中指定一次依赖信息（版本、范围等），从而避免在每个使用到这些依赖的模块中重复指定这些信息。
+    -->
     <dependencyManagement>
         <dependencies>
+            <!--
+            定义阿里巴巴云的依赖管理，指定所使用的版本为2.1.0.RELEASE。
+            它通过 <type>pom</type> 和 <scope>import</scope> 属性表明，这一个依赖是一个pom项目，
+            并且它的作用范围是被导入到当前项目的依赖管理中，而不是直接被项目使用。
+            -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.1.0.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--
+            定义Spring Cloud的依赖管理，这里的版本通过 ${spring-cloud.version} 这个属性动态指定。
+            同样地，通过 <type>pom</type> 和 <scope>import</scope> 属性，将Spring Cloud的依赖管理规则导入到当前项目中。
+            -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -66,6 +159,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>

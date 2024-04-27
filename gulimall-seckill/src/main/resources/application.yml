@@ -1,25 +1,35 @@
+# 服务器配置
 server:
   port: 25000
 
+# 应用配置
 spring:
   application:
-    name: gulimall-seckill
+    name: gulimall-seckill # 应用名称
 
+  # 服务发现配置
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: localhost:8848 # Nacos服务器地址
 
+    # Sentinel配置
     sentinel:
       transport:
-        #配置sentinel dashboard地址
+        # 配置Sentinel控制台地址
         dashboard: localhost:8080
-        #默认8719端口，假如被占用会自动从8719开始依次+1扫描，直至找到未被占用的端口
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
         port: 8719
 
+  # Redis配置
   redis:
-    host: 192.168.77.130
-    port: 6379
+    host: 192.168.56.10 # Redis服务器地址
+    port: 6379 # Redis服务器端口
+
+  # Session配置
+  session:
+    store-type: redis # 使用Redis存储Session
+
 
 
 #开启feign对sentinel的支持
@@ -34,8 +44,11 @@ feign:
         core-size: 5
         max-size: 50
 
-  session:
-    store-type: redis
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug
 
 
 #暴露所有端点

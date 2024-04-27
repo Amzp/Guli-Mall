@@ -1,14 +1,81 @@
+# 配置文件顶部，主要包含服务器、数据源、缓存、消息队列等配置
+
+# 服务器端口配置
 server:
   port: 9000
 
+# 数据源配置，主要用于数据库连接
 spring:
   datasource:
+    # 数据库连接配置
     username: root
     password: root
     url: jdbc:mysql://192.168.56.10:3306/gulimall_oms
     driver-class-name: com.mysql.jdbc.Driver
+
+  # Redis缓存配置
+  redis:
+    host: 192.168.56.10
+    port: 6379
+
+  # RabbitMQ配置，用于消息队列通信
+  rabbitmq:
+    # RabbitMQ服务器地址和端口
+    host: 114.55.178.56
+    port: 5672
+    # 虚拟主机配置
+    virtual-host: /
+    # 开启发送端消息抵达Broker确认
+    publisher-confirms: true
+    # 开启发送端消息抵达Queue确认
+    publisher-returns: true
+    template:
+      # 只要消息抵达Queue，就会异步发送优先回调returnfirm
+      mandatory: true
+    listener:
+      simple:
+        # 手动ack消息，不使用默认的消费端确认
+        acknowledge-mode: manual
+
+  # 服务发现与配置管理
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+    sentinel:
+      transport:
+        #配置sentinel dashboard地址
+        dashboard: localhost:8080
+
+  # 模板引擎配置
+  thymeleaf:
+    cache: false
+
+  # MVC配置
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  # 会话管理配置
+  session:
+    store-type: redis
+
+# 开启feign对sentinel的支持，用于流量控制
+feign:
+  sentinel:
+    enabled: true
+
+
+
+# MyBatis Plus配置，用于简化MyBatis的使用
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:
     db-config:
+      # 主键类型配置
       id-type: auto
+
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug

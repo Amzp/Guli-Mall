@@ -1,7 +1,7 @@
 package com.atguigu.gulimall.cart.vo;
 
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,6 +14,10 @@ import java.util.List;
  **/
 
 @Data
+@Builder
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItemVo {
 
     // SKU唯一标识

@@ -33,14 +33,10 @@ feign:
   sentinel:
     enabled: true  # 开启对Sentinel的支持
 
-
-
-##配置线程池
-#gulimall:
-#  thread:
-#    coreSize: 20
-#    maxSize: 200
-#    keepAliveTime: 10
+# 日志配置
+logging:
+  level:
+    com.atguigu.gulimall: debug # 指定包的日志级别为debug
 
 #暴露所有端点
 management:
@@ -48,5 +44,3 @@ management:
     web:
       exposure:
         include: '*'
-
-

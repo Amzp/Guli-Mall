@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -25,6 +26,22 @@ import java.util.Map;
 public class SkuInfoController {
     @Resource
     private SkuInfoService skuInfoService;
+
+
+    /**
+     * 获取指定SKU ID的商品价格。
+     *
+     * @param skuId 商品SKU的唯一标识符。
+     * @return 返回对应SKU的价格，类型为BigDecimal。
+     */
+    @GetMapping("/{skuId}/price")
+    public R getPrice(@PathVariable("skuId") Long skuId) {
+        log.info("查询商品价格：skuId = {}", skuId);
+        // 通过SKU ID获取SKU信息
+        SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
+        // 返回SKU的价格
+        return R.ok().setData(skuInfo.getPrice().toString());
+    }
 
     /**
      * 查询SKU信息列表

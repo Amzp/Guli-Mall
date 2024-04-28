@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -50,9 +51,37 @@ public class CartServiceImpl implements CartService {
 
     private final String CART_PREFIX = "gulimall:cart:";
 
+    /**
+     * 获取当前用户购物车中的商品列表。
+     * 该方法首先从线程本地存储中获取用户信息，然后根据用户ID生成购物车的存储键。
+     * 如果用户ID不存在，表示用户未登录，则返回null。
+     * 如果用户已登录，将尝试从购物车存储中获取商品列表，并对这些商品进行过滤和加工：
+     * 仅保留选中的商品，并通过远程调用获取每个商品的最新价格。
+     *
+     * @return 返回用户购物车中选中的商品列表。如果用户未登录或购物车中没有商品，则返回null。
+     */
     @Override
     public List<CartItemVo> getUserCartItems() {
-        return Collections.emptyList();
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get(); // 从线程本地存储获取用户信息
+        if (userInfoTo.getUserId() == null) { // 判断用户是否已登录
+            return null;
+        } else {
+            String cartKey = CART_PREFIX + userInfoTo.getUserId(); // 根据用户ID生成购物车的存储键
+            List<CartItemVo> cartItems = getCartItems(cartKey); // 从存储中获取购物车商品列表
+
+            List<CartItemVo> collect = null;
+            if (cartItems != null) { // 如果存在商品，则进行筛选和价格更新
+                collect = cartItems.stream()
+                        .filter(CartItemVo::getCheck) // 筛选选中的商品
+                        .map(item -> {
+                            R price = productFeignService.getPrice(item.getSkuId()); // 远程调用获取商品价格
+                            item.setPrice(new BigDecimal(price.get("data").toString())); // 更新商品价格
+                            return item;
+                        })
+                        .collect(Collectors.toList());
+            }
+            return collect; // 返回加工后的购物车商品列表
+        }
     }
 
     /**
@@ -61,7 +90,7 @@ public class CartServiceImpl implements CartService {
      * 如果用户未登录，将返回与该用户相关的临时购物车信息。
      *
      * @return CartVo 购物车信息的封装对象，包括购物车中的商品项列表。
-     * @throws ExecutionException 当获取购物车数据时，如果存在执行异常则抛出。
+     * @throws ExecutionException   当获取购物车数据时，如果存在执行异常则抛出。
      * @throws InterruptedException 当获取购物车数据的线程被中断时抛出。
      */
     @Override
@@ -124,7 +153,6 @@ public class CartServiceImpl implements CartService {
         // 如果购物车为空，则返回null
         return null;
     }
-
 
 
     /**
@@ -240,7 +268,7 @@ public class CartServiceImpl implements CartService {
         String redisValue = JSON.toJSONString(cartItem);
 
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-        cartOps.put(skuId.toString(),redisValue);
+        cartOps.put(skuId.toString(), redisValue);
 
     }
 
@@ -253,7 +281,7 @@ public class CartServiceImpl implements CartService {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         //序列化存入redis中
         String redisValue = JSON.toJSONString(cartItem);
-        cartOps.put(skuId.toString(),redisValue);
+        cartOps.put(skuId.toString(), redisValue);
     }
 
     @Override

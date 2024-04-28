@@ -46,9 +46,7 @@ public class CartController {
     public List<CartItemVo> getCurrentCartItems() {
         log.debug("获取当前用户的购物车商品项...");
 
-        List<CartItemVo> cartItemVoList = cartService.getUserCartItems();
-
-        return cartItemVoList;
+        return cartService.getUserCartItems();
     }
 
     /**

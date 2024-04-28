@@ -4,10 +4,13 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.member.entity.MemberReceiveAddressEntity;
 import com.atguigu.gulimall.member.service.MemberReceiveAddressService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -21,9 +24,21 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("member/memberreceiveaddress")
+@Slf4j
 public class MemberReceiveAddressController {
-    @Autowired
+    @Resource
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    /**
+     * 查询当前用户的全部收货地址
+     * @param memberId
+     * @return
+     */
+    @GetMapping(value = "/{memberId}/address")
+    List<MemberReceiveAddressEntity> getAddress(@PathVariable("memberId") Long memberId){
+        log.info("查询当前用户的全部收货地址");
+        return memberReceiveAddressService.getAddress(memberId);
+    }
 
     /**
      * 列表

@@ -4,10 +4,12 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.ware.entity.WareInfoEntity;
 import com.atguigu.gulimall.ware.service.WareInfoService;
+import com.atguigu.gulimall.ware.vo.FareVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -26,6 +28,15 @@ public class WareInfoController {
     @Resource
     private WareInfoService wareInfoService;
 
+    @GetMapping("/fare")
+    public R getFare(@RequestParam("addrId") Long addrId) {
+        log.info("查询运费信息");
+
+        FareVo fare = wareInfoService.getFare(addrId);
+
+        return R.ok().setData(fare);
+    }
+
     /**
      * 查询仓库信息列表
      *
@@ -34,7 +45,7 @@ public class WareInfoController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("ware:wareinfo:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         log.info("查询仓库信息列表");
 
         // 调用服务查询指定条件下的仓库信息页面
@@ -45,14 +56,13 @@ public class WareInfoController {
     }
 
 
-
     /**
      * 信息
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("ware:wareinfo:info")
-    public R info(@PathVariable("id") Long id){
-		WareInfoEntity wareInfo = wareInfoService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        WareInfoEntity wareInfo = wareInfoService.getById(id);
 
         return R.ok().put("wareInfo", wareInfo);
     }
@@ -62,8 +72,8 @@ public class WareInfoController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("ware:wareinfo:save")
-    public R save(@RequestBody WareInfoEntity wareInfo){
-		wareInfoService.save(wareInfo);
+    public R save(@RequestBody WareInfoEntity wareInfo) {
+        wareInfoService.save(wareInfo);
 
         return R.ok();
     }
@@ -73,8 +83,8 @@ public class WareInfoController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("ware:wareinfo:update")
-    public R update(@RequestBody WareInfoEntity wareInfo){
-		wareInfoService.updateById(wareInfo);
+    public R update(@RequestBody WareInfoEntity wareInfo) {
+        wareInfoService.updateById(wareInfo);
 
         return R.ok();
     }
@@ -84,8 +94,8 @@ public class WareInfoController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("ware:wareinfo:delete")
-    public R delete(@RequestBody Long[] ids){
-		wareInfoService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        wareInfoService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

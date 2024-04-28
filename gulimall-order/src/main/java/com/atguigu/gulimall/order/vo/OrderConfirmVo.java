@@ -32,6 +32,12 @@ public class OrderConfirmVo {
     @Getter @Setter
     Map<Long,Boolean> stocks;
 
+    Integer count;
+
+    BigDecimal total;
+
+    BigDecimal payPrice;
+
     /**
      * 获取订单项的总数量。
      * <p>此方法不接受任何参数，它会计算当前订单中所有订单项的数量总和。</p>

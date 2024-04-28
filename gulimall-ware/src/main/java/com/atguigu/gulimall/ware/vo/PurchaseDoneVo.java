@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class PurchaseDoneVo {
 
-    @NotNull
+    @NotNull(message = "id不允许为空")
     private Long id;//采购单id
 
     private List<PurchaseItemDoneVo> items;

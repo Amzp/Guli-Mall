@@ -1,6 +1,6 @@
 # 服务器配置
 server:
-  port: 11000
+  port: 11001
 
 # 数据源配置
 spring:

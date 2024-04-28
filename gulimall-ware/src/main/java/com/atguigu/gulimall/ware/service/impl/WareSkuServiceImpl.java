@@ -93,21 +93,24 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     /**
      * 查询指定SKU是否具有库存
-     * @param skuIds
-     * @return
+     *
+     * @param skuIds SKU编号列表，需要查询其库存状况
+     * @return 返回一个SkuHasStockVo对象列表，其中包含了指定SKU是否具有库存的信息
      */
     @Override
     public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
-        skuIds.stream()
+        // 对传入的SKU编号列表进行流式处理
+        return skuIds.stream()
                 .map(skuId -> {
-                    // 查询当前sku总库存量
+                    // 根据SKU编号查询该SKU的库存量
                     Long count = this.baseMapper.getSkuStock(skuId);
+                    // 构建并返回一个包含SKU编号和是否有库存信息的对象
                     return SkuHasStockVo.builder()
                             .skuId(skuId)
                             .hasStock(count != null && count > 0).build();
                 })
+                // 集合化处理，将所有SKU的库存查询结果收集到一个列表中
                 .collect(Collectors.toList());
-
-        return Collections.emptyList();
     }
+
 }

@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 @TableName("oms_order_return_reason")
 public class OrderReturnReasonEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4472402791075461919L;
 
 	/**
 	 * id

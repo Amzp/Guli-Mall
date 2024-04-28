@@ -1,9 +1,14 @@
+# 配置spring应用的基本信息
 spring:
+  # 应用名称
   application:
     name: gulimall-order
 
+  # 配置云服务相关信息
   cloud:
+    # 配置Nacos服务
     nacos:
+      # 配置Nacos服务器地址和命名空间
       config:
-        server-addr: localhost:8848
-        namespace: 9907ac81-ec2f-45da-a2f2-56812b94b51c
+        server-addr: localhost:8848  # Nacos服务器地址
+        namespace: 9907ac81-ec2f-45da-a2f2-56812b94b51c  # 命名空间ID

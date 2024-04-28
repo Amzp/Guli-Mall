@@ -1,15 +1,19 @@
 package com.atguigu.gulimall.order;
 
+import com.atguigu.gulimall.order.entity.OrderEntity;
+import com.atguigu.gulimall.order.entity.OrderReturnReasonEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -90,6 +94,37 @@ public class GulimallOrderApplicationTests {
 
 
         System.out.printf("\ntestCreateBinding  Execution time: %d ms", (System.currentTimeMillis() - startTime));
+    }
+
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+    @Test
+    public void testSendMessageTest(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("testSendMessageTest()\n");
+
+
+        // testSendMessageTest Code
+
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                OrderReturnReasonEntity orderReturnReasonEntity = new OrderReturnReasonEntity();
+                orderReturnReasonEntity.setId((long) i);
+                orderReturnReasonEntity.setName("test");
+                rabbitTemplate.convertAndSend("hello-java-exchange", "hello.java", orderReturnReasonEntity);
+            }else {
+                OrderEntity orderEntity = new OrderEntity();
+                orderEntity.setId((long) i);
+                orderEntity.setOrderSn(UUID.randomUUID().toString());
+                rabbitTemplate.convertAndSend("hello-java-exchange", "hello.java", orderEntity);
+            }
+        }
+
+        log.info("Message sent successfully!");
+
+
+        System.out.printf("\ntestSendMessageTest  Execution time: %d ms", (System.currentTimeMillis() - startTime));
     }
 
 }

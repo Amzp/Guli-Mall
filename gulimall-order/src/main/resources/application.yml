@@ -43,10 +43,10 @@ spring:
       discovery:
         server-addr: localhost:8848
 
-    sentinel:
-      transport:
-        #配置sentinel dashboard地址
-        dashboard: localhost:8080
+#    sentinel:
+#      transport:
+#        #配置sentinel dashboard地址
+#        dashboard: localhost:8080
 
   # 模板引擎配置
   thymeleaf:

@@ -105,7 +105,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             stockMap = skuHasStock.getData(typeReference).stream()
                     .collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
         } catch (Exception e) {
-            log.error("库存服务查询异常，原因 {}", e);
+            log.error("库存服务查询异常，原因 {}", e.toString());
         }
 
         // 封装每个SKU的信息，包括价格、图片、库存状态等
@@ -346,5 +346,19 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageUtils(page);
     }
 
+    /**
+     * 通过SKU ID获取对应的SpuInfoEntity信息。
+     * @param skuId SKU的ID，用于查询对应的SpuInfoEntity。
+     * @return 返回查询到的SpuInfoEntity实例。
+     */
+    @Override
+    public SpuInfoEntity getSpuInfoBySkuId(Long skuId) {
+        // 通过SKU ID获取SKU信息
+        SkuInfoEntity infoEntity = skuInfoService.getById(skuId);
+        // 从SKU信息中提取出Spu的ID
+        Long spuId = infoEntity.getSpuId();
+        // 通过提取出的Spu ID获取完整的SpuInfoEntity信息
+        return this.getById(spuId);
 
+    }
 }

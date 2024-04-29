@@ -5,31 +5,38 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
 import com.atguigu.common.utils.R;
 import com.atguigu.common.vo.MemberRespVo;
+import com.atguigu.gulimall.order.constant.OrderConstant;
 import com.atguigu.gulimall.order.dao.OrderDao;
 import com.atguigu.gulimall.order.entity.OrderEntity;
+import com.atguigu.gulimall.order.entity.OrderItemEntity;
 import com.atguigu.gulimall.order.feign.CartFeignService;
 import com.atguigu.gulimall.order.feign.MemberFeignService;
+import com.atguigu.gulimall.order.feign.ProductFeignService;
 import com.atguigu.gulimall.order.feign.WmsFeignService;
 import com.atguigu.gulimall.order.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.order.service.OrderService;
-import com.atguigu.gulimall.order.vo.MemberAddressVo;
-import com.atguigu.gulimall.order.vo.OrderConfirmVo;
-import com.atguigu.gulimall.order.vo.OrderItemVo;
-import com.atguigu.gulimall.order.vo.SkuStockVo;
+import com.atguigu.gulimall.order.to.OrderCreateTo;
+import com.atguigu.gulimall.order.to.SpuInfoVo;
+import com.atguigu.gulimall.order.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -43,9 +50,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private CartFeignService cartFeignService;
     @Resource
     private WmsFeignService wmsFeignService;
+    @Resource
+    private ProductFeignService productFeignService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Resource
     private ThreadPoolExecutor executor;
+
+    /**
+     * 创建一个ThreadLocal变量，用于存储订单确认信息。
+     * ThreadLocal为每个线程提供了一个独立的变量副本，确保了不同线程之间变量的独立性。
+     * 在该类中，ThreadLocal被用来存储OrderSubmitVo对象，方便在线程执行过程中访问订单确认信息。
+     */
+    private ThreadLocal<OrderSubmitVo> submitVoThreadLocal = new ThreadLocal<>();
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -123,10 +143,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     }
                 }, executor);
 
-
         // 设置用户积分到订单确认视图对象中
         Integer integration = memberRespVo.getIntegration();
         confirmVo.setIntegration(integration);
+
+        /**
+         * 生成并设置防重令牌
+         * 该操作会为指定用户生成一个唯一的防重令牌，并将其存储到Redis中，以供后续请求验证。
+         * 令牌有效期为30分钟。
+         *
+         * @param memberRespVo 用户信息响应对象，包含用户的唯一标识。
+         * @param confirmVo 确认订单的信息对象，将设置生成的令牌。
+         */
+        // 生成一个不含横线的UUID作为防重令牌
+        String token = UUID.randomUUID().toString().replace("-", "");
+        // 将生成的令牌以用户ID为键存储到Redis中，设置过期时间为30分钟
+        stringRedisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId(), token, 30, TimeUnit.MINUTES);
+        // 将生成的令牌设置到确认订单信息对象中
+        confirmVo.setOrderToken(token);
 
         try {
             // 等待所有异步任务完成
@@ -137,6 +171,176 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
 
         return confirmVo;
+    }
+
+
+    @Override
+    public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
+        // 获取当前登录用户的成员响应实体
+        MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
+        // 创建一个提交订单响应实体
+        SubmitOrderResponseVo responseVo = new SubmitOrderResponseVo();
+        // 将给定的Vo实体设置到线程本地存储中
+        submitVoThreadLocal.set(vo);
+
+
+        // 1. 验证令牌：令牌的对比和删除必须保证原子性
+        // 构造一个Redis脚本，用于检查指定键的值是否与给定的值相等，如果相等，则删除该键。
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        // 获取订单令牌
+        String orderToken = vo.getOrderToken();
+        // 执行Redis脚本，传入键名和要比较的值，返回结果为删除成功与否的标志（1为成功，0为失败）
+        Long result = stringRedisTemplate.execute(
+                // 1. 实例化一个DefaultRedisScript对象
+                new DefaultRedisScript<Long>(script, Long.class),
+                // 2. 准备Redis Key
+                Collections.singletonList(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId()),
+                // 3. 提供给脚本的参数
+                orderToken);
+
+
+        if (result == 0L) {
+            // 令牌验证失败
+            responseVo.setCode(1);
+            return responseVo;
+        } else {
+            // 1. 创建订单
+            OrderCreateTo order = createOrder();
+        }
+
+
+        return responseVo;
+
+    }
+
+
+    private OrderCreateTo createOrder() {
+        OrderCreateTo orderCreateTo = new OrderCreateTo();
+        // 1. 生成订单号
+        String orderSn = IdWorker.getTimeId();
+
+        OrderEntity orderEntity = buildOrder(orderSn);
+
+        // 2. 获取订单项信息
+        List<OrderItemEntity> items = buildOrderItems(orderSn);
+
+        // 3. 检验价格
+
+
+        return orderCreateTo;
+    }
+
+    /**
+     * 构建订单实体。
+     * 该方法根据给定的订单编号和收货地址信息（包括运费），使用建造者模式组装一个订单实体。
+     *
+     * @param orderSn 订单编号，用于标识唯一的订单。
+     * @return OrderEntity 订单实体，包含了订单的基本信息和运费等。
+     */
+    private OrderEntity buildOrder(String orderSn) {
+        // 从线程本地存储获取订单提交信息
+        OrderSubmitVo orderSubmitVo = submitVoThreadLocal.get();
+        // 调用远程服务获取运费信息
+        R fare = wmsFeignService.getFare(orderSubmitVo.getAddrId());
+        // 将运费信息反序列化为FareVo对象
+        FareVo fareResp = fare.getData(new TypeReference<FareVo>() {
+        });
+
+        // 使用建造者模式初始化OrderEntity并设置运费及收货人信息
+        return OrderEntity.builder()
+                .orderSn(orderSn) // 设置订单编号
+                .freightAmount(fareResp.getFare()) // 初始化运费金额
+                .receiverCity(fareResp.getAddress().getCity()) // 初始化收货人所在城市
+                .receiverDetailAddress(fareResp.getAddress().getDetailAddress()) // 初始化收货人的详细地址
+                .receiverName(fareResp.getAddress().getName()) // 初始化收货人姓名
+                .receiverPhone(fareResp.getAddress().getPhone()) // 初始化收货人电话
+                .receiverPostCode(fareResp.getAddress().getPostCode()) // 初始化收货人邮政编码
+                .receiverProvince(fareResp.getAddress().getProvince()) // 初始化收货人所在省份
+                .receiverRegion(fareResp.getAddress().getRegion()) // 初始化收货人所在区域
+                .build();
+    }
+
+    /**
+     * 构建所有订单项数据。
+     * 该方法通过调用cartFeignService来获取当前购物车中的商品项，并将这些商品项转换为订单项实体列表。
+     * 每个订单项实体会设置订单编号（orderSn）。
+     *
+     * @param orderSn 订单编号，用于设置每个订单项实体。
+     * @return 返回包含所有订单项实体的列表。如果当前购物车为空，则返回null。
+     */
+    private List<OrderItemEntity> buildOrderItems(String orderSn) {
+        // 获取当前购物车中的商品项
+        List<OrderItemVo> currentCartItems = cartFeignService.getCurrentCartItems();
+        if (currentCartItems != null && !currentCartItems.isEmpty()) {
+            // 将购物车项转换为订单项实体，并设置订单编号
+            return currentCartItems.stream()
+                    .map(cartItem -> {
+                        OrderItemEntity orderItemEntity = buildOrderItem(cartItem);
+                        orderItemEntity.setOrderSn(orderSn);
+                        return orderItemEntity;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            // 如果购物车为空，返回null
+            return null;
+        }
+
+    }
+
+
+    /**
+     * 构建单个订单项数据
+     *
+     * @param cartItem 购物车项信息，包含商品的SKU信息、数量、属性等
+     * @return 返回构建完成的订单项实体对象，包含商品的详细信息、优惠信息、价格信息等
+     */
+    private OrderItemEntity buildOrderItem(OrderItemVo cartItem) {
+
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+
+        // 构建商品的SPU信息
+        Long skuId = cartItem.getSkuId();
+        // 通过SKU ID获取SPU的信息
+        R spuInfo = productFeignService.getSpuInfoBySkuId(skuId);
+        SpuInfoVo spuInfoData = spuInfo.getData("data", new TypeReference<SpuInfoVo>() {
+        });
+        orderItemEntity.setSpuId(spuInfoData.getId())
+                .setSpuName(spuInfoData.getSpuName())
+                .setSpuBrand(spuInfoData.getBrandId().toString())
+                .setCategoryId(spuInfoData.getCatalogId());
+
+        // 构建商品的SKU信息
+        orderItemEntity.setSkuId(skuId)
+                .setSkuName(cartItem.getTitle())
+                .setSkuPic(cartItem.getImage())
+                .setSkuPrice(cartItem.getPrice())
+                .setSkuQuantity(cartItem.getCount());
+
+        // 将SKU属性值列表转换为字符串
+        String skuAttrValues = StringUtils.collectionToDelimitedString(cartItem.getSkuAttrValues(), ";");
+        orderItemEntity.setSkuAttrsVals(skuAttrValues);
+
+        // 构建商品的优惠信息（待实现）
+
+        // 构建商品的积分信息
+        orderItemEntity.setGiftGrowth(cartItem.getPrice().multiply(new BigDecimal(cartItem.getCount())).intValue())
+                .setGiftIntegration(cartItem.getPrice().multiply(new BigDecimal(cartItem.getCount())).intValue());
+
+        // 构建订单项的价格信息
+        orderItemEntity.setPromotionAmount(BigDecimal.ZERO)
+                .setCouponAmount(BigDecimal.ZERO)
+                .setIntegrationAmount(BigDecimal.ZERO);
+
+        // 计算订单项的实际金额
+        // 先计算原价，然后减去各种优惠金额，得到实际支付金额
+        BigDecimal origin = orderItemEntity.getSkuPrice().multiply(new BigDecimal(orderItemEntity.getSkuQuantity().toString()));
+        BigDecimal subtract = origin
+                .subtract(orderItemEntity.getCouponAmount())
+                .subtract(orderItemEntity.getPromotionAmount())
+                .subtract(orderItemEntity.getIntegrationAmount());
+        orderItemEntity.setRealAmount(subtract);
+
+        return orderItemEntity;
     }
 
 

@@ -2,7 +2,11 @@ package com.atguigu.gulimall.order.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,6 +20,10 @@ import java.util.Date;
  * @date 2019-10-08 09:56:16
  */
 @Data
+@Builder
+@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("oms_order")
 public class OrderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

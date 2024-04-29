@@ -3,10 +3,13 @@ package com.atguigu.gulimall.order.web;
 import com.atguigu.gulimall.order.feign.MemberFeignService;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.atguigu.gulimall.order.vo.OrderConfirmVo;
+import com.atguigu.gulimall.order.vo.OrderSubmitVo;
+import com.atguigu.gulimall.order.vo.SubmitOrderResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.Resource;
 
@@ -38,6 +41,22 @@ public class OrderWebController {
         return "confirm";
     }
 
+    @PostMapping("/submitOrder")
+    public String submitOrder(OrderSubmitVo vo) {
+        log.info("提交订单：{}", vo.toString());
+
+        SubmitOrderResponseVo responseVo = orderService.submitOrder(vo);
+
+        if (responseVo.getCode() == 0) {
+            //下单成功来到支付选择页
+            log.debug("下单成功");
+            return "pay";
+        } else {
+            log.debug("下单失败");
+            return "redirect:http://order.gulimall.com/toTrade";
+        }
+
+    }
 
 
 }

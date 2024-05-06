@@ -1,10 +1,13 @@
 package com.atguigu.gulimall.ware.controller;
 
+import com.atguigu.common.exception.BizCodeEnume;
+import com.atguigu.common.exception.NoStockException;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import com.atguigu.gulimall.ware.vo.SkuHasStockVo;
+import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,31 @@ import java.util.Map;
 public class WareSkuController {
     @Resource
     private WareSkuService wareSkuService;
+
+    /**
+     * 锁定库存
+     * 该方法用于在特定场景下锁定库存，具体场景包括：
+     * 1）、下订单成功后，无论订单是因未支付而被系统自动取消，还是被用户手动取消，都需要解锁库存。
+     * 2）、下订单成功且库存锁定成功后，如果后续业务调用失败导致订单回滚，之前锁定的库存需自动解锁。
+     * @param vo 库存锁定场景的详细信息，包括需要锁定的商品信息和数量等。
+     * @return 返回一个结果对象，其中包含库存锁定是否成功的信息。
+     */
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo) {
+        try {
+            // 尝试锁定库存
+            Boolean lockStock = wareSkuService.orderLockStock(vo);
+            log.info("库存锁定结果：{}", lockStock);
+            // 返回锁定结果
+            return R.ok().setData(lockStock);
+        } catch (NoStockException e) {
+            // 如果库存不足，则记录日志并返回相应的错误信息
+            log.warn("库存锁定失败，订单回滚");
+            return R.error(BizCodeEnume.NO_STOCK_EXCEPTION.getCode(), BizCodeEnume.NO_STOCK_EXCEPTION.getMsg());
+        }
+
+    }
+
 
     /**
      * 列表

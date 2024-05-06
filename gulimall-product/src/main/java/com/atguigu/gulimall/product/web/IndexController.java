@@ -5,7 +5,6 @@ import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.product.vo.Catalog2Vo;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

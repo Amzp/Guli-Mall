@@ -1,7 +1,6 @@
 package com.atguigu.gulimall.order.vo;
 
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.Date;
 

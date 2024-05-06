@@ -18,11 +18,35 @@
         WHERE sku_id = #{skuId}
           AND ware_id = #{wareId}
     </update>
+
+    <!-- 更新SKU库存锁定数量 -->
+    <update id="lockSkuStock">
+        update gulimall_wms.wms_ware_sku
+        set stock_locked = stock_locked + #{num} <!-- 增加锁定库存数量 -->
+        where sku_id = #{skuId} <!-- 指定SKU ID -->
+          and ware_id = #{wareId} <!-- 指定仓库ID -->
+          and stock - stock_locked >= #{num} <!-- 确保库存充足，不会超卖 -->
+    </update>
+
     <select id="getSkuStock" resultType="java.lang.Long">
         select sum(stock - stock_locked)
         from gulimall_wms.wms_ware_sku
         where sku_id = #{skuId}
     </select>
+
+    <select id="listWareIdHasSkuStock" resultType="java.lang.Long">
+        select ware_id
+        from gulimall_wms.wms_ware_sku
+        where sku_id = #{skuId}
+          and stock - stock_locked > 0
+    </select>
+
+    <update id="unLockStock">
+        UPDATE gulimall_wms.wms_ware_sku
+        SET stock_locked = stock_locked - #{num}
+        WHERE sku_id = #{skuId}
+          AND ware_id = #{wareId}
+    </update>
 
 
 </mapper>

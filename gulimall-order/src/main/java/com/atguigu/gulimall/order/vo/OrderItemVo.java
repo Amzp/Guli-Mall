@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.order.vo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 
 
 @Data
+@Accessors(chain = true)
 public class OrderItemVo {
 
     private Long skuId;

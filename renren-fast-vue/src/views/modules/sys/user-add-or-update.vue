@@ -130,13 +130,13 @@ export default {
             params: this.$http.adornParams()
           }).then(({data}) => {
             if (data && data.code === 0) {
-                this.dataForm.userName = data.user.username
-                this.dataForm.salt = data.user.salt
-                this.dataForm.email = data.user.email
-                this.dataForm.mobile = data.user.mobile
-                this.dataForm.roleIdList = data.user.roleIdList
-                this.dataForm.status = data.user.status
-              }
+              this.dataForm.userName = data.user.username
+              this.dataForm.salt = data.user.salt
+              this.dataForm.email = data.user.email
+              this.dataForm.mobile = data.user.mobile
+              this.dataForm.roleIdList = data.user.roleIdList
+              this.dataForm.status = data.user.status
+            }
           })
         }
       })

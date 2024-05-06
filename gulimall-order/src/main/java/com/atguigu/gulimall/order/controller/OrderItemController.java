@@ -4,9 +4,9 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.order.entity.OrderItemEntity;
 import com.atguigu.gulimall.order.service.OrderItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("order/orderitem")
 public class OrderItemController {
-    @Autowired
+    @Resource
     private OrderItemService orderItemService;
 
     /**

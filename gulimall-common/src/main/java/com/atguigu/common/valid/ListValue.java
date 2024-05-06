@@ -19,8 +19,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @Retention 指明此注解的保留策略为运行时。
  */
 @Documented
-@Constraint(validatedBy = { ListValueConstraintValidator.class })
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+@Constraint(validatedBy = {ListValueConstraintValidator.class})
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 public @interface ListValue {
     /**
@@ -33,17 +33,17 @@ public @interface ListValue {
      * 校验组，用于分组校验。默认为空组。
      * 可以定义多个校验组，以支持不同的校验场景。
      */
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
     /**
      * 负载信息，用于承载额外的payload信息。
      * 默认为空，可以扩展以支持更复杂的校验需求。
      */
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
     /**
      * 允许的值列表。默认为空数组。
      * 用于校验字段或参数值是否在允许的值列表之中。
      */
-    int[] vals() default { };
+    int[] vals() default {};
 }

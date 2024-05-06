@@ -5,7 +5,6 @@ import com.atguigu.gulimall.ware.entity.WareInfoEntity;
 import com.atguigu.gulimall.ware.vo.FareVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**

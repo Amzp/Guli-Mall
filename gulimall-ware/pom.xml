@@ -20,30 +20,92 @@
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
     </properties>
 
+    <!-- 项目依赖定义 -->
     <dependencies>
+        <!-- 项目基础工具类依赖 -->
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- Spring Boot Web依赖，用于构建Web应用 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Feign客户端依赖，用于实现服务间的调用 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <!-- 测试依赖，仅用于测试环境 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- 配置中心依赖，用于集中管理配置 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- 分布式事务管理依赖，排除默认的seata依赖，采用指定版本 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.seata</groupId>
+                    <artifactId>seata-all</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 指定版本的Seata依赖 -->
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <!-- AMQP消息队列依赖，用于实现消息通信 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- 应用监控依赖，提供应用的监控与管理功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
     </dependencies>
 
+
+    <!--
+    <dependencyManagement> 元素用于定义项目中所有依赖的版本管理，确保整个项目中引用的依赖版本具有一致性。
+    它通过指定依赖的版本，避免在每个依赖声明中重复版本信息，简化了项目的依赖管理。
+    -->
     <dependencyManagement>
         <dependencies>
+            <!--
+            定义阿里巴巴云的依赖管理，指定 spring-cloud-alibaba-dependencies 的版本。
+            它引入了使用阿里巴巴云服务所需的各种依赖的版本约束。
+            -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.1.0.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--
+            定义 Spring Cloud 的依赖管理，通过 ${spring-cloud.version} 变量指定版本。
+            它引入了使用 Spring Cloud 框架所需的各种依赖的版本约束。
+            -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -53,6 +115,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>

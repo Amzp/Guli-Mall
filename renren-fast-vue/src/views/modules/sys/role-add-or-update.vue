@@ -76,14 +76,14 @@ export default {
             params: this.$http.adornParams()
           }).then(({data}) => {
             if (data && data.code === 0) {
-                this.dataForm.roleName = data.role.roleName
-                this.dataForm.remark = data.role.remark
-                var idx = data.role.menuIdList.indexOf(this.tempKey)
-                if (idx !== -1) {
-                  data.role.menuIdList.splice(idx, data.role.menuIdList.length - idx)
-                }
-                this.$refs.menuListTree.setCheckedKeys(data.role.menuIdList)
+              this.dataForm.roleName = data.role.roleName
+              this.dataForm.remark = data.role.remark
+              var idx = data.role.menuIdList.indexOf(this.tempKey)
+              if (idx !== -1) {
+                data.role.menuIdList.splice(idx, data.role.menuIdList.length - idx)
               }
+              this.$refs.menuListTree.setCheckedKeys(data.role.menuIdList)
+            }
           })
         }
       })

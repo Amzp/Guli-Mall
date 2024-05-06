@@ -1,6 +1,9 @@
 package com.atguigu.gulimall.order.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.constant.CartConstant;
+import com.atguigu.common.exception.NoStockException;
+import com.atguigu.common.to.OrderTo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
 import com.atguigu.common.utils.R;
@@ -9,23 +12,33 @@ import com.atguigu.gulimall.order.constant.OrderConstant;
 import com.atguigu.gulimall.order.dao.OrderDao;
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.entity.OrderItemEntity;
+import com.atguigu.gulimall.order.enume.OrderStatusEnum;
 import com.atguigu.gulimall.order.feign.CartFeignService;
 import com.atguigu.gulimall.order.feign.MemberFeignService;
 import com.atguigu.gulimall.order.feign.ProductFeignService;
 import com.atguigu.gulimall.order.feign.WmsFeignService;
 import com.atguigu.gulimall.order.interceptor.LoginUserInterceptor;
+import com.atguigu.gulimall.order.service.OrderItemService;
 import com.atguigu.gulimall.order.service.OrderService;
+import com.atguigu.gulimall.order.service.PaymentInfoService;
 import com.atguigu.gulimall.order.to.OrderCreateTo;
 import com.atguigu.gulimall.order.to.SpuInfoVo;
 import com.atguigu.gulimall.order.vo.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lly835.bestpay.service.BestPayService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -54,7 +67,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private ProductFeignService productFeignService;
 
     @Resource
+    private OrderItemService orderItemService;
+    @Resource
+    private PaymentInfoService paymentInfoService;
+//    @Resource
+//    private BestPayService bestPayService;
+
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private RabbitTemplate rabbitTemplate;
 
     @Resource
     private ThreadPoolExecutor executor;
@@ -71,7 +93,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<OrderEntity> page = this.page(
                 new Query<OrderEntity>().getPage(params),
-                new QueryWrapper<OrderEntity>()
+                new QueryWrapper<>()
         );
         return new PageUtils(page);
     }
@@ -173,7 +195,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return confirmVo;
     }
 
-
+    /**
+     * 提交订单
+     *
+     * @param vo
+     * @return
+     */
+//    @GlobalTransactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
     @Override
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
         // 获取当前登录用户的成员响应实体
@@ -182,7 +211,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         SubmitOrderResponseVo responseVo = new SubmitOrderResponseVo();
         // 将给定的Vo实体设置到线程本地存储中
         submitVoThreadLocal.set(vo);
-
+        // 设置响应状态为成功
+        responseVo.setCode(0);
 
         // 1. 验证令牌：令牌的对比和删除必须保证原子性
         // 构造一个Redis脚本，用于检查指定键的值是否与给定的值相等，如果相等，则删除该键。
@@ -192,28 +222,106 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 执行Redis脚本，传入键名和要比较的值，返回结果为删除成功与否的标志（1为成功，0为失败）
         Long result = stringRedisTemplate.execute(
                 // 1. 实例化一个DefaultRedisScript对象
-                new DefaultRedisScript<Long>(script, Long.class),
+                new DefaultRedisScript<>(script, Long.class),
                 // 2. 准备Redis Key
                 Collections.singletonList(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId()),
                 // 3. 提供给脚本的参数
                 orderToken);
 
 
-        if (result == 0L) {
+        if (result != null && result == 0L) {
             // 令牌验证失败
             responseVo.setCode(1);
             return responseVo;
         } else {
             // 1. 创建订单
             OrderCreateTo order = createOrder();
+            // 2. 检验价格
+            BigDecimal payAmount = order.getOrder().getPayAmount();
+            BigDecimal payPrice = vo.getPayPrice();
+            if (Math.abs(payAmount.subtract(payPrice).doubleValue()) < 0.01) {
+                // 3. 保存订单
+                saveOrder(order);
+                // 4. 库存锁定
+                WareSkuLockVo wareSkuLockVo = new WareSkuLockVo();
+                wareSkuLockVo.setOrderSn(order.getOrder().getOrderSn());
+                List<OrderItemVo> locks = order.getOrderItems().stream()
+                        .map(item -> new OrderItemVo()
+                                .setSkuId(item.getSkuId())
+                                .setCount(item.getSkuQuantity())
+                                .setTitle(item.getSkuName()))
+                        .collect(Collectors.toList());
+                wareSkuLockVo.setLocks(locks);
+
+                // 为了保证高并发，让库存服务自己回滚，发消息给库存服务
+                // 库存服务本身也可以使用自动解锁模式
+                //调用远程锁定库存的方法
+                //出现的问题：扣减库存成功了，但是由于网络原因超时，出现异常，导致订单事务回滚，库存事务不回滚(解决方案：seata)
+                //为了保证高并发，不推荐使用seata，因为是加锁，并行化，提升不了效率,可以发消息给库存服务
+                R r = wmsFeignService.orderLockStock(wareSkuLockVo);
+                if (r.getCode() == 0) {
+                    // 锁定成功
+                    responseVo.setOrder(order.getOrder());
+
+                    // 人为制造一个异常
+//                    int i = 10 / 0;
+
+                    // 5. 发送消息给MQ
+                    rabbitTemplate.convertAndSend("order-event-exchange", "order.create.order", order.getOrder());
+                    log.info("订单创建成功，订单号：{}", order.getOrder().getOrderSn());
+                    //删除购物车里的数据
+                    stringRedisTemplate.delete(CartConstant.CART_PREFIX + memberRespVo.getId());
+                    return responseVo;
+                } else {
+                    // 锁定失败
+                    String msg = (String) r.get("msg");
+                    throw new NoStockException(msg);
+                }
+            } else {
+                // 验证失败
+                responseVo.setCode(2);
+                return responseVo;
+            }
         }
+    }
 
+    /**
+     * 保存订单及其订单项信息。
+     *
+     * @param orderCreateTo 包含订单信息和订单项信息的传输对象。
+     *                      其中，订单信息包括：订单各项属性；
+     *                      订单项信息包括：订单项的各项属性。
+     *                      该方法将订单信息和订单项信息分别保存到数据库中。
+     */
+    private void saveOrder(OrderCreateTo orderCreateTo) {
+        // 获取并设置订单基本信息
+        OrderEntity order = orderCreateTo.getOrder();
+        order.setModifyTime(new Date());
+        order.setCreateTime(new Date());
 
-        return responseVo;
+        // 保存订单信息到数据库
+        this.baseMapper.insert(order);
 
+        // 获取订单项信息并保存
+        List<OrderItemEntity> orderItems = orderCreateTo.getOrderItems();
+
+        // 批量保存订单项信息到数据库
+        orderItemService.saveBatch(orderItems);
     }
 
 
+    /**
+     * 创建订单
+     * <p>
+     * 本方法负责创建订单及其项的信息，主要包括以下步骤：
+     * 1. 生成订单编号；
+     * 2. 构建订单实体；
+     * 3. 获取订单项实体列表；
+     * 4. 校验并计算订单总价；
+     * 5. 将订单实体和订单项实体封装到OrderCreateTo对象中并返回。
+     *
+     * @return OrderCreateTo 包含订单及其项信息的对象
+     */
     private OrderCreateTo createOrder() {
         OrderCreateTo orderCreateTo = new OrderCreateTo();
         // 1. 生成订单号
@@ -225,10 +333,65 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         List<OrderItemEntity> items = buildOrderItems(orderSn);
 
         // 3. 检验价格
+        if (items != null) {
+            computePrice(orderEntity, items);
+        }
 
+        orderCreateTo.setOrder(orderEntity);
+        orderCreateTo.setOrderItems(items);
 
         return orderCreateTo;
     }
+
+
+    /**
+     * 计算订单价格及优惠信息。
+     *
+     * @param orderEntity       订单实体，用于存储订单的总金额、优惠金额等信息。
+     * @param orderItemEntities 订单项实体列表，包含订单中的各个商品及其详细信息，用于计算订单总额及各项优惠。
+     */
+    private void computePrice(OrderEntity orderEntity, List<OrderItemEntity> orderItemEntities) {
+        // 初始化订单总额、各项优惠金额以及积分、成长值
+        BigDecimal total = new BigDecimal("0.0");
+        BigDecimal coupon = new BigDecimal("0.0");
+        BigDecimal intergration = new BigDecimal("0.0");
+        BigDecimal promotion = new BigDecimal("0.0");
+
+        // 初始化积分总数和成长值总数
+        Integer integrationTotal = 0;
+        Integer growthTotal = 0;
+
+        // 遍历订单项，累加订单总额及各项优惠金额，并计算积分和成长值
+        for (OrderItemEntity orderItem : orderItemEntities) {
+            // 累加优惠价格信息
+            coupon = coupon.add(orderItem.getCouponAmount());
+            promotion = promotion.add(orderItem.getPromotionAmount());
+            intergration = intergration.add(orderItem.getIntegrationAmount());
+
+            // 累加总价
+            total = total.add(orderItem.getRealAmount());
+
+            // 累加积分和成长值
+            integrationTotal += orderItem.getGiftIntegration();
+            growthTotal += orderItem.getGiftGrowth();
+        }
+
+        // 设置订单价格相关的信息
+        orderEntity.setTotalAmount(total);
+        // 计算应付总额，即总额加上运费
+        orderEntity.setPayAmount(total.add(orderEntity.getFreightAmount()));
+        orderEntity.setCouponAmount(coupon);
+        orderEntity.setPromotionAmount(promotion);
+        orderEntity.setIntegrationAmount(intergration);
+
+        // 设置积分和成长值信息
+        orderEntity.setIntegration(integrationTotal);
+        orderEntity.setGrowth(growthTotal);
+
+        // 设置订单的删除状态为未删除
+        orderEntity.setDeleteStatus(0);
+    }
+
 
     /**
      * 构建订单实体。
@@ -238,6 +401,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * @return OrderEntity 订单实体，包含了订单的基本信息和运费等。
      */
     private OrderEntity buildOrder(String orderSn) {
+        // 从线程本地存储获取会员信息
+        MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
         // 从线程本地存储获取订单提交信息
         OrderSubmitVo orderSubmitVo = submitVoThreadLocal.get();
         // 调用远程服务获取运费信息
@@ -248,6 +413,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         // 使用建造者模式初始化OrderEntity并设置运费及收货人信息
         return OrderEntity.builder()
+                .memberId(memberRespVo.getId()) // 初始化会员ID
                 .orderSn(orderSn) // 设置订单编号
                 .freightAmount(fareResp.getFare()) // 初始化运费金额
                 .receiverCity(fareResp.getAddress().getCity()) // 初始化收货人所在城市
@@ -257,6 +423,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 .receiverPostCode(fareResp.getAddress().getPostCode()) // 初始化收货人邮政编码
                 .receiverProvince(fareResp.getAddress().getProvince()) // 初始化收货人所在省份
                 .receiverRegion(fareResp.getAddress().getRegion()) // 初始化收货人所在区域
+                .status(OrderStatusEnum.CREATE_NEW.getCode()) // 初始化订单状态为待付款
+                .autoConfirmDay(7)  // 设置自动确认收货时间
+                .confirmStatus(0)   // 初始化订单确认状态为未确认
                 .build();
     }
 
@@ -344,4 +513,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
 
+    @Override
+    public OrderEntity getOrderByOrderSn(String orderSn) {
+        return this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn));
+    }
+
+
+    /**
+     * 关闭订单。
+     * 在关闭订单之前，首先检查订单的状态是否为待支付（即是否已支付）。如果订单状态为待支付，则将订单状态更新为已取消，并发送一条消息到消息队列。
+     *
+     * @param orderEntity 包含订单信息的实体对象。此对象应包含订单的唯一标识，如订单号（orderSn）。
+     */
+    @Override
+    public void closeOrder(OrderEntity orderEntity) {
+        // 根据订单号查询订单状态
+        OrderEntity orderInfo = this.getOne(new QueryWrapper<OrderEntity>().
+                eq("order_sn", orderEntity.getOrderSn()));
+
+        // 检查订单状态是否为待支付，若是则进行关闭订单操作
+        if (orderInfo.getStatus().equals(OrderStatusEnum.CREATE_NEW.getCode())) {
+            // 更新订单状态为已取消
+            OrderEntity orderUpdate = new OrderEntity();
+            orderUpdate.setId(orderInfo.getId());
+            orderUpdate.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(orderUpdate);
+
+            // 准备订单消息，发送到消息队列
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(orderInfo, orderTo);
+
+            try {
+                // 发送订单取消消息到消息队列
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderTo);
+            } catch (Exception e) {
+                // 捕获发送消息异常，计划实现：定期扫描数据库，重新发送失败的消息
+            }
+        }
+    }
 }

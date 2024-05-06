@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @RunWith(SpringRunner.class)
@@ -92,15 +93,15 @@ public class GulimallOrderApplicationTests {
         log.info("Binding created successfully!");
 
 
-
         System.out.printf("\ntestCreateBinding  Execution time: %d ms", (System.currentTimeMillis() - startTime));
     }
 
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
     @Test
-    public void testSendMessageTest(){
+    public void testSendMessageTest() {
         long startTime = System.currentTimeMillis();
         System.out.println("testSendMessageTest()\n");
 
@@ -113,7 +114,7 @@ public class GulimallOrderApplicationTests {
                 orderReturnReasonEntity.setId((long) i);
                 orderReturnReasonEntity.setName("test");
                 rabbitTemplate.convertAndSend("hello-java-exchange", "hello.java", orderReturnReasonEntity);
-            }else {
+            } else {
                 OrderEntity orderEntity = new OrderEntity();
                 orderEntity.setId((long) i);
                 orderEntity.setOrderSn(UUID.randomUUID().toString());
@@ -126,5 +127,7 @@ public class GulimallOrderApplicationTests {
 
         System.out.printf("\ntestSendMessageTest  Execution time: %d ms", (System.currentTimeMillis() - startTime));
     }
+
+
 
 }

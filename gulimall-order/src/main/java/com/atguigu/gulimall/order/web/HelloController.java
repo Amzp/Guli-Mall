@@ -2,7 +2,6 @@ package com.atguigu.gulimall.order.web;
 
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,16 +19,21 @@ public class HelloController {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * 创建订单测试
+     *
+     * @return 返回字符串 "ok"，表示订单创建测试完成
+     */
     @ResponseBody
     @GetMapping(value = "/test/createOrder")
     public String createOrderTest() {
 
-        //订单下单成功
+        // 初始化订单实体
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setOrderSn(UUID.randomUUID().toString());
-        orderEntity.setModifyTime(new Date());
+        orderEntity.setOrderSn(UUID.randomUUID().toString()); // 设置订单编号
+        orderEntity.setModifyTime(new Date()); // 设置修改时间
 
-        //给MQ发送消息
+        // 向MQ发送订单创建消息
         rabbitTemplate.convertAndSend("order-event-exchange","order.create.order",orderEntity);
 
         return "ok";
@@ -40,5 +44,7 @@ public class HelloController {
 
         return page;
     }
+
+
 
 }

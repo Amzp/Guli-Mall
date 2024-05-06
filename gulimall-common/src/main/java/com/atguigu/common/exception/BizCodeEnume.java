@@ -21,6 +21,8 @@ public enum BizCodeEnume {
     UNKNOW_EXCEPTION(10000, "系统未知异常"),
     // 表示参数格式校验失败的异常
     VAILD_EXCEPTION(10001, "参数格式校验失败"),
+
+    TO_MANY_REQUEST(10002,"请求流量过大，请稍后再试"),
     // 表示在短时间内频繁获取验证码导致的异常
     SMS_CODE_EXCEPTION(10002, "验证码已发送，请稍后再试"),
     // 表示商品上架过程中出现的异常

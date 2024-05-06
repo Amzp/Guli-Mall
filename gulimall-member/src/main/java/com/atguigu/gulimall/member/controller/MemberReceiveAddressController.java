@@ -5,7 +5,6 @@ import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.member.entity.MemberReceiveAddressEntity;
 import com.atguigu.gulimall.member.service.MemberReceiveAddressService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

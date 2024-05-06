@@ -5,7 +5,6 @@ import com.atguigu.common.constant.CartConstant;
 import com.atguigu.common.vo.MemberRespVo;
 import com.atguigu.gulimall.cart.to.UserInfoTo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

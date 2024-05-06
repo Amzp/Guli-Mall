@@ -3,18 +3,38 @@ spring:
   datasource:
     username: root # 数据库用户名
     password: root # 数据库密码
-    url: jdbc:mysql://192.168.56.10:3306/gulimall_ums # 数据库连接URL
-    driver-class-name: com.mysql.jdbc.Driver # 数据库驱动类名
+    url: jdbc:mysql://192.168.56.10:3306/gulimall_ums?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai # 数据库连接URL
+    driver-class-name: com.mysql.cj.jdbc.Driver # 数据库驱动类名
 
   # 配置Nacos服务发现
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
+#    sentinel:
+#      transport:
+#        #配置sentinel dashboard地址
+#        dashboard: localhost:8080
 
   # 应用名称配置
   application:
     name: gulimall-member
+
+  redis:
+    port: 6379
+    host: 192.168.56.10
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  session:
+    store-type: redis
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
 
 # 配置Mybatis-plus
 mybatis-plus:

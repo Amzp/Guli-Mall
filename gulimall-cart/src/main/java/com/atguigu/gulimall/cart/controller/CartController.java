@@ -1,9 +1,6 @@
 package com.atguigu.gulimall.cart.controller;
 
-import com.atguigu.common.constant.AuthServerConstant;
-import com.atguigu.gulimall.cart.interceptor.CartInterceptor;
 import com.atguigu.gulimall.cart.service.CartService;
-import com.atguigu.gulimall.cart.to.UserInfoTo;
 import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

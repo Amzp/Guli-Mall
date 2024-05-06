@@ -27,7 +27,7 @@ public class WareMyBatisConfig {
         // 禁止设置最大页数溢出，即当请求的页数大于设置的最大页数时的行为。
         // true 表示回到首页，false 表示继续请求，默认为 false。
 //        paginationInterceptor.setOverflow(true);
-        // 设置每页最多可显示的数量。默认为 500，-1 表示不限制。
+//         设置每页最多可显示的数量。默认为 500，-1 表示不限制。
 //        paginationInterceptor.setLimit(1000);
         return paginationInterceptor;
     }

@@ -1,8 +1,6 @@
 package com.atguigu.gulimall.order.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -10,9 +8,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
  * ClassName: RabbitConfig
@@ -25,7 +20,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @Slf4j
-public class RabbitConfig {
+public class MyRabbitConfig {
 
     private RabbitTemplate rabbitTemplate;
 
@@ -71,7 +66,7 @@ public class RabbitConfig {
          * 注意：回调函数内具体操作根据实际需求编写，此处仅为示例。
          */
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            log.debug("confirm...correlationData[{}]==>ack:[{}]==>cause:[{}]", correlationData, ack, cause);
+            log.debug("confirm...correlationData [{}] ==> ack: [{}] ==> cause: [{}]", correlationData, ack, cause);
         });
 
 
@@ -82,7 +77,7 @@ public class RabbitConfig {
          * 注意：回调函数内具体操作根据实际需求编写，此处仅为示例。
          */
         rabbitTemplate.setReturnCallback((message,replyCode,replyText,exchange,routingKey) -> {
-            log.debug("Fail Message[{}]==>replyCode[{}]==>replyText[{}]==>exchange[{}]==>routingKey[{}]", message, replyCode, replyText, exchange, routingKey);
+            log.debug("Fail Message [{}] ==> replyCode [{}] ==> replyText [{}] ==> exchange [{}] ==> routingKey [{}]", message, replyCode, replyText, exchange, routingKey);
         });
     }
 

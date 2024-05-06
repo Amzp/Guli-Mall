@@ -94,10 +94,10 @@ export default {
                 onClose: () => {
                   this.visible = false
                   this.$nextTick(() => {
-                      this.mainTabs = []
-                      clearLoginInfo()
-                      this.$router.replace({ name: 'login' })
-                    })
+                    this.mainTabs = []
+                    clearLoginInfo()
+                    this.$router.replace({ name: 'login' })
+                  })
                 }
               })
             } else {

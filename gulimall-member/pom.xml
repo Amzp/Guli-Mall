@@ -20,31 +20,89 @@
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
     </properties>
 
+    <!-- 依赖声明部分开始 -->
+    <!-- 这一部分定义了项目所依赖的外部库，包括Spring Boot、Spring Cloud、以及其他常用工具库 -->
     <dependencies>
+        <!-- Gulimall通用模块依赖 -->
+        <!-- 这是一个内部模块依赖，用于共享公共代码和配置 -->
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- Spring Boot Web依赖 -->
+        <!-- 用于构建基于Spring Boot的Web应用，包括RESTful服务和模板引擎等功能 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring Cloud OpenFeign依赖 -->
+        <!-- 用于实现服务间的调用，简化了分布式系统中服务发现和调用的复杂性 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <!--httpclient-->
+        <!-- 提供了一种用于发送HTTP请求的客户端库 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+        <!--commons-io-->
+        <!-- 提供了文件和IO操作的工具库 -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <!--gson-->
+        <!-- 用于JSON数据的解析和生成 -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <!-- 模板引擎 -->
+        <!-- 用于动态生成HTML页面 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- 引入redis -->
+        <!-- 用于数据缓存和轻量级数据库 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- 整合springsession -->
+        <!-- 用于实现会话管理，支持分布式系统中的会话共享 -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+
+        <!-- Spring Boot测试依赖 -->
+        <!-- 用于编写和执行测试代码，验证应用程序的功能和性能 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Spring Boot Actuator依赖 -->
+        <!-- 用于提供应用监控和管理的特性，如健康检查、指标监控等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
+    <!-- 依赖声明部分结束 -->
+
+
 
     <dependencyManagement>
         <dependencies>

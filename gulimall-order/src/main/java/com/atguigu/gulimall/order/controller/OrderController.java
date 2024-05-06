@@ -2,11 +2,13 @@ package com.atguigu.gulimall.order.controller;
 
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
+import com.atguigu.common.annotation.LogInfo;
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -21,15 +23,30 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("order/order")
+@Slf4j
 public class OrderController {
-    @Autowired
+    @Resource
     private OrderService orderService;
+
+    /**
+     * 根据订单编号查询订单状态
+     * @param orderSn
+     * @return
+     */
+    @GetMapping(value = "/status/{orderSn}")
+    @LogInfo(name = "根据订单编号查询订单状态")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn) {
+        log.info("getOrderStatus, orderSn:{}", orderSn);
+        OrderEntity orderEntity = orderService.getOrderByOrderSn(orderSn);
+        return R.ok().setData(orderEntity);
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
     //@RequiresPermissions("order:order:list")
+    @LogInfo(name = "订单列表")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = orderService.queryPage(params);
 
@@ -42,6 +59,7 @@ public class OrderController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("order:order:info")
+    @LogInfo(name = "订单详情")
     public R info(@PathVariable("id") Long id){
 		OrderEntity order = orderService.getById(id);
 
@@ -52,6 +70,7 @@ public class OrderController {
      * 保存
      */
     @RequestMapping("/save")
+    @LogInfo(name = "保存订单")
     //@RequiresPermissions("order:order:save")
     public R save(@RequestBody OrderEntity order){
 		orderService.save(order);
@@ -64,6 +83,7 @@ public class OrderController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("order:order:update")
+    @LogInfo(name = "修改订单")
     public R update(@RequestBody OrderEntity order){
 		orderService.updateById(order);
 
@@ -75,6 +95,7 @@ public class OrderController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("order:order:delete")
+    @LogInfo(name = "删除订单")
     public R delete(@RequestBody Long[] ids){
 		orderService.removeByIds(Arrays.asList(ids));
 

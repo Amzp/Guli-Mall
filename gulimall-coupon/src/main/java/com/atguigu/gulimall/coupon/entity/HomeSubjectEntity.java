@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @Data
 @TableName("sms_home_subject")
@@ -38,7 +38,7 @@ public class HomeSubjectEntity implements Serializable {
 	/**
 	 * 显示状态
 	 */
-	private Integer status;
+	private Boolean status;
 	/**
 	 * 详情连接
 	 */

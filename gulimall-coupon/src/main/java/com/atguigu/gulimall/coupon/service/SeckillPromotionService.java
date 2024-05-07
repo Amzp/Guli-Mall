@@ -1,8 +1,8 @@
 package com.atguigu.gulimall.coupon.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.coupon.entity.SeckillPromotionEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 public interface SeckillPromotionService extends IService<SeckillPromotionEntity> {
 

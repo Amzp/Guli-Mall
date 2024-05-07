@@ -48,7 +48,7 @@ feign:
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+    com.atguigu.gulimall.auth: debug # 指定包的日志级别为debug
 
 # 暴露所有Actuator端点
 management:

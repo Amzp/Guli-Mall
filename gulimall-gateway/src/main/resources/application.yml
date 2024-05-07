@@ -1,6 +1,12 @@
 # 配置Spring Cloud Gateway的路由规则
 spring:
   cloud:
+
+    sentinel:
+      transport:
+        #配置sentinel dashboard地址
+        dashboard: localhost:8080
+
     gateway:
       routes: # 路由规则列表
         - id: product_route # 产品服务路由规则
@@ -9,6 +15,13 @@ spring:
             - Path=/api/product/**, /hello # 判断请求路径是否匹配此模式
           filters: # 过滤器，对匹配的请求进行处理
             - RewritePath=/api/(?<segment>.*),/$\{segment} # 对请求路径进行重写
+
+        - id: coupon_route
+          uri: lb://gulimall-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
 
         - id: third_party_route # 第三方服务路由规则
           uri: lb://gulimall-third-party
@@ -30,6 +43,14 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: order_route
+          uri: lb://gulimall-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+
 
         # admin_route: 定义一个名为“admin_route”的路由规则
         - id: admin_route
@@ -85,4 +106,4 @@ spring:
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: warn # 指定包的日志级别为debug
+    com.atguigu.gulimall.gateway: warn # 指定包的日志级别为debug

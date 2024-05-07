@@ -128,8 +128,6 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
-
-
         <!-- 链路追踪Sleuth依赖（ -->
         <!-- 引入链路追踪sleuth -->
         <dependency>
@@ -144,6 +142,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zipkin</artifactId>
         </dependency>
+
     </dependencies>
 
 

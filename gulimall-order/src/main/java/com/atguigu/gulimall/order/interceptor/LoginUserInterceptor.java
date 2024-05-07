@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.order.interceptor;
 
+import com.atguigu.common.annotation.LogInfo;
 import com.atguigu.common.constant.AuthServerConstant;
 import com.atguigu.common.vo.MemberRespVo;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
      * @throws Exception 抛出异常的处理
      */
     @Override
+    @LogInfo(name = "登录拦截")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 获取请求的URI
         String uri = request.getRequestURI();

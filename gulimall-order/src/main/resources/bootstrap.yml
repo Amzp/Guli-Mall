@@ -12,3 +12,7 @@ spring:
       config:
         server-addr: localhost:8848  # Nacos服务器地址
         namespace: 9907ac81-ec2f-45da-a2f2-56812b94b51c  # 命名空间ID
+        ext-config[0]:
+          data-id: AliPay.yml
+          group: DEFAULT_GROUP
+          refresh: true

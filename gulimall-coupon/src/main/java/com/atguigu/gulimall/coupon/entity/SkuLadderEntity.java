@@ -2,11 +2,7 @@ package com.atguigu.gulimall.coupon.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,13 +12,9 @@ import java.math.BigDecimal;
  * 
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @Data
-@Builder
-@Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
 @TableName("sms_sku_ladder")
 public class SkuLadderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

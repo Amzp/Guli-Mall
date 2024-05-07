@@ -26,7 +26,7 @@ server:
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug，用于调试信息输出
+    com.atguigu.gulimall.thirdparty: debug # 指定包的日志级别为debug，用于调试信息输出
 
 
 

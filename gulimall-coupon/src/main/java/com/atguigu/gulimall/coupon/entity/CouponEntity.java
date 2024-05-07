@@ -13,12 +13,12 @@ import java.util.Date;
  * 
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @Data
 @TableName("sms_coupon")
 public class CouponEntity implements Serializable {
-	private static final long serialVersionUID = 4031373332537103857L;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * id

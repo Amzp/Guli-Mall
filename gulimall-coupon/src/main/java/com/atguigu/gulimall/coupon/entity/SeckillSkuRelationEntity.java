@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * 
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @Data
 @TableName("sms_seckill_sku_relation")
@@ -43,11 +43,11 @@ public class SeckillSkuRelationEntity implements Serializable {
 	/**
 	 * 秒杀总量
 	 */
-	private BigDecimal seckillCount;
+	private Integer seckillCount;
 	/**
 	 * 每人限购数量
 	 */
-	private BigDecimal seckillLimit;
+	private Integer seckillLimit;
 	/**
 	 * 排序
 	 */

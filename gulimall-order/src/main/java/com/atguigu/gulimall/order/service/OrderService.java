@@ -1,10 +1,9 @@
 package com.atguigu.gulimall.order.service;
 
+import com.atguigu.common.to.mq.SeckillOrderTo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.order.entity.OrderEntity;
-import com.atguigu.gulimall.order.vo.OrderConfirmVo;
-import com.atguigu.gulimall.order.vo.OrderSubmitVo;
-import com.atguigu.gulimall.order.vo.SubmitOrderResponseVo;
+import com.atguigu.gulimall.order.vo.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -27,5 +26,15 @@ public interface OrderService extends IService<OrderEntity> {
     OrderEntity getOrderByOrderSn(String orderSn);
 
     void closeOrder(OrderEntity orderEntity);
+
+    PayVo getOrderPay(String orderSn);
+
+    String handlePayResult(PayAsyncVo asyncVo);
+
+    String asyncNotify(String notifyData);
+
+    void createSeckillOrder(SeckillOrderTo orderTo);
+
+    PageUtils queryPageWithItem(Map<String, Object> params);
 }
 

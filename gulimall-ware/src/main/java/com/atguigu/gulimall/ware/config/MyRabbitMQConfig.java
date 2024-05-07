@@ -64,7 +64,7 @@ public class MyRabbitMQConfig {
      * 创建一个延迟队列。该队列具有以下特性：
      * - 使用了死信交换（x-dead-letter-exchange），当消息在队列中超过指定的存活时间（TTL）后，将被发送到名为"stock-event-exchange"的交换器。
      * - 死信路由键（x-dead-letter-routing-key）被设置为"stock.release"，定义了死信应当如何被路由。
-     * - 消息存活时间（x-message-ttl）被设置为2分钟（120000毫秒），任何在队列中等待超过2分钟的消息都将被视为过期并处理。
+     * - 消息存活时间（x-message-ttl）被设置为30分钟（30*60*1000毫秒），任何在队列中等待超过30分钟的消息都将被视为过期并处理。
      *
      * @return 返回配置好的延迟队列对象。
      */
@@ -75,7 +75,7 @@ public class MyRabbitMQConfig {
         HashMap<String, Object> arguments = new HashMap<>();
         arguments.put("x-dead-letter-exchange", "stock-event-exchange");
         arguments.put("x-dead-letter-routing-key", "stock.release");
-        arguments.put("x-message-ttl", 120000);
+        arguments.put("x-message-ttl", 30 * 60 * 1000);
 
         // 创建并返回一个具有指定参数的队列
         return new Queue("stock.delay.queue", true, false, false, arguments);

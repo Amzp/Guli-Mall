@@ -43,4 +43,4 @@ mybatis-plus:
 # 日志级别配置
 logging:
   level:
-    com.atguigu.gulimall: debug
+    com.atguigu.gulimall.ware: debug

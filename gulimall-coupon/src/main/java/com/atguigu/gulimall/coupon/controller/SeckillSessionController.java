@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-
 
 
 /**
@@ -17,13 +17,26 @@ import java.util.Map;
  *
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @RestController
 @RequestMapping("coupon/seckillsession")
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;
+
+
+    /**
+     * 查询最近三天需要参加秒杀商品的信息
+     * @return
+     */
+    @GetMapping(value = "/Lates3DaySession")
+    public R getLates3DaySession() {
+
+        List<SeckillSessionEntity> seckillSessionEntities = seckillSessionService.getLates3DaySession();
+
+        return R.ok().setData(seckillSessionEntities);
+    }
 
     /**
      * 列表

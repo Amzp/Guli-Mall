@@ -50,4 +50,4 @@ server:
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+    com.atguigu.gulimall.member: debug # 指定包的日志级别为debug

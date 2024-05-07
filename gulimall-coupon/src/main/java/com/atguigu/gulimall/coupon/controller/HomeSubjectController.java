@@ -11,13 +11,12 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 首页专题表【jd首页下面很多专题，每个专题链接新的页面，展示专题商品信息】
  *
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @RestController
 @RequestMapping("coupon/homesubject")
@@ -51,8 +50,7 @@ public class HomeSubjectController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-    //@RequiresPermissions("coupon:homesubject:save")
+    @PostMapping("/save")
     public R save(@RequestBody HomeSubjectEntity homeSubject){
 		homeSubjectService.save(homeSubject);
 
@@ -63,7 +61,6 @@ public class HomeSubjectController {
      * 修改
      */
     @RequestMapping("/update")
-    //@RequiresPermissions("coupon:homesubject:update")
     public R update(@RequestBody HomeSubjectEntity homeSubject){
 		homeSubjectService.updateById(homeSubject);
 

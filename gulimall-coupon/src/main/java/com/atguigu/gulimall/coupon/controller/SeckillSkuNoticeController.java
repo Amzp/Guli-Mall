@@ -11,13 +11,12 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 秒杀商品通知订阅
  *
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:39
+ * @date 2020-05-22 19:35:30
  */
 @RestController
 @RequestMapping("coupon/seckillskunotice")

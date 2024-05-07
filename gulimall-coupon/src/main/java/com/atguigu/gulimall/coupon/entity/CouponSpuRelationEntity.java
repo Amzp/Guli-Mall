@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @Data
 @TableName("sms_coupon_spu_relation")

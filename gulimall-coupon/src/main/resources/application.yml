@@ -8,9 +8,17 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        #配置sentinel dashboard地址
+        dashboard: localhost:8080
   application:
     name: gulimall-coupon
 
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -24,7 +32,7 @@ server:
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+    com.atguigu.gulimall.coupon: debug # 指定包的日志级别为debug
 
 # SpringBoot Actuator Endpoints，用于配置暴露的端点和健康检查的显示细节。
 management:

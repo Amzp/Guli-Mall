@@ -68,8 +68,8 @@ public class SysAspect {
     @Around("pointCutAnnotation()")
 //    @Around("pointcutPackage()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        LocalDateTime startTime = null;
-        Duration executionTime = null;
+        LocalDateTime startTime;
+        Duration executionTime;
 
         // 获取当前执行用户的信息，假设通过解析session或token实现
         // 获取方法签名和实际方法对象

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
-
 
 
 /**
@@ -17,7 +17,7 @@ import java.util.Map;
  *
  * @author Rain^
  * @email 843524258@qq.com
- * @date 2019-10-08 09:36:40
+ * @date 2020-05-22 19:35:30
  */
 @RestController
 @RequestMapping("coupon/seckillpromotion")
@@ -54,6 +54,8 @@ public class SeckillPromotionController {
     @RequestMapping("/save")
     //@RequiresPermissions("coupon:seckillpromotion:save")
     public R save(@RequestBody SeckillPromotionEntity seckillPromotion){
+        seckillPromotion.setUserId(1L);
+        seckillPromotion.setCreateTime(new Date());
 		seckillPromotionService.save(seckillPromotion);
 
         return R.ok();

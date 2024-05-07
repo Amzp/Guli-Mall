@@ -1,11 +1,14 @@
 package com.atguigu.gulimall.seckill;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+import java.util.Arrays;
 
 /**
  * 1、整合Sentinel
@@ -37,10 +40,13 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@Slf4j
 public class GulimallSeckillApplication {
 
     public static void main(String[] args) {
+        log.info("开始启动Gulimall秒杀应用：arg = {}", Arrays.toString(args));
         SpringApplication.run(GulimallSeckillApplication.class, args);
+        log.info("Gulimall秒杀应用启动成功");
     }
 
 }

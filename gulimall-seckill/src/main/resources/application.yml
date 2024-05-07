@@ -30,13 +30,6 @@ spring:
   session:
     store-type: redis # 使用Redis存储Session
 
-
-
-#开启feign对sentinel的支持
-feign:
-  sentinel:
-    enabled: true
-
   #配置异步任务线程池
   task:
     execution:
@@ -45,10 +38,16 @@ feign:
         max-size: 50
 
 
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
+
 # 日志配置
 logging:
   level:
-    com.atguigu.gulimall: debug # 指定包的日志级别为debug
+    com.atguigu.gulimall.seckill: debug # 指定包的日志级别为debug
 
 
 #暴露所有端点

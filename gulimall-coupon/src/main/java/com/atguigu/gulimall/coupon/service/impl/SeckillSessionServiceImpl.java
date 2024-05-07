@@ -1,8 +1,5 @@
 package com.atguigu.gulimall.coupon.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
 import com.atguigu.gulimall.coupon.dao.SeckillSessionDao;
@@ -10,7 +7,9 @@ import com.atguigu.gulimall.coupon.entity.SeckillSessionEntity;
 import com.atguigu.gulimall.coupon.entity.SeckillSkuRelationEntity;
 import com.atguigu.gulimall.coupon.service.SeckillSessionService;
 import com.atguigu.gulimall.coupon.service.SeckillSkuRelationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -85,33 +84,42 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
     }
 
     /**
-     * 当前时间
+     * 获取当前时间
      *
-     * @return
+     * @return 返回当前时间的字符串表示，格式为"yyyy-MM-dd HH:mm:ss"
      */
     private String startTime() {
+        // 获取当前日期
         LocalDate now = LocalDate.now();
+        // 定义最小时间
         LocalTime min = LocalTime.MIN;
+        // 组合当前日期和最小时间得到当天的开始时间
         LocalDateTime start = LocalDateTime.of(now, min);
 
-        //格式化时间
+        // 格式化开始时间
         return start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
+
     /**
-     * 结束时间
+     * 获取当前时间后两天的最大时间（即两天后当天的23:59:59）
      *
-     * @return
+     * @return 格式化后的结束时间字符串，格式为"yyyy-MM-dd HH:mm:ss"
      */
     private String endTime() {
+        // 获取当前日期
         LocalDate now = LocalDate.now();
+        // 计算结束日期，为当前日期后加两天
         LocalDate plus = now.plusDays(2);
+        // 设置结束时间，为一天中的最大时间
         LocalTime max = LocalTime.MAX;
+        // 创建结束时间的 LocalDateTime 对象
         LocalDateTime end = LocalDateTime.of(plus, max);
 
-        //格式化时间
+        // 格式化 LocalDateTime 为字符串
         return end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
 
     public static void main(String[] args) {
         // LocalDate now = LocalDate.now();

@@ -4,7 +4,6 @@ import com.atguigu.common.annotation.LogInfo;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.seckill.service.SeckillService;
 import com.atguigu.gulimall.seckill.to.SeckillSkuRedisTo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

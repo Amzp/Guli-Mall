@@ -11,6 +11,11 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
+    sentinel:
+      transport:
+        #配置sentinel dashboard地址
+        dashboard: localhost:8080
+
   # Jackson配置，用于日期格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -23,6 +28,13 @@ spring:
   redis:
     host: 192.168.56.10
     port: 6379
+  session:
+    store-type: redis
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
 
 # MyBatis Plus配置
 mybatis-plus:

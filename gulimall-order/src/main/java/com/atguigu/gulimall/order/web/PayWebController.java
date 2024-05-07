@@ -2,19 +2,20 @@ package com.atguigu.gulimall.order.web;
 
 import com.alipay.api.AlipayApiException;
 import com.atguigu.common.annotation.LogInfo;
-import com.lly835.bestpay.config.WxPayConfig;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.service.BestPayService;
 import com.atguigu.gulimall.order.config.AlipayTemplate;
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.atguigu.gulimall.order.vo.PayVo;
+import com.lly835.bestpay.config.WxPayConfig;
+import com.lly835.bestpay.model.PayRequest;
+import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.service.BestPayService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 

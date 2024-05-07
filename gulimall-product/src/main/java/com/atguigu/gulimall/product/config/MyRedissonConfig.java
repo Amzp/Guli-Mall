@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @Slf4j
-public class RedissonConfig {
+public class MyRedissonConfig {
     /**
      * 创建并配置Redisson客户端连接
      *

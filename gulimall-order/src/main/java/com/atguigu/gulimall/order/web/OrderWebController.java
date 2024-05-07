@@ -1,14 +1,12 @@
 package com.atguigu.gulimall.order.web;
 
-import com.atguigu.common.exception.NoStockException;
 import com.atguigu.common.annotation.LogInfo;
+import com.atguigu.common.exception.NoStockException;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.atguigu.gulimall.order.vo.OrderConfirmVo;
 import com.atguigu.gulimall.order.vo.OrderSubmitVo;
 import com.atguigu.gulimall.order.vo.SubmitOrderResponseVo;
-
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

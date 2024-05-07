@@ -1,7 +1,7 @@
 package com.atguigu.gulimall.coupon.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.atguigu.gulimall.coupon.entity.MemberPriceEntity;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

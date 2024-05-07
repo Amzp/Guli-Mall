@@ -1,10 +1,10 @@
 package com.atguigu.gulimall.seckill.scheduled;
 
+import com.atguigu.common.annotation.LogInfo;
 import com.atguigu.gulimall.seckill.service.SeckillService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,8 @@ public class SeckillScheduled {
 
     //TODO 保证幂等性问题
     // @Scheduled(cron = "*/5 * * * * ? ")
-    @Scheduled(cron = "0 0 1/1 * * ? ")
+    @Scheduled(cron = "0 * * * * ? ")
+    @LogInfo(name = "秒杀商品上架")
     public void uploadSeckillSkuLatest3Days() {
         //1、重复上架无需处理
         log.info("上架秒杀的商品...");

@@ -1,7 +1,6 @@
 package com.atguigu.gulimall.seckill.scheduled;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 /**
  * @Description:

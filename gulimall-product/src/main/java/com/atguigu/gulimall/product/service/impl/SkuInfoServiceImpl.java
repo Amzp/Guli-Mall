@@ -1,12 +1,16 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
+import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.product.dao.SkuInfoDao;
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
 import com.atguigu.gulimall.product.entity.SpuInfoDescEntity;
+import com.atguigu.gulimall.product.feign.SeckillFeignService;
 import com.atguigu.gulimall.product.service.*;
+import com.atguigu.gulimall.product.vo.SeckillSkuVo;
 import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.atguigu.gulimall.product.vo.SkuItemVo;
 import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
@@ -15,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -39,6 +44,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     private AttrGroupService attrGroupService;
     @Resource
     private SkuSaleAttrValueService skuSaleAttrValueService;
+    @Resource
+    private SeckillFeignService seckillFeignService;
 
     @Resource
     private ThreadPoolExecutor executor;
@@ -201,10 +208,28 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             skuItemVo.setImages(images);
         }, executor);
 
+        CompletableFuture<Void> seckillFuture = CompletableFuture.runAsync(() -> {
+            //3、远程调用查询当前sku是否参与秒杀优惠活动
+            R skuSeckilInfo = seckillFeignService.getSkuSeckilInfo(skuId);
+            if (skuSeckilInfo.getCode() == 0) {
+                //查询成功
+                SeckillSkuVo seckilInfoData = skuSeckilInfo.getData("data", new TypeReference<SeckillSkuVo>() {
+                });
+                skuItemVo.setSeckillSkuVo(seckilInfoData);
+
+                if (seckilInfoData != null) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime > seckilInfoData.getEndTime()) {
+                        skuItemVo.setSeckillSkuVo(null);
+                    }
+                }
+            }
+        }, executor);
+
         // 等待所有异步任务完成
         try {
             // 使用CompletableFuture.allOf()方法等待所有异步任务完成
-            CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture).get();
+            CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture, seckillFuture).get();
         } catch (InterruptedException | ExecutionException e) {
             // 若在等待过程中发生异常，抛出运行时异常
             log.error("商品详情信息获取失败", e);

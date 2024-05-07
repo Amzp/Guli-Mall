@@ -1,9 +1,9 @@
 package com.atguigu.gulimall.order.listener;
 
 import com.atguigu.common.annotation.LogInfo;
-import com.rabbitmq.client.Channel;
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
+import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

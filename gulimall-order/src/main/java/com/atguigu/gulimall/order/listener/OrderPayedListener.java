@@ -2,12 +2,10 @@ package com.atguigu.gulimall.order.listener;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
-
 import com.atguigu.gulimall.order.config.AlipayTemplate;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.atguigu.gulimall.order.vo.PayAsyncVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

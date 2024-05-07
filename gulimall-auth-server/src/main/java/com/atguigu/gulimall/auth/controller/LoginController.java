@@ -31,8 +31,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.atguigu.common.constant.AuthServerConstant.LOGIN_USER;
-
 /**
  * ClassName: LoginController
  * Package: com.atguigu.gulimall.auth.controller

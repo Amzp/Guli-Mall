@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 //@EnableConfigurationProperties(ThreadPoolConfigProperties.class)
 @Configuration
 @Slf4j
-public class ThreadConfig {
+public class MyThreadConfig {
 
     /**
      * 创建并配置一个 ThreadPoolExecutor 实例，以实现并发任务的高效管理和执行。

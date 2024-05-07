@@ -14,7 +14,7 @@ spring:
           predicates: # 断言，确定请求是否应被此路由处理
             - Path=/api/product/**, /hello # 判断请求路径是否匹配此模式
           filters: # 过滤器，对匹配的请求进行处理
-            - RewritePath=/api/(?<segment>.*),/$\{segment} # 对请求路径进行重写
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment} # 对请求路径进行重写
 
         - id: coupon_route
           uri: lb://gulimall-coupon
@@ -28,21 +28,21 @@ spring:
           predicates:
             - Path=/api/thirdparty/**
           filters:
-            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+            - RewritePath=/api/thirdparty/(?<segment>/?.*),/$\{segment}
 
         - id: member_route # 会员服务路由规则
           uri: lb://gulimall-member
           predicates:
             - Path=/api/member/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment}
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
 
         - id: ware_route # 仓库服务路由规则
           uri: lb://gulimall-ware
           predicates:
             - Path=/api/ware/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment}
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
 
         - id: order_route
           uri: lb://gulimall-order
@@ -58,7 +58,7 @@ spring:
           predicates:
             - Path=/api/** # 判断请求路径是否以“/api/”开头，粗粒度路由放在细粒度路由后面
           filters:
-            - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} # 对请求路径进行重写，将“/api/”替换为“/renren-fast/”
+            - RewritePath=/api/(?<segment>/?.*),/renren-fast/$\{segment} # 对请求路径进行重写，将“/api/”替换为“/renren-fast/”
 
             # RewritePath：表示要进行路径重写的操作。
             # /api/(?<segment>.*?)：是一个正则表达式，匹配以/api/开头的路径，并将后面的任意字符捕获为一个组，命名为segment。
@@ -102,6 +102,18 @@ spring:
           uri: lb://gulimall-member
           predicates:
             - Host=member.gulimall.com
+
+        - id: gulimall_seckill_route
+          uri: lb://gulimall-seckill
+          predicates:
+            - Host=seckill.gulimall.com
+
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 # 日志配置
 logging:

@@ -37,18 +37,15 @@ spring:
         core-size: 5
         max-size: 50
 
-
-#开启feign对sentinel的支持
-feign:
-  sentinel:
-    enabled: true
-
-
 # 日志配置
 logging:
   level:
     com.atguigu.gulimall.seckill: debug # 指定包的日志级别为debug
 
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
 
 #暴露所有端点
 management:

@@ -16,6 +16,14 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    # Sentinel配置
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
+        port: 8719
+
   # 应用名称配置
   application:
     name: gulimall-ware
@@ -40,7 +48,20 @@ mybatis-plus:
     db-config:
       # 主键类型配置
       id-type: auto
+
 # 日志级别配置
 logging:
   level:
     com.atguigu.gulimall.ware: debug
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

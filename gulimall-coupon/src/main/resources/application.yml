@@ -12,6 +12,9 @@ spring:
       transport:
         #配置sentinel dashboard地址
         dashboard: localhost:8080
+        port: 8719
+
+
   application:
     name: gulimall-coupon
 

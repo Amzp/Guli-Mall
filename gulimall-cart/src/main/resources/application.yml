@@ -14,10 +14,13 @@ spring:
       discovery:
         server-addr: localhost:8848  # Nacos服务地址
 
+    # Sentinel配置
     sentinel:
       transport:
         # 配置Sentinel控制台地址
         dashboard: localhost:8080
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
+        port: 8719
 
   # Redis配置
   redis:

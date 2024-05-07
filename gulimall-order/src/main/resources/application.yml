@@ -43,10 +43,13 @@ spring:
       discovery:
         server-addr: localhost:8848
 
-#    sentinel:
-#      transport:
-#        #配置sentinel dashboard地址
-#        dashboard: localhost:8080
+    # Sentinel配置
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
+        port: 8719
 
   # 模板引擎配置
   thymeleaf:
@@ -60,13 +63,6 @@ spring:
   session:
     store-type: redis
 
-# 开启feign对sentinel的支持，用于流量控制
-feign:
-  sentinel:
-    enabled: true
-
-
-
 # MyBatis Plus配置，用于简化MyBatis的使用
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -79,3 +75,15 @@ mybatis-plus:
 logging:
   level:
     com.atguigu.gulimall.order: debug # 指定包的日志级别为debug
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

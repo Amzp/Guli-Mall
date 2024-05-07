@@ -6,7 +6,7 @@ package com.atguigu.gulimall.product.config;
 /**
  * @Description:
  * @Created: with IntelliJ IDEA.
- * @author: 夏沫止水
+ * @author: Rain^
  * @createTime: 2020-07-06 11:57
  **/
 

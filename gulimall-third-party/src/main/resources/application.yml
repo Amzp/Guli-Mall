@@ -4,6 +4,13 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
+    # Sentinel配置
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
+        port: 8719
 
     # 配置阿里云服务
     alicloud:
@@ -12,7 +19,6 @@ spring:
       oss: # 阿里云对象存储服务配置
         endpoint: oss-cn-beijing.aliyuncs.com # OSS服务的Endpoint
         bucket: # OSS的存储桶名称
-
 
 
 # 应用配置
@@ -28,7 +34,17 @@ logging:
   level:
     com.atguigu.gulimall.thirdparty: debug # 指定包的日志级别为debug，用于调试信息输出
 
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
 
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 
 

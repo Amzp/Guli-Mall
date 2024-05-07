@@ -24,15 +24,12 @@ public class GulimallSeckillSentinelConfig {
 
     public GulimallSeckillSentinelConfig() {
 
-        WebCallbackManager.setUrlBlockHandler(new UrlBlockHandler() {
-            @Override
-            public void blocked(HttpServletRequest request, HttpServletResponse response, BlockException ex) throws IOException {
-                R error = R.error(BizCodeEnume.TO_MANY_REQUEST.getCode(), BizCodeEnume.TO_MANY_REQUEST.getMsg());
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/json");
-                response.getWriter().write(JSON.toJSONString(error));
+        WebCallbackManager.setUrlBlockHandler((request, response, ex) -> {
+            R error = R.error(BizCodeEnume.TO_MANY_REQUEST.getCode(), BizCodeEnume.TO_MANY_REQUEST.getMsg());
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            response.getWriter().write(JSON.toJSONString(error));
 
-            }
         });
 
     }

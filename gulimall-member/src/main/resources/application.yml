@@ -11,10 +11,13 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos服务器地址和端口
-#    sentinel:
-#      transport:
-#        #配置sentinel dashboard地址
-#        dashboard: localhost:8080
+    # Sentinel配置
+    sentinel:
+      transport:
+        # 配置Sentinel控制台地址
+        dashboard: localhost:8080
+        # Sentinel通信端口，默认8719端口，如果被占用会自动寻找未被占用的端口
+        port: 8719
 
   # 应用名称配置
   application:
@@ -29,12 +32,6 @@ spring:
 
   session:
     store-type: redis
-
-#开启feign对sentinel的支持
-feign:
-  sentinel:
-    enabled: true
-
 
 # 配置Mybatis-plus
 mybatis-plus:
@@ -51,3 +48,15 @@ server:
 logging:
   level:
     com.atguigu.gulimall.member: debug # 指定包的日志级别为debug
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
